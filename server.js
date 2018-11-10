@@ -1,6 +1,8 @@
 const express = require('express');
 
+const port = process.env.PORT || 3000;
 var app = express();
+
 app.get('/', (req, res) => {
     res.send({
         message: 'Welcome to AliciAlonso REST API',
@@ -11,6 +13,6 @@ app.get('/', (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-    console.log(`server listening thru port 3000`);
+app.listen(port, () => {
+    console.log(`server listening thru port ${port}`);
 });
