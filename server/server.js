@@ -50,20 +50,33 @@ app.get('/news/:id', (req, res) => {
     let id = req.params.id;
     if (!ObjectID.isValid(id)) {
         return res.status(404).send();
-    } else {
-        News.findById(id)
-            .then((news) => {
-                if (!news) {
-                    return res.status(404).send();
-                }
-                res.send( { news } );
-            })
-            .catch((e) => {
-                res.status(400).send();
-            })
     }
+    News.findById(id)
+        .then((news) => {
+            if (!news) {
+                return res.status(404).send();
+            }
+            res.send( { news } );
+        })
+        .catch( (e) => res.status(400).send() )
 });
 
+app.delete('/news/:id', (req, res) => {
+    let id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+    News.findByIdAndRemove(id)
+        .then((news) => {
+            if (!news) {
+                return res.status(404).send();
+            }
+            res.send( { news } );
+        })
+        .catch( (e) => res.status(400).send() )
+});
+
+// LISTEN ----------------------------------------
 app.listen(port, () => {
     console.log(`server listening on port ${port}`);
 });

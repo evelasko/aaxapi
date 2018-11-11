@@ -104,3 +104,38 @@ describe('GET /news/:id', () => {
             .end(done);
     });
 });
+
+describe('DELETE /news/:id', () => {
+    it('should remove a todo', (done) => {
+        var hexId = dummyNews[1]._id.toHexString();
+        request(app)
+            .delete(`/news/${ hexId }`)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.news._id).toBe(hexId);
+            })
+            .end((err, res) => {
+                if (err) return done(err);
+                News.findById(hexId)
+                    .then((news) => {
+                        expect(news).toBeFalsy();
+                        done();
+                    })
+                    .catch((e) => done(e));
+            });
+    });
+
+    it('should return 404 if news not found', (done) => {
+        request(app)
+            .delete(`/news/${ new ObjectID().toHexString() }`)
+            .expect(404)
+            .end(done);
+    });
+
+    it('should return 404 if object id is invalid', (done) => {
+        request(app)
+            .delete('/news/1a2b3c')
+            .expect(404)
+            .end(done);
+    });
+});
