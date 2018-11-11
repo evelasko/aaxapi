@@ -7,8 +7,8 @@ const { News } = require('./../models/news');
 
 let newsCount = undefined;
 const dummyNews = [
-    { _id: new ObjectID, title: 'News 1', body: 'Body of news 1' },
-    { _id: new ObjectID, title: 'News 2', body: 'Body of news 2' }
+    { _id: new ObjectID, title: 'News 1', body: 'Body of news 1', published: false },
+    { _id: new ObjectID, title: 'News 2', body: 'Body of news 2', published: true, publishedAt: new Date().getTime() }
 ]
 
 beforeEach((done) => {
@@ -138,4 +138,37 @@ describe('DELETE /news/:id', () => {
             .expect(404)
             .end(done);
     });
+});
+
+describe('PATCH /news/:id', () => {
+    it('should update title, published to true, and set createdAt', (done) => {
+        
+        let hexId = dummyNews[0]._id.toHexString();
+        let title = 'Test Title';
+
+        request(app)
+            .patch(`/news/${hexId}`)
+            .send({ published: true, title})
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.news.title).toBe(title);
+                expect(res.body.news.published).toBe(true);
+                expect(typeof res.body.news.publishedAt).toBe('string');
+            })
+            .end(done);
+    });
+    it('should clear publishedAt when published is set to false', (done) => {
+                
+        let hexId = dummyNews[1]._id.toHexString();
+
+        request(app)
+            .patch(`/news/${hexId}`)
+            .send({ published: false })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.news.published).toBe(false);
+                expect(res.body.news.publishedAt).toBe(null);
+            })
+            .end(done);
+    })
 });

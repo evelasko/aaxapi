@@ -19,7 +19,16 @@ let News = mongoose.model('News',
             required: true,
             trim: true,
             minlength: 1
-        }    
+        },
+        published: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
+        publishedAt: {
+            type: Date,
+            required: false
+        }
     }
 );
 

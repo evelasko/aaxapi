@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { ObjectID } = require('mongodb');
@@ -62,7 +63,9 @@ app.get('/news/:id', (req, res) => {
 });
 
 app.delete('/news/:id', (req, res) => {
+
     let id = req.params.id;
+    
     if (!ObjectID.isValid(id)) {
         return res.status(404).send();
     }
@@ -74,6 +77,29 @@ app.delete('/news/:id', (req, res) => {
             res.send( { news } );
         })
         .catch( (e) => res.status(400).send() )
+});
+
+app.patch('/news/:id', (req, res) => {
+    let id = req.params.id;
+    let body = _.pick(req.body, ['title', 'subtitle', 'body', 'published']);
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+    if (_.isBoolean(body.published) && body.published) {
+        body.publishedAt = new Date().getTime();
+    } else {
+        body.published = false;
+        body.publishedAt = null;
+    }
+
+    News.findByIdAndUpdate(id, {$set: body}, {new: true})
+        .then((news) => {
+            if (!news) {
+                return res.status(404).send();
+            }
+            res.send({ news });
+        })
+        .catch((e) => res.status(400).send());
 });
 
 // LISTEN ----------------------------------------
