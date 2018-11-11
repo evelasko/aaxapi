@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const { ObjectID } = require('mongodb');
 let { mongoose } = require('../db/mongoose');
 // MODELS -----------------------------------------------
 let { News } = require('./models/news');
@@ -13,6 +14,16 @@ var app = express();
 app.use(bodyParser.json());
 
 // ROUTES -----------------------------------------------
+app.get('/', (req, res) => {
+    res.send({
+        message: 'Welcome to AliciAlonso REST API',
+        version: 0,
+        author: 'Enrique Velasco',
+        license: 'LSC',
+        repo: 'github'
+    });
+});
+
 app.post('/news', (req, res) => {
     let news = new News({
         title: req.body.title,
@@ -35,14 +46,22 @@ app.get('/news', (req, res) => {
         });
 });
 
-app.get('/', (req, res) => {
-    res.send({
-        message: 'Welcome to AliciAlonso REST API',
-        version: 0,
-        author: 'Enrique Velasco',
-        license: 'LSC',
-        repo: 'github'
-    });
+app.get('/news/:id', (req, res) => {
+    let id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    } else {
+        News.findById(id)
+            .then((news) => {
+                if (!news) {
+                    return res.status(404).send();
+                }
+                res.send( { news } );
+            })
+            .catch((e) => {
+                res.status(400).send();
+            })
+    }
 });
 
 app.listen(port, () => {
