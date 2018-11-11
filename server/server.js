@@ -26,6 +26,15 @@ app.post('/news', (req, res) => {
         })
 });
 
+app.get('/news', (req, res) => {
+    News.find()
+        .then((newss) => {
+            res.send( { newss } )
+        }, (e) => {
+            res.status(400).send(e);
+        });
+});
+
 app.get('/', (req, res) => {
     res.send({
         message: 'Welcome to AliciAlonso REST API',
