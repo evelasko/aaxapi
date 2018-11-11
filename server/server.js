@@ -1,14 +1,19 @@
+require('./config/config');
+
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { ObjectID } = require('mongodb');
+
 let { mongoose } = require('../db/mongoose');
+// pgdb check:
+require('../db/pgdb');
+
 // MODELS -----------------------------------------------
 let { News } = require('./models/news');
 let { User } = require('./models/user');
 let { Event } = require('./models/event');
-// ENV --------------------------------------------------
-const port = process.env.PORT || 3000;
+
 var app = express();
 
 // MIDDLEWARE -------------------------------------------
@@ -103,6 +108,7 @@ app.patch('/news/:id', (req, res) => {
 });
 
 // LISTEN ----------------------------------------
+const port = process.env.PORT;
 app.listen(port, () => {
     console.log(`server listening on port ${port}`);
 });
