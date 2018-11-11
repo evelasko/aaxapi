@@ -47,9 +47,7 @@ app.get('/news', (req, res) => {
     News.find()
         .then((news) => {
             res.send( { news } )
-        }, (e) => {
-            res.status(400).send(e);
-        });
+        }, (e) => res.status(400).send(e));
 });
 
 app.get('/news/:id', (req, res) => {
@@ -64,7 +62,7 @@ app.get('/news/:id', (req, res) => {
             }
             res.send( { news } );
         })
-        .catch( (e) => res.status(400).send() )
+        .catch( (e) => res.status(400).send(e) )
 });
 
 app.delete('/news/:id', (req, res) => {
@@ -81,7 +79,7 @@ app.delete('/news/:id', (req, res) => {
             }
             res.send( { news } );
         })
-        .catch( (e) => res.status(400).send() )
+        .catch( (e) => res.status(400).send(e) )
 });
 
 app.patch('/news/:id', (req, res) => {
@@ -104,8 +102,23 @@ app.patch('/news/:id', (req, res) => {
             }
             res.send({ news });
         })
-        .catch((e) => res.status(400).send());
+        .catch((e) => res.status(400).send(e));
 });
+
+app.post('/user', (req, res) => {
+    let body = _.pick(req.body, ['email', 'password']);
+    let user = new User(body);
+    
+    user.save()
+        .then(() => {
+            return user.generateAuthToken();
+        })
+        .then((token) => {
+            res.header('x-auth', token).send(user);
+        })
+        .catch((e) => res.status(400).send(e));
+});
+
 
 // LISTEN ----------------------------------------
 const port = process.env.PORT;
