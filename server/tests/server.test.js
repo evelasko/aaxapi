@@ -1,13 +1,14 @@
 const expect = require('expect');
 const request = require('supertest');
+const { ObjectID } = require('mongodb');
 
 const { app } = require('./../server');
 const { News } = require('./../models/news');
 
 let newsCount = undefined;
 const dummyNews = [
-    { title: 'News 1', body: 'Body of news 1' },
-    { title: 'News 2', body: 'Body of news 2' }
+    { _id: new ObjectID, title: 'News 1', body: 'Body of news 1' },
+    { _id: new ObjectID, title: 'News 2', body: 'Body of news 2' }
 ]
 
 beforeEach((done) => {
@@ -71,6 +72,35 @@ describe('GET /news', () => {
             .expect((res) => {
                 expect(res.body.news.length).toBe(newsCount);
             })
+            .end(done);
+    });
+});
+
+describe('GET /news/:id', () => {
+    //----------------------------------------------
+    it('should return news doc', (done) => {
+        request(app)
+            .get(`/news/${dummyNews[0]._id.toHexString()}`)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.news.title).toBe(dummyNews[0].title);
+            })
+            .end(done);
+    });
+
+    //----------------------------------------------
+    it('should return 404 if id not found', (done) => {
+        request(app)
+            .get(`/news/${ new ObjectID().toHexString() }`)
+            .expect(404)
+            .end(done);
+    });
+
+    //----------------------------------------------
+    it('should return 404 for non-object id', (done) => {
+        request(app)
+            .get('/news/1a2b3c')
+            .expect(404)
             .end(done);
     });
 });
