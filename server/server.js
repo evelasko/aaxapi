@@ -28,8 +28,8 @@ app.post('/news', (req, res) => {
 
 app.get('/news', (req, res) => {
     News.find()
-        .then((newss) => {
-            res.send( { newss } )
+        .then((news) => {
+            res.send( { news } )
         }, (e) => {
             res.status(400).send(e);
         });

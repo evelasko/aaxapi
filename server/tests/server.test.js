@@ -5,13 +5,21 @@ const { app } = require('./../server');
 const { News } = require('./../models/news');
 
 let newsCount = undefined;
+const dummyNews = [
+    { title: 'News 1', body: 'Body of news 1' },
+    { title: 'News 2', body: 'Body of news 2' }
+]
 
 beforeEach((done) => {
-    News.find().count()
-         .then((count) => {
-             newsCount = count;
-             done();
-            }, (e) => { done(err) });
+    News.remove({})
+        .then(() => News.insertMany(dummyNews))
+        .then(() => {
+            News.find().count()
+            .then((count) => {
+                newsCount = count;
+                done();
+                }, (e) => { done(err) });
+        });
 });
 
 describe('POST /news', () => {
@@ -32,7 +40,7 @@ describe('POST /news', () => {
                 News.find()
                     .then((newss) => {
                         expect(newss.length).toBe(newsCount + 1);
-                        expect(newss[0].title).toBe(title);
+                        expect(newss[ newsCount ].title).toBe(title);
                         done();
                     })
                     .catch((e) => done(e));
@@ -52,5 +60,17 @@ describe('POST /news', () => {
                         done();
                     }).catch((e) => done(e));
             });
+    });
+});
+
+describe('GET /news', () => {
+    it('should get all news', (done) => {
+        request(app)
+            .get('/news')
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.news.length).toBe(newsCount);
+            })
+            .end(done);
     });
 });
