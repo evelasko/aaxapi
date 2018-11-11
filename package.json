@@ -6,7 +6,10 @@
   "scripts": {
     "test": "mocha server/**/*.test.js",
     "test-watch": "nodemon --exec 'npm test'",
-    "start": "node server.js"
+    "start": "node server/server.js"
+  },
+  "engines": {
+    "node": "11.0.0"
   },
   "repository": "github:evelasko/aaxapi.git",
   "author": "Enrique Velasco",

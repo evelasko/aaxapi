@@ -1,9 +1,29 @@
-const { Pool } = require('pg');
-const {user, host, database, password, port} = require('../secrets/db_config');
+const { Client } = require('pg');
+const localDB = require('./../secrets/pgdb_config');
 
-const pool = new Pool({user, host, database, password, port});
+const client = new Client({
+    connectionString: process.env.DATABASE_URL || localDB,
+    ssl: process.env.DATABASE_URL ? true : false
+  });
 
-pool.query('SELECT * FROM aca_subjects', (err, res) => {
-    if (err) return console.log(err);
-    console.log(res);
+client.connect();
+
+client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+  if (err) throw err;
+  for (let row of res.rows) {
+    console.log(JSON.stringify(row));
+  }
+  client.end();
 });
+
+// pool.query('SELECT * FROM aca_subjects', (err, res) => {
+//     if (err) return console.log(err);
+//     console.log(res);
+// });
+
+
+
+
+
+
+

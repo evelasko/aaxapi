@@ -6,7 +6,7 @@ let { mongoose } = require('../db/mongoose');
 let { News } = require('./models/news');
 let { User } = require('./models/user');
 let { Event } = require('./models/event');
-
+// ENV --------------------------------------------------
 const port = process.env.PORT || 3000;
 var app = express();
 
