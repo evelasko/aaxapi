@@ -5,16 +5,19 @@ const jwt = require('jsonwebtoken');
 
 const userOneId = new ObjectID;
 const userTwoId = new ObjectID;
+
 const users = [
     { _id: userOneId, email: 'some@ex.com', password: 'user1pass', tokens:[
-        { access: 'auth', token: jwt.sign({_id: userOneId, access: 'auth'}, 'abc123').toString() }
+        { access: 'auth', token: jwt.sign({_id: userOneId, access: 'auth'}, process.env.JWT_SECRET).toString() }
     ] },
-    { _id: userTwoId, email: 'same@ef.com', password: 'user2pass' }
+    { _id: userTwoId, email: 'same@ef.com', password: 'user2pass', tokens:[
+        { access: 'auth', token: jwt.sign({_id: userTwoId, access: 'auth'}, process.env.JWT_SECRET).toString() }
+    ] }
 ];
 
 const dummyNews = [
-    { _id: new ObjectID, title: 'News 1', body: 'Body of news 1', published: false },
-    { _id: new ObjectID, title: 'News 2', body: 'Body of news 2', published: true, publishedAt: new Date().getTime() }
+    { _id: new ObjectID, title: 'News 1', body: 'Body of news 1', published: false, _creator: userOneId },
+    { _id: new ObjectID, title: 'News 2', body: 'Body of news 2', published: true, publishedAt: new Date().getTime(), _creator: userTwoId }
 ];
 
 const populateDB = (done) => {

@@ -20,6 +20,7 @@ describe('POST /news', () => {
 
         request(app)
             .post('/news')
+            .set('x-auth', users[0].tokens[0].token)
             .send({ title, body })
             .expect(200)
             .expect((res) => {
@@ -40,6 +41,7 @@ describe('POST /news', () => {
     it('should not create news with invalid body data', (done) => {
         request(app)
             .post('/news')
+            .set('x-auth', users[0].tokens[0].token)
             .send({})
             .expect(400)
             .end((err, res) => {
@@ -57,9 +59,10 @@ describe('GET /news', () => {
     it('should get all news', (done) => {
         request(app)
             .get('/news')
+            .set('x-auth', users[0].tokens[0].token)
             .expect(200)
             .expect((res) => {
-                expect(res.body.news.length).toBe(newsCount);
+                expect(res.body.news.length).toBe(1);
             })
             .end(done);
     });
@@ -70,6 +73,7 @@ describe('GET /news/:id', () => {
     it('should return news doc', (done) => {
         request(app)
             .get(`/news/${dummyNews[0]._id.toHexString()}`)
+            .set('x-auth', users[0].tokens[0].token)
             .expect(200)
             .expect((res) => {
                 expect(res.body.news.title).toBe(dummyNews[0].title);
@@ -78,9 +82,19 @@ describe('GET /news/:id', () => {
     });
 
     //----------------------------------------------
+    it('should not return news doc created by other user', (done) => {
+        request(app)
+            .get(`/news/${dummyNews[1]._id.toHexString()}`)
+            .set('x-auth', users[0].tokens[0].token)
+            .expect(404)
+            .end(done);
+    });
+
+    //----------------------------------------------
     it('should return 404 if id not found', (done) => {
         request(app)
             .get(`/news/${ new ObjectID().toHexString() }`)
+            .set('x-auth', users[0].tokens[0].token)
             .expect(404)
             .end(done);
     });
@@ -89,6 +103,7 @@ describe('GET /news/:id', () => {
     it('should return 404 for non-object id', (done) => {
         request(app)
             .get('/news/1a2b3c')
+            .set('x-auth', users[0].tokens[0].token)
             .expect(404)
             .end(done);
     });
@@ -99,6 +114,7 @@ describe('DELETE /news/:id', () => {
         var hexId = dummyNews[1]._id.toHexString();
         request(app)
             .delete(`/news/${ hexId }`)
+            .set('x-auth', users[1].tokens[0].token)
             .expect(200)
             .expect((res) => {
                 expect(res.body.news._id).toBe(hexId);
@@ -114,9 +130,27 @@ describe('DELETE /news/:id', () => {
             });
     });
 
+    it('should not remove a todo from other user', (done) => {
+        var hexId = dummyNews[0]._id.toHexString();
+        request(app)
+            .delete(`/news/${ hexId }`)
+            .set('x-auth', users[1].tokens[0].token)
+            .expect(404)
+            .end((err, res) => {
+                if (err) return done(err);
+                News.findById(hexId)
+                    .then((news) => {
+                        expect(news).toBeTruthy();
+                        done();
+                    })
+                    .catch((e) => done(e));
+            });
+    });
+
     it('should return 404 if news not found', (done) => {
         request(app)
             .delete(`/news/${ new ObjectID().toHexString() }`)
+            .set('x-auth', users[1].tokens[0].token)
             .expect(404)
             .end(done);
     });
@@ -124,6 +158,7 @@ describe('DELETE /news/:id', () => {
     it('should return 404 if object id is invalid', (done) => {
         request(app)
             .delete('/news/1a2b3c')
+            .set('x-auth', users[1].tokens[0].token)
             .expect(404)
             .end(done);
     });
@@ -137,6 +172,7 @@ describe('PATCH /news/:id', () => {
 
         request(app)
             .patch(`/news/${hexId}`)
+            .set('x-auth', users[0].tokens[0].token)
             .send({ published: true, title})
             .expect(200)
             .expect((res) => {
@@ -146,12 +182,27 @@ describe('PATCH /news/:id', () => {
             })
             .end(done);
     });
+
+    it('should not update news of another user', (done) => {
+        
+        let hexId = dummyNews[0]._id.toHexString();
+        let title = 'Test Title';
+
+        request(app)
+            .patch(`/news/${hexId}`)
+            .set('x-auth', users[1].tokens[0].token)
+            .send({ published: true, title})
+            .expect(404)
+            .end(done);
+    });
+
     it('should clear publishedAt when published is set to false', (done) => {
                 
         let hexId = dummyNews[1]._id.toHexString();
 
         request(app)
             .patch(`/news/${hexId}`)
+            .set('x-auth', users[1].tokens[0].token)
             .send({ published: false })
             .expect(200)
             .expect((res) => {
@@ -238,7 +289,7 @@ describe('POST /user/login', () => {
                 if (err) return (done(err));
                 User.findById(users[1]._id)
                     .then((user) => {
-                        expect(user.tokens[0]).toHaveProperty('token', res.headers['x-auth']);
+                        expect(user.tokens[1]).toHaveProperty('token', res.headers['x-auth']);
                     done();
                 })
             .catch((e) => done(e));     
@@ -257,7 +308,7 @@ describe('POST /user/login', () => {
                 if (err) return (done(err));
                 User.findById(users[1]._id)
                     .then((user) => {
-                        expect(user.tokens.length).toBe(0);
+                        expect(user.tokens.length).toBe(1);
                     done();
                 })
             .catch((e) => done(e));     

@@ -26,15 +26,16 @@ app.get('/', (req, res) => {
         message: 'Welcome to AliciAlonso REST API',
         version: 0,
         author: 'Enrique Velasco',
-        license: 'LSC',
-        repo: 'github'
+        license: 'MIT',
+        repo: 'github:evelasko/aaxapi.git'
     });
 });
 
-app.post('/news', (req, res) => {
+app.post('/news', authenticate, (req, res) => {
     let news = new News({
         title: req.body.title,
-        body: req.body.body
+        body: req.body.body,
+        _creator: req.user._id
     });
     news.save()
         .then((doc) => {
@@ -44,36 +45,19 @@ app.post('/news', (req, res) => {
         })
 });
 
-app.get('/news', (req, res) => {
-    News.find()
+app.get('/news', authenticate, (req, res) => {
+    News.find( { _creator: req.user._id } )
         .then((news) => {
             res.send( { news } )
         }, (e) => res.status(400).send(e));
 });
 
-app.get('/news/:id', (req, res) => {
-    let id = req.params.id;
-    if (!ObjectID.isValid(id)) {
-        return res.status(404).send();
-    }
-    News.findById(id)
-        .then((news) => {
-            if (!news) {
-                return res.status(404).send();
-            }
-            res.send( { news } );
-        })
-        .catch( (e) => res.status(400).send(e) )
-});
-
-app.delete('/news/:id', (req, res) => {
-
+app.get('/news/:id', authenticate, (req, res) => {
     let id = req.params.id;
     
-    if (!ObjectID.isValid(id)) {
-        return res.status(404).send();
-    }
-    News.findByIdAndRemove(id)
+    if (!ObjectID.isValid(id)) return res.status(404).send();
+
+    News.findOne( { _id: id, _creator: req.user._id } )
         .then((news) => {
             if (!news) {
                 return res.status(404).send();
@@ -83,12 +67,27 @@ app.delete('/news/:id', (req, res) => {
         .catch( (e) => res.status(400).send(e) )
 });
 
-app.patch('/news/:id', (req, res) => {
+app.delete('/news/:id', authenticate, (req, res) => {
+    let id = req.params.id;
+    
+    if (!ObjectID.isValid(id)) return res.status(404).send();
+
+    News.findOneAndRemove({ _id: id, _creator: req.user._id })
+        .then((news) => {
+            if (!news) {
+                return res.status(404).send();
+            }
+            res.send( { news } );
+        })
+        .catch( (e) => res.status(400).send(e) )
+});
+
+app.patch('/news/:id', authenticate, (req, res) => {
     let id = req.params.id;
     let body = _.pick(req.body, ['title', 'subtitle', 'body', 'published']);
-    if (!ObjectID.isValid(id)) {
-        return res.status(404).send();
-    }
+
+    if (!ObjectID.isValid(id)) return res.status(404).send();
+
     if (_.isBoolean(body.published) && body.published) {
         body.publishedAt = new Date().getTime();
     } else {
@@ -96,7 +95,7 @@ app.patch('/news/:id', (req, res) => {
         body.publishedAt = null;
     }
 
-    News.findByIdAndUpdate(id, {$set: body}, {new: true})
+    News.findOneAndUpdate({ _id: id, _creator: req.user._id }, {$set: body}, {new: true})
         .then((news) => {
             if (!news) {
                 return res.status(404).send();

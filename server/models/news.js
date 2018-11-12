@@ -28,6 +28,10 @@ let News = mongoose.model('News',
         publishedAt: {
             type: Date,
             required: false
+        },
+        _creator: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
         }
     }
 );
