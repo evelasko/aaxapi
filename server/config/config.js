@@ -1,5 +1,9 @@
 // ENVIRONMENT CONFIGURATION -------------------------------
-const local_pgdb = require('./../../secrets/pgdb_config');
+if (process.env.NODE_ENV != 'production') {
+    let local_pgdb = require('./../../secrets/pgdb_config');
+} else {
+    let local_pgdb = {local_pgdb_dev: '', local_pgdb_test:''}
+}
 
 let env = process.env.NODE_ENV || 'development';
 
