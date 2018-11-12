@@ -13,6 +13,7 @@ require('../db/pgdb');
 let { News } = require('./models/news');
 let { User } = require('./models/user');
 let { Event } = require('./models/event');
+let { authenticate } = require('./middleware/authenticate');
 
 var app = express();
 
@@ -108,7 +109,7 @@ app.patch('/news/:id', (req, res) => {
 app.post('/user', (req, res) => {
     let body = _.pick(req.body, ['email', 'password']);
     let user = new User(body);
-    
+
     user.save()
         .then(() => {
             return user.generateAuthToken();
@@ -119,6 +120,9 @@ app.post('/user', (req, res) => {
         .catch((e) => res.status(400).send(e));
 });
 
+app.get('/user/me', authenticate, (req, res) => {
+    res.send(req.user);
+});
 
 // LISTEN ----------------------------------------
 const port = process.env.PORT;
