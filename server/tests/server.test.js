@@ -19,7 +19,7 @@ describe('POST /news', () => {
         let body = 'Some test body';
 
         request(app)
-            .post('/news')
+            .post('/news/new')
             .set('x-auth', users[0].tokens[0].token)
             .send({ title, body })
             .expect(200)
@@ -40,7 +40,7 @@ describe('POST /news', () => {
     //----------------------------------------------
     it('should not create news with invalid body data', (done) => {
         request(app)
-            .post('/news')
+            .post('/news/new')
             .set('x-auth', users[0].tokens[0].token)
             .send({})
             .expect(400)
@@ -58,7 +58,7 @@ describe('POST /news', () => {
 describe('GET /news', () => {
     it('should get all news', (done) => {
         request(app)
-            .get('/news')
+            .get('/news/all')
             .set('x-auth', users[0].tokens[0].token)
             .expect(200)
             .expect((res) => {
@@ -110,7 +110,7 @@ describe('GET /news/:id', () => {
 });
 
 describe('DELETE /news/:id', () => {
-    it('should remove a todo', (done) => {
+    it('should remove a news', (done) => {
         var hexId = dummyNews[1]._id.toHexString();
         request(app)
             .delete(`/news/${ hexId }`)
@@ -130,7 +130,7 @@ describe('DELETE /news/:id', () => {
             });
     });
 
-    it('should not remove a todo from other user', (done) => {
+    it('should not remove a news from other user', (done) => {
         var hexId = dummyNews[0]._id.toHexString();
         request(app)
             .delete(`/news/${ hexId }`)
@@ -236,13 +236,13 @@ describe('GET /user/me', () => {
     });
 });
 
-describe('POST /user', () => {
+describe('POST /user/new', () => {
     it('should create user', (done) => {
         let email = 'ex@ex.com';
         let password = '123abcd';
 
         request(app)
-            .post('/user')
+            .post('/user/new')
             .send({email, password})
             .expect(200)
             .expect((res) => {
@@ -262,14 +262,14 @@ describe('POST /user', () => {
     });
     it('should return validation errors if request invalid', (done) => {
         request(app)
-            .post('/user')
+            .post('/user/new')
             .send({email: 'ap', password: '123'})
             .expect(400)
             .end(done);
     });
     it('should not create user if email in use', (done) => {
         request(app)
-            .post('/user')
+            .post('/user/new')
             .send({email: users[0].email, password: '123abc!'})
             .expect(400)
             .end(done);
