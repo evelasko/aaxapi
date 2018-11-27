@@ -10,9 +10,22 @@ let { authenticate } = require('../middleware/authenticate');
 const router = new Router();
 
 router.post('/new', authenticate, (req, res) => {
+    let published = false;
+    let publishedAt = null;
+
+    if (_.isBoolean(req.body.published) && req.body.published) {
+        publishedAt = new Date().getTime();
+    }
+
+    //------- REVIEW REVIEW REVIEW REVIEW THIS FULL FUNCTION !!!!!!!!!
+    //------- BUILD THE LOGIC FOR EXPIRATION DATE OF NEWS !!!!!!!!!!!!
+
     let news = new News({
         title: req.body.title,
         body: req.body.body,
+        published,
+        publishedAt,
+        expire: moment().add(10, 'days').valueOf(),
         _creator: req.user._id
     });
     news.save()

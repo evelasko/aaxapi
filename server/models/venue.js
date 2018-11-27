@@ -20,6 +20,12 @@ let Venue = mongoose.model('Venue',
             trim: true,
             minlength: 1
         },
+        link: {
+            type: String,
+            required: false,
+            trim: true,
+            minlength: 1
+        },
         _creator: {
             type: mongoose.Schema.Types.ObjectId,
             required: true

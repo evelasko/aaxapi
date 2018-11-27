@@ -1,4 +1,5 @@
 let mongoose = require('mongoose');
+let moment = require('moment');
 
 let News = mongoose.model('News', 
     {
@@ -32,6 +33,11 @@ let News = mongoose.model('News',
         _creator: {
             type: mongoose.Schema.Types.ObjectId,
             required: true
+        },
+        expire: {
+            type: Date,
+            required: false,
+            default: moment()
         }
     }
 );
