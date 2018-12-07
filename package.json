@@ -1,35 +1,32 @@
 {
-  "name": "aaxapi",
+  "name": "graphql-basics",
   "version": "1.0.0",
-  "description": "REST API for AliciAlonso Apps",
-  "main": "server.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha server/**/*.test.js",
-    "test-watch": "nodemon --exec 'npm test'",
-    "start": "node server/server.js"
+    "test": "jest --watch",
+    "dev": "env-cmd ./config/dev.env nodemon src/index.js --exec babel-node",
+    "start": "node dist/index.js",
+    "heroku-postbuild": "babel src --out-dir dist --copy-files",
+    "get-schema": "graphql get-schema -p prisma --dotenv config/dev.env"
   },
-  "engines": {
-    "node": "11.0.0"
-  },
-  "repository": "github:evelasko/aaxapi.git",
-  "author": "Enrique Velasco",
-  "license": "MIT",
+  "author": "",
+  "license": "ISC",
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.18.3",
-    "crypto-js": "^3.1.9-1",
-    "express": "^4.16.4",
-    "jsonwebtoken": "^8.3.0",
-    "lodash": "^4.17.11",
-    "moment": "^2.22.2",
-    "mongodb": "^3.1.9",
-    "mongoose": "^5.3.11",
-    "pg": "^7.6.1",
-    "validator": "^10.9.0"
+    "env-cmd": "^8.0.2",
+    "graphql-cli": "^2.17.0",
+    "graphql-yoga": "^1.16.7",
+    "jsonwebtoken": "^8.4.0",
+    "prisma-binding": "^2.1.1"
   },
   "devDependencies": {
-    "expect": "^23.6.0",
-    "mocha": "^5.2.0",
-    "supertest": "^3.3.0"
+    "jest": "^23.6.0",
+    "kexec": "^3.0.0",
+    "nodemon": "^1.18.6"
   }
 }
