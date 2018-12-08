@@ -1,0 +1,35 @@
+type News {
+  id: ID! @unique
+  title: String!
+  subtitle: String
+  body: String!
+  imageURL: String
+  expiration: DateTime!
+  target: UserGroup!
+  published: Boolean! @default(value: "false")
+}
+type Event {
+  id: ID! @unique
+  title: String!
+  subtitle: String
+  body: String!
+  imageURL: String
+  date: DateTime!
+  target: UserGroup!
+  published: Boolean! @default(value: "false")
+  venue: Venue!
+  links: [Link!]! @relation(name: "LinksForEvent" onDelete: CASCADE)
+}
+type Venue {
+  id: ID! @unique
+  name: String!
+  address: String!
+  links: [Link!]! @relation(name: "LinksForVenue" onDelete: CASCADE)
+}
+type Link {
+  id: ID! @unique
+  name: String!
+  linkURL: String!
+  venue: Venue @relation(name: "LinksForVenue" onDelete: SET_NULL)
+  event: Event @relation(name: "LinksForEvent" onDelete: SET_NULL)
+}

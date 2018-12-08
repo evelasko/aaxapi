@@ -1,0 +1,24 @@
+enum UserGroup {
+  PUBLIC
+  STAFF
+  STUDENT
+}
+type Address {
+  id: ID! @unique
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  country: String!
+  location: Location!
+}
+type PhoneNumber {
+  id: ID! @unique
+  countryCode: Int!
+  phone: Int! @unique
+  verified: Boolean! @default(value: "false")
+}
+type Location {
+  latitude: Float!
+  longitude: Float!
+}

@@ -1,0 +1,14 @@
+type User {
+  id: ID! @unique
+  name: String
+  lastname: String
+  email: String! @unique
+  emailVerified: Boolean! @default(value: "false")
+  password: String!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  group: UserGroup! @default(value: "PUBLIC")
+  address: Address
+  phone: PhoneNumber
+  isAdmin: Boolean! @default(value: "false")
+}

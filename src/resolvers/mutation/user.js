@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs'
-import getUserId from '../utils/getUserId'
-import generateToken from '../utils/generateToken';
-import hashPassword from '../utils/hashPassword';
+import getUserId from '../../utils/getUserId'
+import generateToken from '../../utils/generateToken';
+import hashPassword from '../../utils/hashPassword';
 
-const Mutation = {
+const userMutations = {
     async createUser(parent, args, { prisma }, info) {
         const password = await hashPassword(args.data.password)
         const user = await prisma.mutation.createUser({ data: { ...args.data, password } })
@@ -25,4 +25,4 @@ const Mutation = {
     }
 }
 
-export { Mutation as default }
+export { userMutations as default }

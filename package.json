@@ -1,5 +1,5 @@
 {
-  "name": "graphql-basics",
+  "name": "aaxapi",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,7 @@
     "get-schema": "graphql get-schema -p prisma --dotenv config/dev.env"
   },
   "author": "",
-  "license": "ISC",
+  "license": "LICENSE",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "babel-cli": "^6.26.0",

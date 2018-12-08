@@ -1,13 +1,13 @@
 import { extractFragmentReplacements } from 'prisma-binding'
-import Query from './Query'
-import Mutation from './Mutation'
-import Subscription from './Subscription'
-import User from './User'
+import Query from './query'
+import Mutation from './mutation'
+import Subscription from './subscription'
+import { User, News } from './types'
 
 const resolvers = { 
     Query, 
     Mutation, 
-    User 
+    User, News
     //Subscription 
 }
 

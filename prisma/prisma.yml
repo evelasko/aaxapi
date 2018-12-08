@@ -1,3 +1,7 @@
 endpoint: ${env:PRISMA_ENDPOINT}
-datamodel: datamodel.prisma
-secret: ${env:PRISMA_SECRET}
+disableAuth: true
+#secret: ${env:PRISMA_SECRET}
+datamodel: 
+  - model/common.graphql
+  - model/base.graphql
+  - model/appmodel.graphql

@@ -1,6 +1,6 @@
-import getUserId from "../utils/getUserId";
+import getUserId from "../../utils/getUserId";
 
-const Query = {
+const userQueries = {
     users(parent, args, { prisma }, info) {
         const opArgs = { 
             first: args.first, 
@@ -22,4 +22,4 @@ const Query = {
     }
 }
 
-export { Query as default }
+export { userQueries as default }
