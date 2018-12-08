@@ -11,4 +11,6 @@ type User {
   address: Address
   phone: PhoneNumber
   isAdmin: Boolean! @default(value: "false")
+  newses: [News!]! @relation(name: "NewsToUser", onDelete: CASCADE)
+  events: [Event!]! @relation(name: "EventToUser", onDelete: CASCADE)
 }

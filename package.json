@@ -1,7 +1,11 @@
 {
   "name": "aaxapi",
   "version": "1.0.0",
-  "description": "",
+  "description": "AliciAlonso GraphQL API Project",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evelasko/aaxapi.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "jest --watch",
@@ -11,7 +15,7 @@
     "get-schema": "graphql get-schema -p prisma --dotenv config/dev.env"
   },
   "author": "",
-  "license": "LICENSE",
+  "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "babel-cli": "^6.26.0",
@@ -22,11 +26,12 @@
     "graphql-cli": "^2.17.0",
     "graphql-yoga": "^1.16.7",
     "jsonwebtoken": "^8.4.0",
-    "prisma-binding": "^2.1.1"
+    "moment": "^2.22.2",
+    "prisma-binding": "^2.2.8"
   },
   "devDependencies": {
     "jest": "^23.6.0",
     "kexec": "^3.0.0",
-    "nodemon": "^1.18.6"
+    "nodemon": "^1.18.7"
   }
 }

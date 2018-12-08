@@ -2,7 +2,7 @@ import { extractFragmentReplacements } from 'prisma-binding'
 import Query from './query'
 import Mutation from './mutation'
 import Subscription from './subscription'
-import { User, News } from './types'
+import { User, News, Event, Venue } from './types'
 
 const resolvers = { 
     Query, 

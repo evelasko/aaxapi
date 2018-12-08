@@ -1,19 +1,48 @@
 # import UserOrderByInput from '../generated/prisma.graphql'
 
+# ------------------------------------------------------
+# QUERY
+# ------------------------------------------------------
+
 type Query {
     users(query: String, first: Int, skip: Int): [User!]!
     newses(query: String): [News]!
     me: User!
 }
+
+# ------------------------------------------------------
+# MUTATION
+# ------------------------------------------------------
+
 type Mutation {
     createUser(data: CreateUserInput!): AuthPayload!
     loginUser(data: LoginUserInput!): AuthPayload!
     deleteUser: User!
     updateUser(data: UpdateUserInput! ): User!
+    createNews(data: CreateNewsInput! ): News!
 }
 #type Subscription {
 
 #}
+
+# ------------------------------------------------------
+# USER TYPE DEFS
+# ------------------------------------------------------
+
+type User {
+    id: ID! 
+    name: String
+    lastname: String
+    email: String
+    emailVerified: Boolean
+    password: String!
+    group: UserGroup!
+    address: Address
+    phone: PhoneNumber
+    isAdmin: Boolean
+    newses: [News!]!
+    events: [Event!]!
+}
 type AuthPayload {
     token: String!
     user: User!
@@ -23,35 +52,97 @@ input LoginUserInput {
     password: String!
 }
 input CreateUserInput {
-    name: String!
     email: String!
     password: String!
+    name: String
+    lastname: String 
+    group: UserGroup # not required -> has default set
+    isAdmin: Boolean # not required -> has default set
 }
 input UpdateUserInput {
     name: String
-    email: String
+    lastname: String
+    email: String 
+    emailVerified: Boolean
     password: String
+    group: UserGroup
+    isAdmin: Boolean
 }
-type User {
-    id: ID!
-    name: String!
-    email: String
-    password: String!
-}
+
+
+# ------------------------------------------------------
+# APP TYPE DEFS
+# ------------------------------------------------------
 
 type News {
   id: ID!
+  author: User!
   title: String!
   subtitle: String
   body: String!
   imageURL: String
   expiration: DateTime!
-  target: UserGroup!
-  published: Boolean!
+  target: UserGroup
+  published: Boolean
 }
+
+type CreateNewsInput {
+    title: String!
+    subtitle: String
+    body: String!
+    imageURL: String
+    expiration: DateTime
+    target: UserGroup
+    published: Boolean
+}
+
+type Event {
+  id: ID!
+  author: User!
+  title: String!
+  subtitle: String
+  body: String!
+  imageURL: String
+  date: DateTime!
+  target: UserGroup
+  published: Boolean
+  venue: Venue!
+  links: [Link!]!
+}
+type Venue {
+  id: ID!
+  name: String!
+  address: String!
+  links: [Link!]!
+}
+type Link {
+  id: ID!
+  name: String!
+  linkURL: String!
+  venue: Venue
+  event: Event
+}
+
+# ------------------------------------------------------
+# COMMON TYPE DEFS
+# ------------------------------------------------------
 
 enum MutationType {
     CREATED
     UPDATED
     DELETED
+}
+
+enum UserGroup {
+    STAFF
+    PUBLIC
+    STUDENT
+}
+
+type Address {
+    id: ID
+}
+
+type PhoneNumber {
+    id: ID
 }

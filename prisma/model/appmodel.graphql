@@ -1,5 +1,6 @@
 type News {
   id: ID! @unique
+  author: User! @relation(name: "NewsToUser", onDelete: SET_NULL)
   title: String!
   subtitle: String
   body: String!
@@ -10,6 +11,7 @@ type News {
 }
 type Event {
   id: ID! @unique
+  author: User! @relation(name: "EventToUser", onDelete: SET_NULL)
   title: String!
   subtitle: String
   body: String!

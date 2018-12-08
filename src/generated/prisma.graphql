@@ -1,5 +1,5 @@
 # source: http://localhost:4466/aaxapi/dev
-# timestamp: Sat Dec 08 2018 12:01:15 GMT+0100 (Central European Standard Time)
+# timestamp: Sat Dec 08 2018 18:59:02 GMT+0100 (Central European Standard Time)
 
 type Address implements Node {
   id: ID!
@@ -448,6 +448,7 @@ scalar DateTime
 
 type Event implements Node {
   id: ID!
+  author: User!
   title: String!
   subtitle: String
   body: String!
@@ -477,13 +478,31 @@ input EventCreateInput {
   date: DateTime!
   target: UserGroup!
   published: Boolean
+  author: UserCreateOneWithoutEventsInput!
   venue: VenueCreateOneInput!
   links: LinkCreateManyWithoutEventInput
+}
+
+input EventCreateManyWithoutAuthorInput {
+  create: [EventCreateWithoutAuthorInput!]
+  connect: [EventWhereUniqueInput!]
 }
 
 input EventCreateOneWithoutLinksInput {
   create: EventCreateWithoutLinksInput
   connect: EventWhereUniqueInput
+}
+
+input EventCreateWithoutAuthorInput {
+  title: String!
+  subtitle: String
+  body: String!
+  imageURL: String
+  date: DateTime!
+  target: UserGroup!
+  published: Boolean
+  venue: VenueCreateOneInput!
+  links: LinkCreateManyWithoutEventInput
 }
 
 input EventCreateWithoutLinksInput {
@@ -494,6 +513,7 @@ input EventCreateWithoutLinksInput {
   date: DateTime!
   target: UserGroup!
   published: Boolean
+  author: UserCreateOneWithoutEventsInput!
   venue: VenueCreateOneInput!
 }
 
@@ -538,6 +558,253 @@ type EventPreviousValues {
   date: DateTime!
   target: UserGroup!
   published: Boolean!
+}
+
+input EventScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [EventScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [EventScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [EventScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  subtitle: String
+
+  """All values that are not equal to given value."""
+  subtitle_not: String
+
+  """All values that are contained in given list."""
+  subtitle_in: [String!]
+
+  """All values that are not contained in given list."""
+  subtitle_not_in: [String!]
+
+  """All values less than the given value."""
+  subtitle_lt: String
+
+  """All values less than or equal the given value."""
+  subtitle_lte: String
+
+  """All values greater than the given value."""
+  subtitle_gt: String
+
+  """All values greater than or equal the given value."""
+  subtitle_gte: String
+
+  """All values containing the given string."""
+  subtitle_contains: String
+
+  """All values not containing the given string."""
+  subtitle_not_contains: String
+
+  """All values starting with the given string."""
+  subtitle_starts_with: String
+
+  """All values not starting with the given string."""
+  subtitle_not_starts_with: String
+
+  """All values ending with the given string."""
+  subtitle_ends_with: String
+
+  """All values not ending with the given string."""
+  subtitle_not_ends_with: String
+  body: String
+
+  """All values that are not equal to given value."""
+  body_not: String
+
+  """All values that are contained in given list."""
+  body_in: [String!]
+
+  """All values that are not contained in given list."""
+  body_not_in: [String!]
+
+  """All values less than the given value."""
+  body_lt: String
+
+  """All values less than or equal the given value."""
+  body_lte: String
+
+  """All values greater than the given value."""
+  body_gt: String
+
+  """All values greater than or equal the given value."""
+  body_gte: String
+
+  """All values containing the given string."""
+  body_contains: String
+
+  """All values not containing the given string."""
+  body_not_contains: String
+
+  """All values starting with the given string."""
+  body_starts_with: String
+
+  """All values not starting with the given string."""
+  body_not_starts_with: String
+
+  """All values ending with the given string."""
+  body_ends_with: String
+
+  """All values not ending with the given string."""
+  body_not_ends_with: String
+  imageURL: String
+
+  """All values that are not equal to given value."""
+  imageURL_not: String
+
+  """All values that are contained in given list."""
+  imageURL_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageURL_not_in: [String!]
+
+  """All values less than the given value."""
+  imageURL_lt: String
+
+  """All values less than or equal the given value."""
+  imageURL_lte: String
+
+  """All values greater than the given value."""
+  imageURL_gt: String
+
+  """All values greater than or equal the given value."""
+  imageURL_gte: String
+
+  """All values containing the given string."""
+  imageURL_contains: String
+
+  """All values not containing the given string."""
+  imageURL_not_contains: String
+
+  """All values starting with the given string."""
+  imageURL_starts_with: String
+
+  """All values not starting with the given string."""
+  imageURL_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageURL_ends_with: String
+
+  """All values not ending with the given string."""
+  imageURL_not_ends_with: String
+  date: DateTime
+
+  """All values that are not equal to given value."""
+  date_not: DateTime
+
+  """All values that are contained in given list."""
+  date_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  date_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  date_lt: DateTime
+
+  """All values less than or equal the given value."""
+  date_lte: DateTime
+
+  """All values greater than the given value."""
+  date_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  date_gte: DateTime
+  target: UserGroup
+
+  """All values that are not equal to given value."""
+  target_not: UserGroup
+
+  """All values that are contained in given list."""
+  target_in: [UserGroup!]
+
+  """All values that are not contained in given list."""
+  target_not_in: [UserGroup!]
+  published: Boolean
+
+  """All values that are not equal to given value."""
+  published_not: Boolean
 }
 
 type EventSubscriptionPayload {
@@ -587,8 +854,19 @@ input EventUpdateInput {
   date: DateTime
   target: UserGroup
   published: Boolean
+  author: UserUpdateOneRequiredWithoutEventsInput
   venue: VenueUpdateOneRequiredInput
   links: LinkUpdateManyWithoutEventInput
+}
+
+input EventUpdateManyDataInput {
+  title: String
+  subtitle: String
+  body: String
+  imageURL: String
+  date: DateTime
+  target: UserGroup
+  published: Boolean
 }
 
 input EventUpdateManyMutationInput {
@@ -601,6 +879,22 @@ input EventUpdateManyMutationInput {
   published: Boolean
 }
 
+input EventUpdateManyWithoutAuthorInput {
+  create: [EventCreateWithoutAuthorInput!]
+  connect: [EventWhereUniqueInput!]
+  disconnect: [EventWhereUniqueInput!]
+  delete: [EventWhereUniqueInput!]
+  update: [EventUpdateWithWhereUniqueWithoutAuthorInput!]
+  updateMany: [EventUpdateManyWithWhereNestedInput!]
+  deleteMany: [EventScalarWhereInput!]
+  upsert: [EventUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input EventUpdateManyWithWhereNestedInput {
+  where: EventScalarWhereInput!
+  data: EventUpdateManyDataInput!
+}
+
 input EventUpdateOneWithoutLinksInput {
   create: EventCreateWithoutLinksInput
   connect: EventWhereUniqueInput
@@ -608,6 +902,18 @@ input EventUpdateOneWithoutLinksInput {
   delete: Boolean
   update: EventUpdateWithoutLinksDataInput
   upsert: EventUpsertWithoutLinksInput
+}
+
+input EventUpdateWithoutAuthorDataInput {
+  title: String
+  subtitle: String
+  body: String
+  imageURL: String
+  date: DateTime
+  target: UserGroup
+  published: Boolean
+  venue: VenueUpdateOneRequiredInput
+  links: LinkUpdateManyWithoutEventInput
 }
 
 input EventUpdateWithoutLinksDataInput {
@@ -618,12 +924,24 @@ input EventUpdateWithoutLinksDataInput {
   date: DateTime
   target: UserGroup
   published: Boolean
+  author: UserUpdateOneRequiredWithoutEventsInput
   venue: VenueUpdateOneRequiredInput
+}
+
+input EventUpdateWithWhereUniqueWithoutAuthorInput {
+  where: EventWhereUniqueInput!
+  data: EventUpdateWithoutAuthorDataInput!
 }
 
 input EventUpsertWithoutLinksInput {
   update: EventUpdateWithoutLinksDataInput!
   create: EventCreateWithoutLinksInput!
+}
+
+input EventUpsertWithWhereUniqueWithoutAuthorInput {
+  where: EventWhereUniqueInput!
+  update: EventUpdateWithoutAuthorDataInput!
+  create: EventCreateWithoutAuthorInput!
 }
 
 input EventWhereInput {
@@ -871,6 +1189,7 @@ input EventWhereInput {
 
   """All values that are not equal to given value."""
   published_not: Boolean
+  author: UserWhereInput
   venue: VenueWhereInput
   links_every: LinkWhereInput
   links_some: LinkWhereInput
@@ -1573,6 +1892,7 @@ enum MutationType {
 
 type News implements Node {
   id: ID!
+  author: User!
   title: String!
   subtitle: String
   body: String!
@@ -1593,6 +1913,22 @@ type NewsConnection {
 }
 
 input NewsCreateInput {
+  title: String!
+  subtitle: String
+  body: String!
+  imageURL: String
+  expiration: DateTime!
+  target: UserGroup!
+  published: Boolean
+  author: UserCreateOneWithoutNewsesInput!
+}
+
+input NewsCreateManyWithoutAuthorInput {
+  create: [NewsCreateWithoutAuthorInput!]
+  connect: [NewsWhereUniqueInput!]
+}
+
+input NewsCreateWithoutAuthorInput {
   title: String!
   subtitle: String
   body: String!
@@ -1645,6 +1981,253 @@ type NewsPreviousValues {
   published: Boolean!
 }
 
+input NewsScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [NewsScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [NewsScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [NewsScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  subtitle: String
+
+  """All values that are not equal to given value."""
+  subtitle_not: String
+
+  """All values that are contained in given list."""
+  subtitle_in: [String!]
+
+  """All values that are not contained in given list."""
+  subtitle_not_in: [String!]
+
+  """All values less than the given value."""
+  subtitle_lt: String
+
+  """All values less than or equal the given value."""
+  subtitle_lte: String
+
+  """All values greater than the given value."""
+  subtitle_gt: String
+
+  """All values greater than or equal the given value."""
+  subtitle_gte: String
+
+  """All values containing the given string."""
+  subtitle_contains: String
+
+  """All values not containing the given string."""
+  subtitle_not_contains: String
+
+  """All values starting with the given string."""
+  subtitle_starts_with: String
+
+  """All values not starting with the given string."""
+  subtitle_not_starts_with: String
+
+  """All values ending with the given string."""
+  subtitle_ends_with: String
+
+  """All values not ending with the given string."""
+  subtitle_not_ends_with: String
+  body: String
+
+  """All values that are not equal to given value."""
+  body_not: String
+
+  """All values that are contained in given list."""
+  body_in: [String!]
+
+  """All values that are not contained in given list."""
+  body_not_in: [String!]
+
+  """All values less than the given value."""
+  body_lt: String
+
+  """All values less than or equal the given value."""
+  body_lte: String
+
+  """All values greater than the given value."""
+  body_gt: String
+
+  """All values greater than or equal the given value."""
+  body_gte: String
+
+  """All values containing the given string."""
+  body_contains: String
+
+  """All values not containing the given string."""
+  body_not_contains: String
+
+  """All values starting with the given string."""
+  body_starts_with: String
+
+  """All values not starting with the given string."""
+  body_not_starts_with: String
+
+  """All values ending with the given string."""
+  body_ends_with: String
+
+  """All values not ending with the given string."""
+  body_not_ends_with: String
+  imageURL: String
+
+  """All values that are not equal to given value."""
+  imageURL_not: String
+
+  """All values that are contained in given list."""
+  imageURL_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageURL_not_in: [String!]
+
+  """All values less than the given value."""
+  imageURL_lt: String
+
+  """All values less than or equal the given value."""
+  imageURL_lte: String
+
+  """All values greater than the given value."""
+  imageURL_gt: String
+
+  """All values greater than or equal the given value."""
+  imageURL_gte: String
+
+  """All values containing the given string."""
+  imageURL_contains: String
+
+  """All values not containing the given string."""
+  imageURL_not_contains: String
+
+  """All values starting with the given string."""
+  imageURL_starts_with: String
+
+  """All values not starting with the given string."""
+  imageURL_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageURL_ends_with: String
+
+  """All values not ending with the given string."""
+  imageURL_not_ends_with: String
+  expiration: DateTime
+
+  """All values that are not equal to given value."""
+  expiration_not: DateTime
+
+  """All values that are contained in given list."""
+  expiration_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  expiration_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  expiration_lt: DateTime
+
+  """All values less than or equal the given value."""
+  expiration_lte: DateTime
+
+  """All values greater than the given value."""
+  expiration_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  expiration_gte: DateTime
+  target: UserGroup
+
+  """All values that are not equal to given value."""
+  target_not: UserGroup
+
+  """All values that are contained in given list."""
+  target_in: [UserGroup!]
+
+  """All values that are not contained in given list."""
+  target_not_in: [UserGroup!]
+  published: Boolean
+
+  """All values that are not equal to given value."""
+  published_not: Boolean
+}
+
 type NewsSubscriptionPayload {
   mutation: MutationType!
   node: News
@@ -1692,6 +2275,17 @@ input NewsUpdateInput {
   expiration: DateTime
   target: UserGroup
   published: Boolean
+  author: UserUpdateOneRequiredWithoutNewsesInput
+}
+
+input NewsUpdateManyDataInput {
+  title: String
+  subtitle: String
+  body: String
+  imageURL: String
+  expiration: DateTime
+  target: UserGroup
+  published: Boolean
 }
 
 input NewsUpdateManyMutationInput {
@@ -1702,6 +2296,43 @@ input NewsUpdateManyMutationInput {
   expiration: DateTime
   target: UserGroup
   published: Boolean
+}
+
+input NewsUpdateManyWithoutAuthorInput {
+  create: [NewsCreateWithoutAuthorInput!]
+  connect: [NewsWhereUniqueInput!]
+  disconnect: [NewsWhereUniqueInput!]
+  delete: [NewsWhereUniqueInput!]
+  update: [NewsUpdateWithWhereUniqueWithoutAuthorInput!]
+  updateMany: [NewsUpdateManyWithWhereNestedInput!]
+  deleteMany: [NewsScalarWhereInput!]
+  upsert: [NewsUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input NewsUpdateManyWithWhereNestedInput {
+  where: NewsScalarWhereInput!
+  data: NewsUpdateManyDataInput!
+}
+
+input NewsUpdateWithoutAuthorDataInput {
+  title: String
+  subtitle: String
+  body: String
+  imageURL: String
+  expiration: DateTime
+  target: UserGroup
+  published: Boolean
+}
+
+input NewsUpdateWithWhereUniqueWithoutAuthorInput {
+  where: NewsWhereUniqueInput!
+  data: NewsUpdateWithoutAuthorDataInput!
+}
+
+input NewsUpsertWithWhereUniqueWithoutAuthorInput {
+  where: NewsWhereUniqueInput!
+  update: NewsUpdateWithoutAuthorDataInput!
+  create: NewsCreateWithoutAuthorInput!
 }
 
 input NewsWhereInput {
@@ -1949,6 +2580,7 @@ input NewsWhereInput {
 
   """All values that are not equal to given value."""
   published_not: Boolean
+  author: UserWhereInput
 }
 
 input NewsWhereUniqueInput {
@@ -2270,6 +2902,8 @@ type User implements Node {
   address: Address
   phone: PhoneNumber
   isAdmin: Boolean!
+  newses(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [News!]
+  events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event!]
 }
 
 """A connection to a list of items."""
@@ -2292,6 +2926,44 @@ input UserCreateInput {
   isAdmin: Boolean
   address: AddressCreateOneInput
   phone: PhoneNumberCreateOneInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
+}
+
+input UserCreateOneWithoutEventsInput {
+  create: UserCreateWithoutEventsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutNewsesInput {
+  create: UserCreateWithoutNewsesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutEventsInput {
+  name: String
+  lastname: String
+  email: String!
+  emailVerified: Boolean
+  password: String!
+  group: UserGroup
+  isAdmin: Boolean
+  address: AddressCreateOneInput
+  phone: PhoneNumberCreateOneInput
+  newses: NewsCreateManyWithoutAuthorInput
+}
+
+input UserCreateWithoutNewsesInput {
+  name: String
+  lastname: String
+  email: String!
+  emailVerified: Boolean
+  password: String!
+  group: UserGroup
+  isAdmin: Boolean
+  address: AddressCreateOneInput
+  phone: PhoneNumberCreateOneInput
+  events: EventCreateManyWithoutAuthorInput
 }
 
 """An edge in a connection."""
@@ -2394,6 +3066,8 @@ input UserUpdateInput {
   isAdmin: Boolean
   address: AddressUpdateOneInput
   phone: PhoneNumberUpdateOneInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateManyMutationInput {
@@ -2404,6 +3078,56 @@ input UserUpdateManyMutationInput {
   password: String
   group: UserGroup
   isAdmin: Boolean
+}
+
+input UserUpdateOneRequiredWithoutEventsInput {
+  create: UserCreateWithoutEventsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutEventsDataInput
+  upsert: UserUpsertWithoutEventsInput
+}
+
+input UserUpdateOneRequiredWithoutNewsesInput {
+  create: UserCreateWithoutNewsesInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutNewsesDataInput
+  upsert: UserUpsertWithoutNewsesInput
+}
+
+input UserUpdateWithoutEventsDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  group: UserGroup
+  isAdmin: Boolean
+  address: AddressUpdateOneInput
+  phone: PhoneNumberUpdateOneInput
+  newses: NewsUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateWithoutNewsesDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  group: UserGroup
+  isAdmin: Boolean
+  address: AddressUpdateOneInput
+  phone: PhoneNumberUpdateOneInput
+  events: EventUpdateManyWithoutAuthorInput
+}
+
+input UserUpsertWithoutEventsInput {
+  update: UserUpdateWithoutEventsDataInput!
+  create: UserCreateWithoutEventsInput!
+}
+
+input UserUpsertWithoutNewsesInput {
+  update: UserUpdateWithoutNewsesDataInput!
+  create: UserCreateWithoutNewsesInput!
 }
 
 input UserWhereInput {
@@ -2679,6 +3403,12 @@ input UserWhereInput {
   isAdmin_not: Boolean
   address: AddressWhereInput
   phone: PhoneNumberWhereInput
+  newses_every: NewsWhereInput
+  newses_some: NewsWhereInput
+  newses_none: NewsWhereInput
+  events_every: EventWhereInput
+  events_some: EventWhereInput
+  events_none: EventWhereInput
 }
 
 input UserWhereUniqueInput {

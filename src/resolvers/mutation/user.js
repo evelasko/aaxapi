@@ -11,7 +11,7 @@ const userMutations = {
     },
     async loginUser(parent, args, { prisma }, info) {
         const user = await prisma.query.user({ where: { email: args.data.email } })
-        if ( !user  ) throw new Error('email not found')
+        if ( !user  ) throw new Error(`Error: user with email: ${args.data.email} was not found`)
         const match = await bcrypt.compare(args.data.password, user.password)
         if ( !match ) throw new Error('incorrect password, try again')
         return {user, token: generateToken(user.id)}
