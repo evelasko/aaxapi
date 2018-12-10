@@ -1,5 +1,5 @@
 # source: http://localhost:4466/aaxapi/dev
-# timestamp: Sat Dec 08 2018 18:59:02 GMT+0100 (Central European Standard Time)
+# timestamp: Sat Dec 08 2018 20:28:39 GMT+0100 (Central European Standard Time)
 
 type Address implements Node {
   id: ID!
@@ -1897,8 +1897,8 @@ type News implements Node {
   subtitle: String
   body: String!
   imageURL: String
-  expiration: DateTime!
-  target: UserGroup!
+  expiration: DateTime
+  target: UserGroup
   published: Boolean!
 }
 
@@ -1917,8 +1917,8 @@ input NewsCreateInput {
   subtitle: String
   body: String!
   imageURL: String
-  expiration: DateTime!
-  target: UserGroup!
+  expiration: DateTime
+  target: UserGroup
   published: Boolean
   author: UserCreateOneWithoutNewsesInput!
 }
@@ -1933,8 +1933,8 @@ input NewsCreateWithoutAuthorInput {
   subtitle: String
   body: String!
   imageURL: String
-  expiration: DateTime!
-  target: UserGroup!
+  expiration: DateTime
+  target: UserGroup
   published: Boolean
 }
 
@@ -1976,8 +1976,8 @@ type NewsPreviousValues {
   subtitle: String
   body: String!
   imageURL: String
-  expiration: DateTime!
-  target: UserGroup!
+  expiration: DateTime
+  target: UserGroup
   published: Boolean!
 }
 

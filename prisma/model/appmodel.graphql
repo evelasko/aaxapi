@@ -5,8 +5,8 @@ type News {
   subtitle: String
   body: String!
   imageURL: String
-  expiration: DateTime!
-  target: UserGroup!
+  expiration: DateTime
+  target: UserGroup @default(value: PUBLIC)
   published: Boolean! @default(value: "false")
 }
 type Event {

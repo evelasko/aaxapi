@@ -1,5 +1,5 @@
 import { Prisma } from 'prisma-binding'
-import { fragmentReplacements } from './resolvers'
+import { fragmentReplacements } from './schema'
 
 const prisma = new Prisma({
     typeDefs: 'src/generated/prisma.graphql',
