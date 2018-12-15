@@ -1,5 +1,5 @@
 # source: http://localhost:4466/aaxapi/dev
-# timestamp: Sat Dec 08 2018 20:28:39 GMT+0100 (Central European Standard Time)
+# timestamp: Fri Dec 14 2018 14:38:15 GMT+0100 (Central European Standard Time)
 
 type Address implements Node {
   id: ID!
@@ -415,10 +415,6 @@ type AggregateEvent {
   count: Int!
 }
 
-type AggregateLink {
-  count: Int!
-}
-
 type AggregateLocation {
   count: Int!
 }
@@ -455,9 +451,9 @@ type Event implements Node {
   imageURL: String
   date: DateTime!
   target: UserGroup!
+  deleteUpon: Boolean
   published: Boolean!
   venue: Venue!
-  links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
 }
 
 """A connection to a list of items."""
@@ -477,10 +473,10 @@ input EventCreateInput {
   imageURL: String
   date: DateTime!
   target: UserGroup!
+  deleteUpon: Boolean
   published: Boolean
   author: UserCreateOneWithoutEventsInput!
-  venue: VenueCreateOneInput!
-  links: LinkCreateManyWithoutEventInput
+  venue: VenueCreateOneWithoutEventsInput!
 }
 
 input EventCreateManyWithoutAuthorInput {
@@ -488,9 +484,9 @@ input EventCreateManyWithoutAuthorInput {
   connect: [EventWhereUniqueInput!]
 }
 
-input EventCreateOneWithoutLinksInput {
-  create: EventCreateWithoutLinksInput
-  connect: EventWhereUniqueInput
+input EventCreateManyWithoutVenueInput {
+  create: [EventCreateWithoutVenueInput!]
+  connect: [EventWhereUniqueInput!]
 }
 
 input EventCreateWithoutAuthorInput {
@@ -500,21 +496,21 @@ input EventCreateWithoutAuthorInput {
   imageURL: String
   date: DateTime!
   target: UserGroup!
+  deleteUpon: Boolean
   published: Boolean
-  venue: VenueCreateOneInput!
-  links: LinkCreateManyWithoutEventInput
+  venue: VenueCreateOneWithoutEventsInput!
 }
 
-input EventCreateWithoutLinksInput {
+input EventCreateWithoutVenueInput {
   title: String!
   subtitle: String
   body: String!
   imageURL: String
   date: DateTime!
   target: UserGroup!
+  deleteUpon: Boolean
   published: Boolean
   author: UserCreateOneWithoutEventsInput!
-  venue: VenueCreateOneInput!
 }
 
 """An edge in a connection."""
@@ -541,6 +537,8 @@ enum EventOrderByInput {
   date_DESC
   target_ASC
   target_DESC
+  deleteUpon_ASC
+  deleteUpon_DESC
   published_ASC
   published_DESC
   updatedAt_ASC
@@ -557,6 +555,7 @@ type EventPreviousValues {
   imageURL: String
   date: DateTime!
   target: UserGroup!
+  deleteUpon: Boolean
   published: Boolean!
 }
 
@@ -801,6 +800,10 @@ input EventScalarWhereInput {
 
   """All values that are not contained in given list."""
   target_not_in: [UserGroup!]
+  deleteUpon: Boolean
+
+  """All values that are not equal to given value."""
+  deleteUpon_not: Boolean
   published: Boolean
 
   """All values that are not equal to given value."""
@@ -853,10 +856,10 @@ input EventUpdateInput {
   imageURL: String
   date: DateTime
   target: UserGroup
+  deleteUpon: Boolean
   published: Boolean
   author: UserUpdateOneRequiredWithoutEventsInput
-  venue: VenueUpdateOneRequiredInput
-  links: LinkUpdateManyWithoutEventInput
+  venue: VenueUpdateOneRequiredWithoutEventsInput
 }
 
 input EventUpdateManyDataInput {
@@ -866,6 +869,7 @@ input EventUpdateManyDataInput {
   imageURL: String
   date: DateTime
   target: UserGroup
+  deleteUpon: Boolean
   published: Boolean
 }
 
@@ -876,6 +880,7 @@ input EventUpdateManyMutationInput {
   imageURL: String
   date: DateTime
   target: UserGroup
+  deleteUpon: Boolean
   published: Boolean
 }
 
@@ -890,18 +895,20 @@ input EventUpdateManyWithoutAuthorInput {
   upsert: [EventUpsertWithWhereUniqueWithoutAuthorInput!]
 }
 
+input EventUpdateManyWithoutVenueInput {
+  create: [EventCreateWithoutVenueInput!]
+  connect: [EventWhereUniqueInput!]
+  disconnect: [EventWhereUniqueInput!]
+  delete: [EventWhereUniqueInput!]
+  update: [EventUpdateWithWhereUniqueWithoutVenueInput!]
+  updateMany: [EventUpdateManyWithWhereNestedInput!]
+  deleteMany: [EventScalarWhereInput!]
+  upsert: [EventUpsertWithWhereUniqueWithoutVenueInput!]
+}
+
 input EventUpdateManyWithWhereNestedInput {
   where: EventScalarWhereInput!
   data: EventUpdateManyDataInput!
-}
-
-input EventUpdateOneWithoutLinksInput {
-  create: EventCreateWithoutLinksInput
-  connect: EventWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: EventUpdateWithoutLinksDataInput
-  upsert: EventUpsertWithoutLinksInput
 }
 
 input EventUpdateWithoutAuthorDataInput {
@@ -911,21 +918,21 @@ input EventUpdateWithoutAuthorDataInput {
   imageURL: String
   date: DateTime
   target: UserGroup
+  deleteUpon: Boolean
   published: Boolean
-  venue: VenueUpdateOneRequiredInput
-  links: LinkUpdateManyWithoutEventInput
+  venue: VenueUpdateOneRequiredWithoutEventsInput
 }
 
-input EventUpdateWithoutLinksDataInput {
+input EventUpdateWithoutVenueDataInput {
   title: String
   subtitle: String
   body: String
   imageURL: String
   date: DateTime
   target: UserGroup
+  deleteUpon: Boolean
   published: Boolean
   author: UserUpdateOneRequiredWithoutEventsInput
-  venue: VenueUpdateOneRequiredInput
 }
 
 input EventUpdateWithWhereUniqueWithoutAuthorInput {
@@ -933,15 +940,21 @@ input EventUpdateWithWhereUniqueWithoutAuthorInput {
   data: EventUpdateWithoutAuthorDataInput!
 }
 
-input EventUpsertWithoutLinksInput {
-  update: EventUpdateWithoutLinksDataInput!
-  create: EventCreateWithoutLinksInput!
+input EventUpdateWithWhereUniqueWithoutVenueInput {
+  where: EventWhereUniqueInput!
+  data: EventUpdateWithoutVenueDataInput!
 }
 
 input EventUpsertWithWhereUniqueWithoutAuthorInput {
   where: EventWhereUniqueInput!
   update: EventUpdateWithoutAuthorDataInput!
   create: EventCreateWithoutAuthorInput!
+}
+
+input EventUpsertWithWhereUniqueWithoutVenueInput {
+  where: EventWhereUniqueInput!
+  update: EventUpdateWithoutVenueDataInput!
+  create: EventCreateWithoutVenueInput!
 }
 
 input EventWhereInput {
@@ -1185,15 +1198,16 @@ input EventWhereInput {
 
   """All values that are not contained in given list."""
   target_not_in: [UserGroup!]
+  deleteUpon: Boolean
+
+  """All values that are not equal to given value."""
+  deleteUpon_not: Boolean
   published: Boolean
 
   """All values that are not equal to given value."""
   published_not: Boolean
   author: UserWhereInput
   venue: VenueWhereInput
-  links_every: LinkWhereInput
-  links_some: LinkWhereInput
-  links_none: LinkWhereInput
 }
 
 input EventWhereUniqueInput {
@@ -1202,466 +1216,6 @@ input EventWhereUniqueInput {
 
 """Raw JSON value"""
 scalar Json
-
-type Link implements Node {
-  id: ID!
-  name: String!
-  linkURL: String!
-  venue: Venue
-  event: Event
-}
-
-"""A connection to a list of items."""
-type LinkConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [LinkEdge]!
-  aggregate: AggregateLink!
-}
-
-input LinkCreateInput {
-  name: String!
-  linkURL: String!
-  venue: VenueCreateOneWithoutLinksInput
-  event: EventCreateOneWithoutLinksInput
-}
-
-input LinkCreateManyWithoutEventInput {
-  create: [LinkCreateWithoutEventInput!]
-  connect: [LinkWhereUniqueInput!]
-}
-
-input LinkCreateManyWithoutVenueInput {
-  create: [LinkCreateWithoutVenueInput!]
-  connect: [LinkWhereUniqueInput!]
-}
-
-input LinkCreateWithoutEventInput {
-  name: String!
-  linkURL: String!
-  venue: VenueCreateOneWithoutLinksInput
-}
-
-input LinkCreateWithoutVenueInput {
-  name: String!
-  linkURL: String!
-  event: EventCreateOneWithoutLinksInput
-}
-
-"""An edge in a connection."""
-type LinkEdge {
-  """The item at the end of the edge."""
-  node: Link!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-enum LinkOrderByInput {
-  id_ASC
-  id_DESC
-  name_ASC
-  name_DESC
-  linkURL_ASC
-  linkURL_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
-}
-
-type LinkPreviousValues {
-  id: ID!
-  name: String!
-  linkURL: String!
-}
-
-input LinkScalarWhereInput {
-  """Logical AND on all given filters."""
-  AND: [LinkScalarWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [LinkScalarWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [LinkScalarWhereInput!]
-  id: ID
-
-  """All values that are not equal to given value."""
-  id_not: ID
-
-  """All values that are contained in given list."""
-  id_in: [ID!]
-
-  """All values that are not contained in given list."""
-  id_not_in: [ID!]
-
-  """All values less than the given value."""
-  id_lt: ID
-
-  """All values less than or equal the given value."""
-  id_lte: ID
-
-  """All values greater than the given value."""
-  id_gt: ID
-
-  """All values greater than or equal the given value."""
-  id_gte: ID
-
-  """All values containing the given string."""
-  id_contains: ID
-
-  """All values not containing the given string."""
-  id_not_contains: ID
-
-  """All values starting with the given string."""
-  id_starts_with: ID
-
-  """All values not starting with the given string."""
-  id_not_starts_with: ID
-
-  """All values ending with the given string."""
-  id_ends_with: ID
-
-  """All values not ending with the given string."""
-  id_not_ends_with: ID
-  name: String
-
-  """All values that are not equal to given value."""
-  name_not: String
-
-  """All values that are contained in given list."""
-  name_in: [String!]
-
-  """All values that are not contained in given list."""
-  name_not_in: [String!]
-
-  """All values less than the given value."""
-  name_lt: String
-
-  """All values less than or equal the given value."""
-  name_lte: String
-
-  """All values greater than the given value."""
-  name_gt: String
-
-  """All values greater than or equal the given value."""
-  name_gte: String
-
-  """All values containing the given string."""
-  name_contains: String
-
-  """All values not containing the given string."""
-  name_not_contains: String
-
-  """All values starting with the given string."""
-  name_starts_with: String
-
-  """All values not starting with the given string."""
-  name_not_starts_with: String
-
-  """All values ending with the given string."""
-  name_ends_with: String
-
-  """All values not ending with the given string."""
-  name_not_ends_with: String
-  linkURL: String
-
-  """All values that are not equal to given value."""
-  linkURL_not: String
-
-  """All values that are contained in given list."""
-  linkURL_in: [String!]
-
-  """All values that are not contained in given list."""
-  linkURL_not_in: [String!]
-
-  """All values less than the given value."""
-  linkURL_lt: String
-
-  """All values less than or equal the given value."""
-  linkURL_lte: String
-
-  """All values greater than the given value."""
-  linkURL_gt: String
-
-  """All values greater than or equal the given value."""
-  linkURL_gte: String
-
-  """All values containing the given string."""
-  linkURL_contains: String
-
-  """All values not containing the given string."""
-  linkURL_not_contains: String
-
-  """All values starting with the given string."""
-  linkURL_starts_with: String
-
-  """All values not starting with the given string."""
-  linkURL_not_starts_with: String
-
-  """All values ending with the given string."""
-  linkURL_ends_with: String
-
-  """All values not ending with the given string."""
-  linkURL_not_ends_with: String
-}
-
-type LinkSubscriptionPayload {
-  mutation: MutationType!
-  node: Link
-  updatedFields: [String!]
-  previousValues: LinkPreviousValues
-}
-
-input LinkSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [LinkSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [LinkSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [LinkSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: LinkWhereInput
-}
-
-input LinkUpdateInput {
-  name: String
-  linkURL: String
-  venue: VenueUpdateOneWithoutLinksInput
-  event: EventUpdateOneWithoutLinksInput
-}
-
-input LinkUpdateManyDataInput {
-  name: String
-  linkURL: String
-}
-
-input LinkUpdateManyMutationInput {
-  name: String
-  linkURL: String
-}
-
-input LinkUpdateManyWithoutEventInput {
-  create: [LinkCreateWithoutEventInput!]
-  connect: [LinkWhereUniqueInput!]
-  disconnect: [LinkWhereUniqueInput!]
-  delete: [LinkWhereUniqueInput!]
-  update: [LinkUpdateWithWhereUniqueWithoutEventInput!]
-  updateMany: [LinkUpdateManyWithWhereNestedInput!]
-  deleteMany: [LinkScalarWhereInput!]
-  upsert: [LinkUpsertWithWhereUniqueWithoutEventInput!]
-}
-
-input LinkUpdateManyWithoutVenueInput {
-  create: [LinkCreateWithoutVenueInput!]
-  connect: [LinkWhereUniqueInput!]
-  disconnect: [LinkWhereUniqueInput!]
-  delete: [LinkWhereUniqueInput!]
-  update: [LinkUpdateWithWhereUniqueWithoutVenueInput!]
-  updateMany: [LinkUpdateManyWithWhereNestedInput!]
-  deleteMany: [LinkScalarWhereInput!]
-  upsert: [LinkUpsertWithWhereUniqueWithoutVenueInput!]
-}
-
-input LinkUpdateManyWithWhereNestedInput {
-  where: LinkScalarWhereInput!
-  data: LinkUpdateManyDataInput!
-}
-
-input LinkUpdateWithoutEventDataInput {
-  name: String
-  linkURL: String
-  venue: VenueUpdateOneWithoutLinksInput
-}
-
-input LinkUpdateWithoutVenueDataInput {
-  name: String
-  linkURL: String
-  event: EventUpdateOneWithoutLinksInput
-}
-
-input LinkUpdateWithWhereUniqueWithoutEventInput {
-  where: LinkWhereUniqueInput!
-  data: LinkUpdateWithoutEventDataInput!
-}
-
-input LinkUpdateWithWhereUniqueWithoutVenueInput {
-  where: LinkWhereUniqueInput!
-  data: LinkUpdateWithoutVenueDataInput!
-}
-
-input LinkUpsertWithWhereUniqueWithoutEventInput {
-  where: LinkWhereUniqueInput!
-  update: LinkUpdateWithoutEventDataInput!
-  create: LinkCreateWithoutEventInput!
-}
-
-input LinkUpsertWithWhereUniqueWithoutVenueInput {
-  where: LinkWhereUniqueInput!
-  update: LinkUpdateWithoutVenueDataInput!
-  create: LinkCreateWithoutVenueInput!
-}
-
-input LinkWhereInput {
-  """Logical AND on all given filters."""
-  AND: [LinkWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [LinkWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [LinkWhereInput!]
-  id: ID
-
-  """All values that are not equal to given value."""
-  id_not: ID
-
-  """All values that are contained in given list."""
-  id_in: [ID!]
-
-  """All values that are not contained in given list."""
-  id_not_in: [ID!]
-
-  """All values less than the given value."""
-  id_lt: ID
-
-  """All values less than or equal the given value."""
-  id_lte: ID
-
-  """All values greater than the given value."""
-  id_gt: ID
-
-  """All values greater than or equal the given value."""
-  id_gte: ID
-
-  """All values containing the given string."""
-  id_contains: ID
-
-  """All values not containing the given string."""
-  id_not_contains: ID
-
-  """All values starting with the given string."""
-  id_starts_with: ID
-
-  """All values not starting with the given string."""
-  id_not_starts_with: ID
-
-  """All values ending with the given string."""
-  id_ends_with: ID
-
-  """All values not ending with the given string."""
-  id_not_ends_with: ID
-  name: String
-
-  """All values that are not equal to given value."""
-  name_not: String
-
-  """All values that are contained in given list."""
-  name_in: [String!]
-
-  """All values that are not contained in given list."""
-  name_not_in: [String!]
-
-  """All values less than the given value."""
-  name_lt: String
-
-  """All values less than or equal the given value."""
-  name_lte: String
-
-  """All values greater than the given value."""
-  name_gt: String
-
-  """All values greater than or equal the given value."""
-  name_gte: String
-
-  """All values containing the given string."""
-  name_contains: String
-
-  """All values not containing the given string."""
-  name_not_contains: String
-
-  """All values starting with the given string."""
-  name_starts_with: String
-
-  """All values not starting with the given string."""
-  name_not_starts_with: String
-
-  """All values ending with the given string."""
-  name_ends_with: String
-
-  """All values not ending with the given string."""
-  name_not_ends_with: String
-  linkURL: String
-
-  """All values that are not equal to given value."""
-  linkURL_not: String
-
-  """All values that are contained in given list."""
-  linkURL_in: [String!]
-
-  """All values that are not contained in given list."""
-  linkURL_not_in: [String!]
-
-  """All values less than the given value."""
-  linkURL_lt: String
-
-  """All values less than or equal the given value."""
-  linkURL_lte: String
-
-  """All values greater than the given value."""
-  linkURL_gt: String
-
-  """All values greater than or equal the given value."""
-  linkURL_gte: String
-
-  """All values containing the given string."""
-  linkURL_contains: String
-
-  """All values not containing the given string."""
-  linkURL_not_contains: String
-
-  """All values starting with the given string."""
-  linkURL_starts_with: String
-
-  """All values not starting with the given string."""
-  linkURL_not_starts_with: String
-
-  """All values ending with the given string."""
-  linkURL_ends_with: String
-
-  """All values not ending with the given string."""
-  linkURL_not_ends_with: String
-  venue: VenueWhereInput
-  event: EventWhereInput
-}
-
-input LinkWhereUniqueInput {
-  id: ID
-}
 
 type Location {
   latitude: Float!
@@ -1839,46 +1393,40 @@ type Mutation {
   createUser(data: UserCreateInput!): User!
   createNews(data: NewsCreateInput!): News!
   createEvent(data: EventCreateInput!): Event!
-  createLink(data: LinkCreateInput!): Link!
-  createLocation(data: LocationCreateInput!): Location!
   createVenue(data: VenueCreateInput!): Venue!
+  createLocation(data: LocationCreateInput!): Location!
   createAddress(data: AddressCreateInput!): Address!
   createPhoneNumber(data: PhoneNumberCreateInput!): PhoneNumber!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateNews(data: NewsUpdateInput!, where: NewsWhereUniqueInput!): News
   updateEvent(data: EventUpdateInput!, where: EventWhereUniqueInput!): Event
-  updateLink(data: LinkUpdateInput!, where: LinkWhereUniqueInput!): Link
   updateVenue(data: VenueUpdateInput!, where: VenueWhereUniqueInput!): Venue
   updateAddress(data: AddressUpdateInput!, where: AddressWhereUniqueInput!): Address
   updatePhoneNumber(data: PhoneNumberUpdateInput!, where: PhoneNumberWhereUniqueInput!): PhoneNumber
   deleteUser(where: UserWhereUniqueInput!): User
   deleteNews(where: NewsWhereUniqueInput!): News
   deleteEvent(where: EventWhereUniqueInput!): Event
-  deleteLink(where: LinkWhereUniqueInput!): Link
   deleteVenue(where: VenueWhereUniqueInput!): Venue
   deleteAddress(where: AddressWhereUniqueInput!): Address
   deletePhoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertNews(where: NewsWhereUniqueInput!, create: NewsCreateInput!, update: NewsUpdateInput!): News!
   upsertEvent(where: EventWhereUniqueInput!, create: EventCreateInput!, update: EventUpdateInput!): Event!
-  upsertLink(where: LinkWhereUniqueInput!, create: LinkCreateInput!, update: LinkUpdateInput!): Link!
   upsertVenue(where: VenueWhereUniqueInput!, create: VenueCreateInput!, update: VenueUpdateInput!): Venue!
   upsertAddress(where: AddressWhereUniqueInput!, create: AddressCreateInput!, update: AddressUpdateInput!): Address!
   upsertPhoneNumber(where: PhoneNumberWhereUniqueInput!, create: PhoneNumberCreateInput!, update: PhoneNumberUpdateInput!): PhoneNumber!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyNewses(data: NewsUpdateManyMutationInput!, where: NewsWhereInput): BatchPayload!
   updateManyEvents(data: EventUpdateManyMutationInput!, where: EventWhereInput): BatchPayload!
-  updateManyLinks(data: LinkUpdateManyMutationInput!, where: LinkWhereInput): BatchPayload!
-  updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   updateManyVenues(data: VenueUpdateManyMutationInput!, where: VenueWhereInput): BatchPayload!
+  updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   updateManyAddresses(data: AddressUpdateManyMutationInput!, where: AddressWhereInput): BatchPayload!
   updateManyPhoneNumbers(data: PhoneNumberUpdateManyMutationInput!, where: PhoneNumberWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyNewses(where: NewsWhereInput): BatchPayload!
   deleteManyEvents(where: EventWhereInput): BatchPayload!
-  deleteManyLinks(where: LinkWhereInput): BatchPayload!
-  deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyVenues(where: VenueWhereInput): BatchPayload!
+  deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyAddresses(where: AddressWhereInput): BatchPayload!
   deleteManyPhoneNumbers(where: PhoneNumberWhereInput): BatchPayload!
   executeRaw(database: PrismaDatabase, query: String!): Json!
@@ -1898,7 +1446,8 @@ type News implements Node {
   body: String!
   imageURL: String
   expiration: DateTime
-  target: UserGroup
+  target: UserGroup!
+  deleteUpon: Boolean
   published: Boolean!
 }
 
@@ -1918,7 +1467,8 @@ input NewsCreateInput {
   body: String!
   imageURL: String
   expiration: DateTime
-  target: UserGroup
+  target: UserGroup!
+  deleteUpon: Boolean
   published: Boolean
   author: UserCreateOneWithoutNewsesInput!
 }
@@ -1934,7 +1484,8 @@ input NewsCreateWithoutAuthorInput {
   body: String!
   imageURL: String
   expiration: DateTime
-  target: UserGroup
+  target: UserGroup!
+  deleteUpon: Boolean
   published: Boolean
 }
 
@@ -1962,6 +1513,8 @@ enum NewsOrderByInput {
   expiration_DESC
   target_ASC
   target_DESC
+  deleteUpon_ASC
+  deleteUpon_DESC
   published_ASC
   published_DESC
   updatedAt_ASC
@@ -1977,7 +1530,8 @@ type NewsPreviousValues {
   body: String!
   imageURL: String
   expiration: DateTime
-  target: UserGroup
+  target: UserGroup!
+  deleteUpon: Boolean
   published: Boolean!
 }
 
@@ -2222,6 +1776,10 @@ input NewsScalarWhereInput {
 
   """All values that are not contained in given list."""
   target_not_in: [UserGroup!]
+  deleteUpon: Boolean
+
+  """All values that are not equal to given value."""
+  deleteUpon_not: Boolean
   published: Boolean
 
   """All values that are not equal to given value."""
@@ -2274,6 +1832,7 @@ input NewsUpdateInput {
   imageURL: String
   expiration: DateTime
   target: UserGroup
+  deleteUpon: Boolean
   published: Boolean
   author: UserUpdateOneRequiredWithoutNewsesInput
 }
@@ -2285,6 +1844,7 @@ input NewsUpdateManyDataInput {
   imageURL: String
   expiration: DateTime
   target: UserGroup
+  deleteUpon: Boolean
   published: Boolean
 }
 
@@ -2295,6 +1855,7 @@ input NewsUpdateManyMutationInput {
   imageURL: String
   expiration: DateTime
   target: UserGroup
+  deleteUpon: Boolean
   published: Boolean
 }
 
@@ -2321,6 +1882,7 @@ input NewsUpdateWithoutAuthorDataInput {
   imageURL: String
   expiration: DateTime
   target: UserGroup
+  deleteUpon: Boolean
   published: Boolean
 }
 
@@ -2576,6 +2138,10 @@ input NewsWhereInput {
 
   """All values that are not contained in given list."""
   target_not_in: [UserGroup!]
+  deleteUpon: Boolean
+
+  """All values that are not equal to given value."""
+  deleteUpon_not: Boolean
   published: Boolean
 
   """All values that are not equal to given value."""
@@ -2850,24 +2416,21 @@ type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   newses(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [News]!
   events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event]!
-  links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link]!
-  locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   venues(where: VenueWhereInput, orderBy: VenueOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Venue]!
+  locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   addresses(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Address]!
   phoneNumbers(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhoneNumber]!
   user(where: UserWhereUniqueInput!): User
   news(where: NewsWhereUniqueInput!): News
   event(where: EventWhereUniqueInput!): Event
-  link(where: LinkWhereUniqueInput!): Link
   venue(where: VenueWhereUniqueInput!): Venue
   address(where: AddressWhereUniqueInput!): Address
   phoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   newsesConnection(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): NewsConnection!
   eventsConnection(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EventConnection!
-  linksConnection(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LinkConnection!
-  locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   venuesConnection(where: VenueWhereInput, orderBy: VenueOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VenueConnection!
+  locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   addressesConnection(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AddressConnection!
   phoneNumbersConnection(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhoneNumberConnection!
 
@@ -2882,9 +2445,8 @@ type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   news(where: NewsSubscriptionWhereInput): NewsSubscriptionPayload
   event(where: EventSubscriptionWhereInput): EventSubscriptionPayload
-  link(where: LinkSubscriptionWhereInput): LinkSubscriptionPayload
-  location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   venue(where: VenueSubscriptionWhereInput): VenueSubscriptionPayload
+  location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
   phoneNumber(where: PhoneNumberSubscriptionWhereInput): PhoneNumberSubscriptionPayload
 }
@@ -3420,7 +2982,8 @@ type Venue implements Node {
   id: ID!
   name: String!
   address: String!
-  links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
+  placeID: String
+  events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event!]
 }
 
 """A connection to a list of items."""
@@ -3436,22 +2999,19 @@ type VenueConnection {
 input VenueCreateInput {
   name: String!
   address: String!
-  links: LinkCreateManyWithoutVenueInput
+  placeID: String
+  events: EventCreateManyWithoutVenueInput
 }
 
-input VenueCreateOneInput {
-  create: VenueCreateInput
+input VenueCreateOneWithoutEventsInput {
+  create: VenueCreateWithoutEventsInput
   connect: VenueWhereUniqueInput
 }
 
-input VenueCreateOneWithoutLinksInput {
-  create: VenueCreateWithoutLinksInput
-  connect: VenueWhereUniqueInput
-}
-
-input VenueCreateWithoutLinksInput {
+input VenueCreateWithoutEventsInput {
   name: String!
   address: String!
+  placeID: String
 }
 
 """An edge in a connection."""
@@ -3470,6 +3030,8 @@ enum VenueOrderByInput {
   name_DESC
   address_ASC
   address_DESC
+  placeID_ASC
+  placeID_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -3480,6 +3042,7 @@ type VenuePreviousValues {
   id: ID!
   name: String!
   address: String!
+  placeID: String
 }
 
 type VenueSubscriptionPayload {
@@ -3521,52 +3084,35 @@ input VenueSubscriptionWhereInput {
   node: VenueWhereInput
 }
 
-input VenueUpdateDataInput {
-  name: String
-  address: String
-  links: LinkUpdateManyWithoutVenueInput
-}
-
 input VenueUpdateInput {
   name: String
   address: String
-  links: LinkUpdateManyWithoutVenueInput
+  placeID: String
+  events: EventUpdateManyWithoutVenueInput
 }
 
 input VenueUpdateManyMutationInput {
   name: String
   address: String
+  placeID: String
 }
 
-input VenueUpdateOneRequiredInput {
-  create: VenueCreateInput
+input VenueUpdateOneRequiredWithoutEventsInput {
+  create: VenueCreateWithoutEventsInput
   connect: VenueWhereUniqueInput
-  update: VenueUpdateDataInput
-  upsert: VenueUpsertNestedInput
+  update: VenueUpdateWithoutEventsDataInput
+  upsert: VenueUpsertWithoutEventsInput
 }
 
-input VenueUpdateOneWithoutLinksInput {
-  create: VenueCreateWithoutLinksInput
-  connect: VenueWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: VenueUpdateWithoutLinksDataInput
-  upsert: VenueUpsertWithoutLinksInput
-}
-
-input VenueUpdateWithoutLinksDataInput {
+input VenueUpdateWithoutEventsDataInput {
   name: String
   address: String
+  placeID: String
 }
 
-input VenueUpsertNestedInput {
-  update: VenueUpdateDataInput!
-  create: VenueCreateInput!
-}
-
-input VenueUpsertWithoutLinksInput {
-  update: VenueUpdateWithoutLinksDataInput!
-  create: VenueCreateWithoutLinksInput!
+input VenueUpsertWithoutEventsInput {
+  update: VenueUpdateWithoutEventsDataInput!
+  create: VenueCreateWithoutEventsInput!
 }
 
 input VenueWhereInput {
@@ -3698,9 +3244,49 @@ input VenueWhereInput {
 
   """All values not ending with the given string."""
   address_not_ends_with: String
-  links_every: LinkWhereInput
-  links_some: LinkWhereInput
-  links_none: LinkWhereInput
+  placeID: String
+
+  """All values that are not equal to given value."""
+  placeID_not: String
+
+  """All values that are contained in given list."""
+  placeID_in: [String!]
+
+  """All values that are not contained in given list."""
+  placeID_not_in: [String!]
+
+  """All values less than the given value."""
+  placeID_lt: String
+
+  """All values less than or equal the given value."""
+  placeID_lte: String
+
+  """All values greater than the given value."""
+  placeID_gt: String
+
+  """All values greater than or equal the given value."""
+  placeID_gte: String
+
+  """All values containing the given string."""
+  placeID_contains: String
+
+  """All values not containing the given string."""
+  placeID_not_contains: String
+
+  """All values starting with the given string."""
+  placeID_starts_with: String
+
+  """All values not starting with the given string."""
+  placeID_not_starts_with: String
+
+  """All values ending with the given string."""
+  placeID_ends_with: String
+
+  """All values not ending with the given string."""
+  placeID_not_ends_with: String
+  events_every: EventWhereInput
+  events_some: EventWhereInput
+  events_none: EventWhereInput
 }
 
 input VenueWhereUniqueInput {

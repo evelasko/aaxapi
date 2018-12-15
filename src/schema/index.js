@@ -4,6 +4,7 @@ import _ from 'lodash'
 import { typeDef as user, Resolvers as userResolvers } from './user'
 import { typeDef as news, Resolvers as newsResolvers } from './news'
 import { typeDef as event, Resolvers as eventResolvers } from './event'
+import { typeDef as venue, Resolvers as venueResolvers } from './venue'
 
 const commonTypeDef = `
     scalar DateTime
@@ -12,11 +13,6 @@ const commonTypeDef = `
     }
     type Mutation {
         _empty: String
-    }
-    type Venue {
-        id: ID!
-        name: String!
-        address: String!
     }
     type Address {
         id: ID
@@ -36,7 +32,12 @@ const commonTypeDef = `
     }
 `
 
-export const typeDefs = [ commonTypeDef, user, news, event ]
+export const typeDefs = [ commonTypeDef, user, news, event, venue ]
 const resolversObject = {}
-export const resolvers = _.merge(resolversObject, userResolvers, newsResolvers, eventResolvers)
+export const resolvers = _.merge(
+    resolversObject, 
+    userResolvers, 
+    newsResolvers, 
+    eventResolvers,
+    venueResolvers)
 export const fragmentReplacements = extractFragmentReplacements(resolvers)

@@ -1,5 +1,7 @@
 import moment from 'moment'
 import getUserId from '../utils/getUserId'
+import { isBeforeNow, aWeekFromNow } from '../utils/time'
+
 
 // ---------------------------------------------------
 //      TYPE DEFS
@@ -16,6 +18,7 @@ export const typeDef = `
         imageURL: String
         expiration: DateTime!
         target: UserGroup
+        deleteUpon: Boolean
         published: Boolean
     }
     input CreateNewsInput {
@@ -25,6 +28,7 @@ export const typeDef = `
         imageURL: String
         expiration: DateTime
         target: UserGroup
+        deleteUpon: Boolean
         published: Boolean
     }
     input UpdateNewsInput {
@@ -34,6 +38,7 @@ export const typeDef = `
         imageURL: String
         expiration: DateTime
         target: UserGroup
+        deleteUpon: Boolean
         published: Boolean
     }
     extend type Query {
@@ -59,17 +64,19 @@ export const Resolvers = {
         }
     },
     Mutation: {
-        createNews(parent, args, { prisma, request }, info) {
-            if (!args.data.expiration) args.data.expiration = moment().add(1, 'w').format()
+        async createNews(parent, args, { prisma, request }, info) {
+            if (!isBeforeNow(args.data.expiration)) throw new Error('Expiration cannot be before now...')
+
             return prisma.mutation.createNews({
                 data: {
                     title: args.data.title,
                     subtitle: args.data.subtitle,
                     imageURL: args.data.imageURL,
                     body: args.data.body,
-                    published: args.data.published,
+                    published: args.data.published || false,
                     target: args.data.target || "PUBLIC",
-                    expiration: args.data.expiration,
+                    expiration: args.data.expiration || aWeekFromNow(),
+                    deleteUpon: args.data.deleteUpon || false,
                     author: { connect: { id : getUserId(request) } }
                 }
             }, info)
@@ -80,6 +87,8 @@ export const Resolvers = {
         },
         async updateNews(parent, args, { prisma, request }, info) {
             if ( !await prisma.exists.News({ id: args.id, author: {id: getUserId(request)} }) ) throw new Error('News not found')
+            if ( args.data.expiration && !isBeforeNow(args.data.expiration) ) throw new Error('Expiration cannot be before now...')
+
             return prisma.mutation.updateNews({ where: { id: args.id }, data: args.data }, info)
         }
     }

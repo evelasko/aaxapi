@@ -18,6 +18,7 @@ export const typeDef = `
         date: DateTime!
         target: UserGroup
         published: Boolean
+        deleteUpon: Boolean
         venue: Venue!
     }
     input CreateEventInput {
@@ -25,18 +26,22 @@ export const typeDef = `
         subtitle: String
         body: String!
         imageURL: String
-        expiration: DateTime
+        date: DateTime!
         target: UserGroup
         published: Boolean
+        deleteUpon: Boolean
+        venue: ID!
     }
     input UpdateEventInput {
         title: String
         subtitle: String
         body: String
         imageURL: String
-        expiration: DateTime
+        date: DateTime
         target: UserGroup
         published: Boolean
+        deleteUpon: Boolean
+        venue: ID
     }
     extend type Query {
         events(query: String): [Event]!
@@ -68,20 +73,21 @@ export const Resolvers = {
                     subtitle: args.data.subtitle,
                     imageURL: args.data.imageURL,
                     body: args.data.body,
-                    published: args.data.published,
+                    published: args.data.published || false,
                     date: args.data.date,
                     target: args.data.target || "PUBLIC",
+                    deleteUpon: args.data.deleteUpon || false,
                     venue: { connect: { id: args.data.venue } },
                     author: { connect: { id : getUserId(request) } }
                 }
             }, info)
         },
         async deleteEvent(parent, args, { prisma, request }, info) {
-            if (!await prisma.exists.Event({ id: args.id, author: {id: getUserId(request)} }) ) throw new Error('Event not found...')
+            if (!await prisma.exists.Event({ id: args.id, author: {id: getUserId(request)} }) ) throw new Error('Event not found in database...')
             return prisma.mutation.deleteEvent({ where: { id: args.id }}, info)
         },
         async updateEvent(parent, args, { prisma, request }, info) {
-            if ( !await prisma.exists.Event({ id: args.id, author: {id: getUserId(request)} }) ) throw new Error('Event not found')
+            if ( !await prisma.exists.Event({ id: args.id, author: {id: getUserId(request)} }) ) throw new Error('Event not found in database...')
             return prisma.mutation.updateEvent({ where: { id: args.id }, data: args.data }, info)
         }
     }

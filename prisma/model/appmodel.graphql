@@ -6,7 +6,8 @@ type News {
   body: String!
   imageURL: String
   expiration: DateTime
-  target: UserGroup @default(value: PUBLIC)
+  target: UserGroup!
+  deleteUpon: Boolean @default(value: "false")
   published: Boolean! @default(value: "false")
 }
 type Event {
@@ -18,20 +19,14 @@ type Event {
   imageURL: String
   date: DateTime!
   target: UserGroup!
+  deleteUpon: Boolean @default(value: "false")
   published: Boolean! @default(value: "false")
-  venue: Venue!
-  links: [Link!]! @relation(name: "LinksForEvent" onDelete: CASCADE)
+  venue: Venue! @relation(name: "EventToVenue", onDelete: SET_NULL)
 }
 type Venue {
   id: ID! @unique
   name: String!
   address: String!
-  links: [Link!]! @relation(name: "LinksForVenue" onDelete: CASCADE)
-}
-type Link {
-  id: ID! @unique
-  name: String!
-  linkURL: String!
-  venue: Venue @relation(name: "LinksForVenue" onDelete: SET_NULL)
-  event: Event @relation(name: "LinksForEvent" onDelete: SET_NULL)
+  placeID: String
+  events: [Event!]! @relation(name: "EventToVenue", onDelete: CASCADE )
 }

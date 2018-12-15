@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs'
+import isEmail from 'validator/lib/isEmail'
 import getUserId from '../utils/getUserId'
-import generateToken from '../utils/generateToken';
-import hashPassword from '../utils/hashPassword';
+import generateToken from '../utils/generateToken'
+import hashPassword from '../utils/hashPassword'
 
 // ---------------------------------------------------
 //      TYPE DEFS
@@ -52,7 +53,7 @@ extend type Query {
     me: User!
 }
 extend type Mutation {
-    createUser(data: CreateUserInput!): AuthPayload!
+    signUpUser(data: CreateUserInput!): AuthPayload!
     loginUser(data: LoginUserInput!): AuthPayload!
     deleteUser: User!
     updateUser(data: UpdateUserInput! ): User!
@@ -97,7 +98,8 @@ export const Resolvers = {
         }
     },
     Mutation: {
-        async createUser(parent, args, { prisma }, info) {
+        async signUpUser(parent, args, { prisma }, info) {
+            if (!isEmail(args.data.email)) throw new Error('The email address is not valid')
             const password = await hashPassword(args.data.password)
             const user = await prisma.mutation.createUser({ data: { ...args.data, password } })
             return {user, token: generateToken(user.id)}
