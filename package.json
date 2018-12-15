@@ -21,6 +21,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "adm-zip": ">=0.4.11",
     "@babel/polyfill": "^7.0.0",
     "apollo-boost": "^0.1.22",
     "axios": "^0.18.0",
