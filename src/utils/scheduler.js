@@ -49,7 +49,8 @@ const job = () => {
 
 const initScheduleJob = () => {
   var rule = new schedule.RecurrenceRule()
-  rule.minute = [1, new schedule.Range(1, 55)]
+  rule.dayOfWeek = [0, new schedule.Range(0, 6)]
+  rule.hour = [1, new schedule.Range(7, 21)]
   schedule.scheduleJob('archiverJob', rule, () => { job() })
 }
 

@@ -20,7 +20,5 @@ const server = new GraphQLServer({
 })
 
 server.express.use('/app', express.static(path.join(__dirname, 'public')))
-server.express.get('/hi', (req, res) => {
-  res.send('Hello World!');
-});
+server.express.get('/hi', (req, res) => { res.send('Hello World!') })
 export { server as default }

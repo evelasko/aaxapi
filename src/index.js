@@ -21,7 +21,7 @@ const app = express();
 app.use(express.static(__dirname + '/mail/js'))
 
 //Do something when you're landing on the first page
-app.get('/', function(req, res) {
+app.get('/', (req, res) => {
     //render the index.jade file - input forms for humans
     res.render('index', (err, html) => {
         if (err) console.log(err)
