@@ -25,6 +25,11 @@ const commonTypeDef = `
         UPDATED
         DELETED
     }
+    enum NewsCategory {
+        NEWS
+        ALERT
+        CALL
+    }
     enum UserGroup {
         STAFF
         PUBLIC

@@ -18,6 +18,8 @@ export const typeDef = `
         imageURL: String
         expiration: DateTime!
         target: UserGroup
+        category: NewsCategory
+        featured: Boolean
         deleteUpon: Boolean
         published: Boolean
     }
@@ -27,6 +29,8 @@ export const typeDef = `
         body: String!
         imageURL: String
         expiration: DateTime
+        category: NewsCategory
+        featured: Boolean
         target: UserGroup
         deleteUpon: Boolean
         published: Boolean
@@ -37,6 +41,8 @@ export const typeDef = `
         body: String
         imageURL: String
         expiration: DateTime
+        category: NewsCategory
+        featured: Boolean
         target: UserGroup
         deleteUpon: Boolean
         published: Boolean
