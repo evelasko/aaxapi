@@ -49,6 +49,9 @@ export const typeDef = `
     }
     extend type Query {
         newses(query: String): [News]!
+        alerts(query: String): [News]!
+        calls(query: String): [News]!
+        allNews(query: String): [News]!
     }
     extend type Mutation {
         createNews(data: CreateNewsInput! ): News!
@@ -66,6 +69,15 @@ export const Resolvers = {
     News: {},
     Query: {
         newses(parent, args, { prisma }, info) {
+            return prisma.query.newses({where: {category: "NEWS"}}, info)
+        },
+        alerts(parent, args, { prisma }, info) {
+            return prisma.query.newses({where: {category: "ALERT"}}, info)
+        },
+        calls(parent, args, { prisma }, info) {
+            return prisma.query.newses({where: {category: "CALL"}}, info)
+        },
+        allNews(parent, args, { prisma }, info) {
             return prisma.query.newses(args, info)
         }
     },
@@ -81,6 +93,8 @@ export const Resolvers = {
                     body: args.data.body,
                     published: args.data.published || false,
                     target: args.data.target || "PUBLIC",
+                    category: args.data.category,
+                    featured: args.data.featured,
                     expiration: args.data.expiration || aWeekFromNow(),
                     deleteUpon: args.data.deleteUpon || false,
                     author: { connect: { id : getUserId(request) } }

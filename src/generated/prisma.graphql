@@ -1,5 +1,5 @@
 # source: http://localhost:4466/aaxapi/dev
-# timestamp: Thu Dec 20 2018 11:56:38 GMT+0100 (Central European Standard Time)
+# timestamp: Thu Dec 27 2018 10:50:40 GMT+0100 (Central European Standard Time)
 
 type Address implements Node {
   id: ID!
@@ -411,6 +411,10 @@ type AggregateAddress {
   count: Int!
 }
 
+type AggregateBranch {
+  count: Int!
+}
+
 type AggregateEvent {
   count: Int!
 }
@@ -427,6 +431,10 @@ type AggregatePhoneNumber {
   count: Int!
 }
 
+type AggregateProgram {
+  count: Int!
+}
+
 type AggregateUser {
   count: Int!
 }
@@ -438,6 +446,598 @@ type AggregateVenue {
 type BatchPayload {
   """The number of nodes that have been affected by the Batch operation."""
   count: Long!
+}
+
+type Branch implements Node {
+  id: ID!
+  name: String!
+  shortName: String!
+  description: String
+  program: Program!
+  students(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  staff(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+}
+
+"""A connection to a list of items."""
+type BranchConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [BranchEdge]!
+  aggregate: AggregateBranch!
+}
+
+input BranchCreateInput {
+  name: String!
+  shortName: String!
+  description: String
+  program: ProgramCreateOneWithoutBranchesInput!
+  students: UserCreateManyWithoutBranchInput
+  staff: UserCreateManyWithoutDepartmentInput
+}
+
+input BranchCreateManyWithoutProgramInput {
+  create: [BranchCreateWithoutProgramInput!]
+  connect: [BranchWhereUniqueInput!]
+}
+
+input BranchCreateOneWithoutStaffInput {
+  create: BranchCreateWithoutStaffInput
+  connect: BranchWhereUniqueInput
+}
+
+input BranchCreateOneWithoutStudentsInput {
+  create: BranchCreateWithoutStudentsInput
+  connect: BranchWhereUniqueInput
+}
+
+input BranchCreateWithoutProgramInput {
+  name: String!
+  shortName: String!
+  description: String
+  students: UserCreateManyWithoutBranchInput
+  staff: UserCreateManyWithoutDepartmentInput
+}
+
+input BranchCreateWithoutStaffInput {
+  name: String!
+  shortName: String!
+  description: String
+  program: ProgramCreateOneWithoutBranchesInput!
+  students: UserCreateManyWithoutBranchInput
+}
+
+input BranchCreateWithoutStudentsInput {
+  name: String!
+  shortName: String!
+  description: String
+  program: ProgramCreateOneWithoutBranchesInput!
+  staff: UserCreateManyWithoutDepartmentInput
+}
+
+"""An edge in a connection."""
+type BranchEdge {
+  """The item at the end of the edge."""
+  node: Branch!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum BranchOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  shortName_ASC
+  shortName_DESC
+  description_ASC
+  description_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type BranchPreviousValues {
+  id: ID!
+  name: String!
+  shortName: String!
+  description: String
+}
+
+input BranchScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [BranchScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [BranchScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [BranchScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  shortName: String
+
+  """All values that are not equal to given value."""
+  shortName_not: String
+
+  """All values that are contained in given list."""
+  shortName_in: [String!]
+
+  """All values that are not contained in given list."""
+  shortName_not_in: [String!]
+
+  """All values less than the given value."""
+  shortName_lt: String
+
+  """All values less than or equal the given value."""
+  shortName_lte: String
+
+  """All values greater than the given value."""
+  shortName_gt: String
+
+  """All values greater than or equal the given value."""
+  shortName_gte: String
+
+  """All values containing the given string."""
+  shortName_contains: String
+
+  """All values not containing the given string."""
+  shortName_not_contains: String
+
+  """All values starting with the given string."""
+  shortName_starts_with: String
+
+  """All values not starting with the given string."""
+  shortName_not_starts_with: String
+
+  """All values ending with the given string."""
+  shortName_ends_with: String
+
+  """All values not ending with the given string."""
+  shortName_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+}
+
+type BranchSubscriptionPayload {
+  mutation: MutationType!
+  node: Branch
+  updatedFields: [String!]
+  previousValues: BranchPreviousValues
+}
+
+input BranchSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [BranchSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [BranchSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [BranchSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: BranchWhereInput
+}
+
+input BranchUpdateInput {
+  name: String
+  shortName: String
+  description: String
+  program: ProgramUpdateOneRequiredWithoutBranchesInput
+  students: UserUpdateManyWithoutBranchInput
+  staff: UserUpdateManyWithoutDepartmentInput
+}
+
+input BranchUpdateManyDataInput {
+  name: String
+  shortName: String
+  description: String
+}
+
+input BranchUpdateManyMutationInput {
+  name: String
+  shortName: String
+  description: String
+}
+
+input BranchUpdateManyWithoutProgramInput {
+  create: [BranchCreateWithoutProgramInput!]
+  connect: [BranchWhereUniqueInput!]
+  disconnect: [BranchWhereUniqueInput!]
+  delete: [BranchWhereUniqueInput!]
+  update: [BranchUpdateWithWhereUniqueWithoutProgramInput!]
+  updateMany: [BranchUpdateManyWithWhereNestedInput!]
+  deleteMany: [BranchScalarWhereInput!]
+  upsert: [BranchUpsertWithWhereUniqueWithoutProgramInput!]
+}
+
+input BranchUpdateManyWithWhereNestedInput {
+  where: BranchScalarWhereInput!
+  data: BranchUpdateManyDataInput!
+}
+
+input BranchUpdateOneWithoutStaffInput {
+  create: BranchCreateWithoutStaffInput
+  connect: BranchWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: BranchUpdateWithoutStaffDataInput
+  upsert: BranchUpsertWithoutStaffInput
+}
+
+input BranchUpdateOneWithoutStudentsInput {
+  create: BranchCreateWithoutStudentsInput
+  connect: BranchWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: BranchUpdateWithoutStudentsDataInput
+  upsert: BranchUpsertWithoutStudentsInput
+}
+
+input BranchUpdateWithoutProgramDataInput {
+  name: String
+  shortName: String
+  description: String
+  students: UserUpdateManyWithoutBranchInput
+  staff: UserUpdateManyWithoutDepartmentInput
+}
+
+input BranchUpdateWithoutStaffDataInput {
+  name: String
+  shortName: String
+  description: String
+  program: ProgramUpdateOneRequiredWithoutBranchesInput
+  students: UserUpdateManyWithoutBranchInput
+}
+
+input BranchUpdateWithoutStudentsDataInput {
+  name: String
+  shortName: String
+  description: String
+  program: ProgramUpdateOneRequiredWithoutBranchesInput
+  staff: UserUpdateManyWithoutDepartmentInput
+}
+
+input BranchUpdateWithWhereUniqueWithoutProgramInput {
+  where: BranchWhereUniqueInput!
+  data: BranchUpdateWithoutProgramDataInput!
+}
+
+input BranchUpsertWithoutStaffInput {
+  update: BranchUpdateWithoutStaffDataInput!
+  create: BranchCreateWithoutStaffInput!
+}
+
+input BranchUpsertWithoutStudentsInput {
+  update: BranchUpdateWithoutStudentsDataInput!
+  create: BranchCreateWithoutStudentsInput!
+}
+
+input BranchUpsertWithWhereUniqueWithoutProgramInput {
+  where: BranchWhereUniqueInput!
+  update: BranchUpdateWithoutProgramDataInput!
+  create: BranchCreateWithoutProgramInput!
+}
+
+input BranchWhereInput {
+  """Logical AND on all given filters."""
+  AND: [BranchWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [BranchWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [BranchWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  shortName: String
+
+  """All values that are not equal to given value."""
+  shortName_not: String
+
+  """All values that are contained in given list."""
+  shortName_in: [String!]
+
+  """All values that are not contained in given list."""
+  shortName_not_in: [String!]
+
+  """All values less than the given value."""
+  shortName_lt: String
+
+  """All values less than or equal the given value."""
+  shortName_lte: String
+
+  """All values greater than the given value."""
+  shortName_gt: String
+
+  """All values greater than or equal the given value."""
+  shortName_gte: String
+
+  """All values containing the given string."""
+  shortName_contains: String
+
+  """All values not containing the given string."""
+  shortName_not_contains: String
+
+  """All values starting with the given string."""
+  shortName_starts_with: String
+
+  """All values not starting with the given string."""
+  shortName_not_starts_with: String
+
+  """All values ending with the given string."""
+  shortName_ends_with: String
+
+  """All values not ending with the given string."""
+  shortName_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  program: ProgramWhereInput
+  students_every: UserWhereInput
+  students_some: UserWhereInput
+  students_none: UserWhereInput
+  staff_every: UserWhereInput
+  staff_some: UserWhereInput
+  staff_none: UserWhereInput
+}
+
+input BranchWhereUniqueInput {
+  id: ID
+  name: String
 }
 
 scalar DateTime
@@ -1670,6 +2270,8 @@ type Mutation {
   createNews(data: NewsCreateInput!): News!
   createEvent(data: EventCreateInput!): Event!
   createVenue(data: VenueCreateInput!): Venue!
+  createProgram(data: ProgramCreateInput!): Program!
+  createBranch(data: BranchCreateInput!): Branch!
   createLocation(data: LocationCreateInput!): Location!
   createAddress(data: AddressCreateInput!): Address!
   createPhoneNumber(data: PhoneNumberCreateInput!): PhoneNumber!
@@ -1677,24 +2279,32 @@ type Mutation {
   updateNews(data: NewsUpdateInput!, where: NewsWhereUniqueInput!): News
   updateEvent(data: EventUpdateInput!, where: EventWhereUniqueInput!): Event
   updateVenue(data: VenueUpdateInput!, where: VenueWhereUniqueInput!): Venue
+  updateProgram(data: ProgramUpdateInput!, where: ProgramWhereUniqueInput!): Program
+  updateBranch(data: BranchUpdateInput!, where: BranchWhereUniqueInput!): Branch
   updateAddress(data: AddressUpdateInput!, where: AddressWhereUniqueInput!): Address
   updatePhoneNumber(data: PhoneNumberUpdateInput!, where: PhoneNumberWhereUniqueInput!): PhoneNumber
   deleteUser(where: UserWhereUniqueInput!): User
   deleteNews(where: NewsWhereUniqueInput!): News
   deleteEvent(where: EventWhereUniqueInput!): Event
   deleteVenue(where: VenueWhereUniqueInput!): Venue
+  deleteProgram(where: ProgramWhereUniqueInput!): Program
+  deleteBranch(where: BranchWhereUniqueInput!): Branch
   deleteAddress(where: AddressWhereUniqueInput!): Address
   deletePhoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertNews(where: NewsWhereUniqueInput!, create: NewsCreateInput!, update: NewsUpdateInput!): News!
   upsertEvent(where: EventWhereUniqueInput!, create: EventCreateInput!, update: EventUpdateInput!): Event!
   upsertVenue(where: VenueWhereUniqueInput!, create: VenueCreateInput!, update: VenueUpdateInput!): Venue!
+  upsertProgram(where: ProgramWhereUniqueInput!, create: ProgramCreateInput!, update: ProgramUpdateInput!): Program!
+  upsertBranch(where: BranchWhereUniqueInput!, create: BranchCreateInput!, update: BranchUpdateInput!): Branch!
   upsertAddress(where: AddressWhereUniqueInput!, create: AddressCreateInput!, update: AddressUpdateInput!): Address!
   upsertPhoneNumber(where: PhoneNumberWhereUniqueInput!, create: PhoneNumberCreateInput!, update: PhoneNumberUpdateInput!): PhoneNumber!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyNewses(data: NewsUpdateManyMutationInput!, where: NewsWhereInput): BatchPayload!
   updateManyEvents(data: EventUpdateManyMutationInput!, where: EventWhereInput): BatchPayload!
   updateManyVenues(data: VenueUpdateManyMutationInput!, where: VenueWhereInput): BatchPayload!
+  updateManyPrograms(data: ProgramUpdateManyMutationInput!, where: ProgramWhereInput): BatchPayload!
+  updateManyBranches(data: BranchUpdateManyMutationInput!, where: BranchWhereInput): BatchPayload!
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   updateManyAddresses(data: AddressUpdateManyMutationInput!, where: AddressWhereInput): BatchPayload!
   updateManyPhoneNumbers(data: PhoneNumberUpdateManyMutationInput!, where: PhoneNumberWhereInput): BatchPayload!
@@ -1702,6 +2312,8 @@ type Mutation {
   deleteManyNewses(where: NewsWhereInput): BatchPayload!
   deleteManyEvents(where: EventWhereInput): BatchPayload!
   deleteManyVenues(where: VenueWhereInput): BatchPayload!
+  deleteManyPrograms(where: ProgramWhereInput): BatchPayload!
+  deleteManyBranches(where: BranchWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyAddresses(where: AddressWhereInput): BatchPayload!
   deleteManyPhoneNumbers(where: PhoneNumberWhereInput): BatchPayload!
@@ -2796,11 +3408,230 @@ enum PrismaDatabase {
   default
 }
 
+type Program implements Node {
+  id: ID!
+  name: String!
+  branches(where: BranchWhereInput, orderBy: BranchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Branch!]
+}
+
+"""A connection to a list of items."""
+type ProgramConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProgramEdge]!
+  aggregate: AggregateProgram!
+}
+
+input ProgramCreateInput {
+  name: String!
+  branches: BranchCreateManyWithoutProgramInput
+}
+
+input ProgramCreateOneWithoutBranchesInput {
+  create: ProgramCreateWithoutBranchesInput
+  connect: ProgramWhereUniqueInput
+}
+
+input ProgramCreateWithoutBranchesInput {
+  name: String!
+}
+
+"""An edge in a connection."""
+type ProgramEdge {
+  """The item at the end of the edge."""
+  node: Program!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ProgramOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ProgramPreviousValues {
+  id: ID!
+  name: String!
+}
+
+type ProgramSubscriptionPayload {
+  mutation: MutationType!
+  node: Program
+  updatedFields: [String!]
+  previousValues: ProgramPreviousValues
+}
+
+input ProgramSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProgramSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProgramSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProgramSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProgramWhereInput
+}
+
+input ProgramUpdateInput {
+  name: String
+  branches: BranchUpdateManyWithoutProgramInput
+}
+
+input ProgramUpdateManyMutationInput {
+  name: String
+}
+
+input ProgramUpdateOneRequiredWithoutBranchesInput {
+  create: ProgramCreateWithoutBranchesInput
+  connect: ProgramWhereUniqueInput
+  update: ProgramUpdateWithoutBranchesDataInput
+  upsert: ProgramUpsertWithoutBranchesInput
+}
+
+input ProgramUpdateWithoutBranchesDataInput {
+  name: String
+}
+
+input ProgramUpsertWithoutBranchesInput {
+  update: ProgramUpdateWithoutBranchesDataInput!
+  create: ProgramCreateWithoutBranchesInput!
+}
+
+input ProgramWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProgramWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProgramWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProgramWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  branches_every: BranchWhereInput
+  branches_some: BranchWhereInput
+  branches_none: BranchWhereInput
+}
+
+input ProgramWhereUniqueInput {
+  id: ID
+}
+
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   newses(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [News]!
   events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event]!
   venues(where: VenueWhereInput, orderBy: VenueOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Venue]!
+  programs(where: ProgramWhereInput, orderBy: ProgramOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Program]!
+  branches(where: BranchWhereInput, orderBy: BranchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Branch]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   addresses(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Address]!
   phoneNumbers(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhoneNumber]!
@@ -2808,12 +3639,16 @@ type Query {
   news(where: NewsWhereUniqueInput!): News
   event(where: EventWhereUniqueInput!): Event
   venue(where: VenueWhereUniqueInput!): Venue
+  program(where: ProgramWhereUniqueInput!): Program
+  branch(where: BranchWhereUniqueInput!): Branch
   address(where: AddressWhereUniqueInput!): Address
   phoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   newsesConnection(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): NewsConnection!
   eventsConnection(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EventConnection!
   venuesConnection(where: VenueWhereInput, orderBy: VenueOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VenueConnection!
+  programsConnection(where: ProgramWhereInput, orderBy: ProgramOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProgramConnection!
+  branchesConnection(where: BranchWhereInput, orderBy: BranchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BranchConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   addressesConnection(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AddressConnection!
   phoneNumbersConnection(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhoneNumberConnection!
@@ -2830,6 +3665,8 @@ type Subscription {
   news(where: NewsSubscriptionWhereInput): NewsSubscriptionPayload
   event(where: EventSubscriptionWhereInput): EventSubscriptionPayload
   venue(where: VenueSubscriptionWhereInput): VenueSubscriptionPayload
+  program(where: ProgramSubscriptionWhereInput): ProgramSubscriptionPayload
+  branch(where: BranchSubscriptionWhereInput): BranchSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
   phoneNumber(where: PhoneNumberSubscriptionWhereInput): PhoneNumberSubscriptionPayload
@@ -2850,6 +3687,9 @@ type User implements Node {
   isAdmin: Boolean!
   newses(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [News!]
   events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event!]
+  branch: Branch
+  department: Branch
+  academicYear: Int
 }
 
 """A connection to a list of items."""
@@ -2870,10 +3710,23 @@ input UserCreateInput {
   password: String!
   group: UserGroup
   isAdmin: Boolean
+  academicYear: Int
   address: AddressCreateOneInput
   phone: PhoneNumberCreateOneInput
   newses: NewsCreateManyWithoutAuthorInput
   events: EventCreateManyWithoutAuthorInput
+  branch: BranchCreateOneWithoutStudentsInput
+  department: BranchCreateOneWithoutStaffInput
+}
+
+input UserCreateManyWithoutBranchInput {
+  create: [UserCreateWithoutBranchInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateManyWithoutDepartmentInput {
+  create: [UserCreateWithoutDepartmentInput!]
+  connect: [UserWhereUniqueInput!]
 }
 
 input UserCreateOneWithoutEventsInput {
@@ -2886,6 +3739,38 @@ input UserCreateOneWithoutNewsesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateWithoutBranchInput {
+  name: String
+  lastname: String
+  email: String!
+  emailVerified: Boolean
+  password: String!
+  group: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  address: AddressCreateOneInput
+  phone: PhoneNumberCreateOneInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
+  department: BranchCreateOneWithoutStaffInput
+}
+
+input UserCreateWithoutDepartmentInput {
+  name: String
+  lastname: String
+  email: String!
+  emailVerified: Boolean
+  password: String!
+  group: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  address: AddressCreateOneInput
+  phone: PhoneNumberCreateOneInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
+  branch: BranchCreateOneWithoutStudentsInput
+}
+
 input UserCreateWithoutEventsInput {
   name: String
   lastname: String
@@ -2894,9 +3779,12 @@ input UserCreateWithoutEventsInput {
   password: String!
   group: UserGroup
   isAdmin: Boolean
+  academicYear: Int
   address: AddressCreateOneInput
   phone: PhoneNumberCreateOneInput
   newses: NewsCreateManyWithoutAuthorInput
+  branch: BranchCreateOneWithoutStudentsInput
+  department: BranchCreateOneWithoutStaffInput
 }
 
 input UserCreateWithoutNewsesInput {
@@ -2907,9 +3795,12 @@ input UserCreateWithoutNewsesInput {
   password: String!
   group: UserGroup
   isAdmin: Boolean
+  academicYear: Int
   address: AddressCreateOneInput
   phone: PhoneNumberCreateOneInput
   events: EventCreateManyWithoutAuthorInput
+  branch: BranchCreateOneWithoutStudentsInput
+  department: BranchCreateOneWithoutStaffInput
 }
 
 """An edge in a connection."""
@@ -2948,6 +3839,8 @@ enum UserOrderByInput {
   group_DESC
   isAdmin_ASC
   isAdmin_DESC
+  academicYear_ASC
+  academicYear_DESC
 }
 
 type UserPreviousValues {
@@ -2961,6 +3854,302 @@ type UserPreviousValues {
   createdAt: DateTime!
   group: UserGroup!
   isAdmin: Boolean!
+  academicYear: Int
+}
+
+input UserScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  lastname: String
+
+  """All values that are not equal to given value."""
+  lastname_not: String
+
+  """All values that are contained in given list."""
+  lastname_in: [String!]
+
+  """All values that are not contained in given list."""
+  lastname_not_in: [String!]
+
+  """All values less than the given value."""
+  lastname_lt: String
+
+  """All values less than or equal the given value."""
+  lastname_lte: String
+
+  """All values greater than the given value."""
+  lastname_gt: String
+
+  """All values greater than or equal the given value."""
+  lastname_gte: String
+
+  """All values containing the given string."""
+  lastname_contains: String
+
+  """All values not containing the given string."""
+  lastname_not_contains: String
+
+  """All values starting with the given string."""
+  lastname_starts_with: String
+
+  """All values not starting with the given string."""
+  lastname_not_starts_with: String
+
+  """All values ending with the given string."""
+  lastname_ends_with: String
+
+  """All values not ending with the given string."""
+  lastname_not_ends_with: String
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  emailVerified: Boolean
+
+  """All values that are not equal to given value."""
+  emailVerified_not: Boolean
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  group: UserGroup
+
+  """All values that are not equal to given value."""
+  group_not: UserGroup
+
+  """All values that are contained in given list."""
+  group_in: [UserGroup!]
+
+  """All values that are not contained in given list."""
+  group_not_in: [UserGroup!]
+  isAdmin: Boolean
+
+  """All values that are not equal to given value."""
+  isAdmin_not: Boolean
+  academicYear: Int
+
+  """All values that are not equal to given value."""
+  academicYear_not: Int
+
+  """All values that are contained in given list."""
+  academicYear_in: [Int!]
+
+  """All values that are not contained in given list."""
+  academicYear_not_in: [Int!]
+
+  """All values less than the given value."""
+  academicYear_lt: Int
+
+  """All values less than or equal the given value."""
+  academicYear_lte: Int
+
+  """All values greater than the given value."""
+  academicYear_gt: Int
+
+  """All values greater than or equal the given value."""
+  academicYear_gte: Int
 }
 
 type UserSubscriptionPayload {
@@ -3010,10 +4199,24 @@ input UserUpdateInput {
   password: String
   group: UserGroup
   isAdmin: Boolean
+  academicYear: Int
   address: AddressUpdateOneInput
   phone: PhoneNumberUpdateOneInput
   newses: NewsUpdateManyWithoutAuthorInput
   events: EventUpdateManyWithoutAuthorInput
+  branch: BranchUpdateOneWithoutStudentsInput
+  department: BranchUpdateOneWithoutStaffInput
+}
+
+input UserUpdateManyDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  group: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
 }
 
 input UserUpdateManyMutationInput {
@@ -3024,6 +4227,34 @@ input UserUpdateManyMutationInput {
   password: String
   group: UserGroup
   isAdmin: Boolean
+  academicYear: Int
+}
+
+input UserUpdateManyWithoutBranchInput {
+  create: [UserCreateWithoutBranchInput!]
+  connect: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutBranchInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutBranchInput!]
+}
+
+input UserUpdateManyWithoutDepartmentInput {
+  create: [UserCreateWithoutDepartmentInput!]
+  connect: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutDepartmentInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutDepartmentInput!]
+}
+
+input UserUpdateManyWithWhereNestedInput {
+  where: UserScalarWhereInput!
+  data: UserUpdateManyDataInput!
 }
 
 input UserUpdateOneRequiredWithoutEventsInput {
@@ -3040,6 +4271,38 @@ input UserUpdateOneRequiredWithoutNewsesInput {
   upsert: UserUpsertWithoutNewsesInput
 }
 
+input UserUpdateWithoutBranchDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  group: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  address: AddressUpdateOneInput
+  phone: PhoneNumberUpdateOneInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
+  department: BranchUpdateOneWithoutStaffInput
+}
+
+input UserUpdateWithoutDepartmentDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  group: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  address: AddressUpdateOneInput
+  phone: PhoneNumberUpdateOneInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
+  branch: BranchUpdateOneWithoutStudentsInput
+}
+
 input UserUpdateWithoutEventsDataInput {
   name: String
   lastname: String
@@ -3048,9 +4311,12 @@ input UserUpdateWithoutEventsDataInput {
   password: String
   group: UserGroup
   isAdmin: Boolean
+  academicYear: Int
   address: AddressUpdateOneInput
   phone: PhoneNumberUpdateOneInput
   newses: NewsUpdateManyWithoutAuthorInput
+  branch: BranchUpdateOneWithoutStudentsInput
+  department: BranchUpdateOneWithoutStaffInput
 }
 
 input UserUpdateWithoutNewsesDataInput {
@@ -3061,9 +4327,22 @@ input UserUpdateWithoutNewsesDataInput {
   password: String
   group: UserGroup
   isAdmin: Boolean
+  academicYear: Int
   address: AddressUpdateOneInput
   phone: PhoneNumberUpdateOneInput
   events: EventUpdateManyWithoutAuthorInput
+  branch: BranchUpdateOneWithoutStudentsInput
+  department: BranchUpdateOneWithoutStaffInput
+}
+
+input UserUpdateWithWhereUniqueWithoutBranchInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutBranchDataInput!
+}
+
+input UserUpdateWithWhereUniqueWithoutDepartmentInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutDepartmentDataInput!
 }
 
 input UserUpsertWithoutEventsInput {
@@ -3074,6 +4353,18 @@ input UserUpsertWithoutEventsInput {
 input UserUpsertWithoutNewsesInput {
   update: UserUpdateWithoutNewsesDataInput!
   create: UserCreateWithoutNewsesInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutBranchInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutBranchDataInput!
+  create: UserCreateWithoutBranchInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutDepartmentInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutDepartmentDataInput!
+  create: UserCreateWithoutDepartmentInput!
 }
 
 input UserWhereInput {
@@ -3347,6 +4638,28 @@ input UserWhereInput {
 
   """All values that are not equal to given value."""
   isAdmin_not: Boolean
+  academicYear: Int
+
+  """All values that are not equal to given value."""
+  academicYear_not: Int
+
+  """All values that are contained in given list."""
+  academicYear_in: [Int!]
+
+  """All values that are not contained in given list."""
+  academicYear_not_in: [Int!]
+
+  """All values less than the given value."""
+  academicYear_lt: Int
+
+  """All values less than or equal the given value."""
+  academicYear_lte: Int
+
+  """All values greater than the given value."""
+  academicYear_gt: Int
+
+  """All values greater than or equal the given value."""
+  academicYear_gte: Int
   address: AddressWhereInput
   phone: PhoneNumberWhereInput
   newses_every: NewsWhereInput
@@ -3355,6 +4668,8 @@ input UserWhereInput {
   events_every: EventWhereInput
   events_some: EventWhereInput
   events_none: EventWhereInput
+  branch: BranchWhereInput
+  department: BranchWhereInput
 }
 
 input UserWhereUniqueInput {

@@ -13,4 +13,7 @@ type User {
   isAdmin: Boolean! @default(value: "false")
   newses: [News!]! @relation(name: "NewsToUser", onDelete: CASCADE)
   events: [Event!]! @relation(name: "EventToUser", onDelete: CASCADE)
+  branch: Branch @relation(name: "BranchToStudent")
+  department: Branch @relation(name: "BranchToStaff")
+  academicYear: Int @default(value: 0)
 }
