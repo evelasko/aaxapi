@@ -1,5 +1,5 @@
 import moment from 'moment'
-import getUserId from '../utils/getUserId'
+import {getSessionUserId} from '../utils/getUserId'
 
 
 // ---------------------------------------------------
@@ -78,16 +78,16 @@ export const Resolvers = {
                     target: args.data.target || "PUBLIC",
                     deleteUpon: args.data.deleteUpon || false,
                     venue: { connect: { id: args.data.venue } },
-                    author: { connect: { id : getUserId(request) } }
+                    author: { connect: { id : getSessionUserId(request) } }
                 }
             }, info)
         },
         async deleteEvent(parent, args, { prisma, request }, info) {
-            if (!await prisma.exists.Event({ id: args.id, author: {id: getUserId(request)} }) ) throw new Error('Event not found in database...')
+            if (!await prisma.exists.Event({ id: args.id, author: {id: getSessionUserId(request)} }) ) throw new Error('Event not found in database...')
             return prisma.mutation.deleteEvent({ where: { id: args.id }}, info)
         },
         async updateEvent(parent, args, { prisma, request }, info) {
-            if ( !await prisma.exists.Event({ id: args.id, author: {id: getUserId(request)} }) ) throw new Error('Event not found in database...')
+            if ( !await prisma.exists.Event({ id: args.id, author: {id: getSessionUserId(request)} }) ) throw new Error('Event not found in database...')
             return prisma.mutation.updateEvent({ where: { id: args.id }, data: args.data }, info)
         }
     }

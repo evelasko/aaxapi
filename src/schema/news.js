@@ -1,7 +1,6 @@
 import moment from 'moment'
-import getUserId from '../utils/getUserId'
+import { getUserId, getSessionUserId } from '../utils/getUserId'
 import { isBeforeNow, aWeekFromNow } from '../utils/time'
-
 
 // ---------------------------------------------------
 //      TYPE DEFS
@@ -97,16 +96,16 @@ export const Resolvers = {
                     featured: args.data.featured,
                     expiration: args.data.expiration || aWeekFromNow(),
                     deleteUpon: args.data.deleteUpon || false,
-                    author: { connect: { id : getUserId(request) } }
+                    author: { connect: { id : getSessionUserId(request) } }
                 }
             }, info)
         },
         async deleteNews(parent, args, { prisma, request }, info) {
-            if (!await prisma.exists.News({ id: args.id, author: {id: getUserId(request)} }) ) throw new Error('News not found...')
+            if (!await prisma.exists.News({ id: args.id, author: {id: getSessionUserId(request)} }) ) throw new Error('News not found...')
             return prisma.mutation.deleteNews({ where: { id: args.id }}, info)
         },
         async updateNews(parent, args, { prisma, request }, info) {
-            if ( !await prisma.exists.News({ id: args.id, author: {id: getUserId(request)} }) ) throw new Error('News not found')
+            if ( !await prisma.exists.News({ id: args.id, author: {id: getSessionUserId(request)} }) ) throw new Error('News not found')
             if ( args.data.expiration && !isBeforeNow(args.data.expiration) ) throw new Error('Expiration cannot be before now...')
 
             return prisma.mutation.updateNews({ where: { id: args.id }, data: args.data }, info)

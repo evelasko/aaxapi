@@ -1,12 +1,11 @@
 import { GraphQLServer, PubSub } from 'graphql-yoga'
-import path from 'path'
 import cors from 'cors'
+import session from 'express-session'
 
-//const express = require('express')
-import express from 'express'
 import { typeDefs, resolvers, fragmentReplacements } from './schema'
 import prisma from './prisma'
 import initScheduleJob from './utils/scheduler'
+import { middlewareShield } from './middleware/shield'
 
 initScheduleJob()
 
@@ -15,6 +14,7 @@ const pubsub = new PubSub()
 const server = new GraphQLServer({
     typeDefs,
     resolvers,
+    middlewares: middlewareShield,
     context(request) {
         return { pubsub, prisma, request }
     },
@@ -28,6 +28,18 @@ const corsOptions = {
 }
 
 server.express.use(cors(corsOptions))
-server.express.use('/app', express.static(path.join(__dirname, 'public')))
-server.express.get('/hi', (req, res) => { res.send('Hello World!') })
+server.express.use(
+  session({
+    name: "qid",
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      //secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+  })
+)
+
 export { server as default }

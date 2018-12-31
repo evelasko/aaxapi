@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
-const getUserId = (request, requireAuth = true) => {
-  
+export const getUserId = (request, requireAuth = true) => {
+
     const header = request.request ? request.request.headers.authorization : request.connection.context.Authorization
 
     if (header) {
@@ -14,4 +14,7 @@ const getUserId = (request, requireAuth = true) => {
     return null
 }
 
-export { getUserId as default }
+export const getSessionUserId = context => {
+  if (context.request.session.userId) return context.request.session.userId
+  throw new Error('Authentication required!')
+}

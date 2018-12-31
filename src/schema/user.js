@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
 import isEmail from 'validator/lib/isEmail'
-import getUserId from '../utils/getUserId'
+import { getUserId, getSessionUserId } from '../utils/getUserId'
 import { generateToken, generateResetToken } from '../utils/generateToken'
 import hashPassword from '../utils/hashPassword'
 import { sendEmail } from '../utils/sendEmail'
@@ -137,7 +137,7 @@ export const Resolvers = {
             const userCheck = await prisma.mutation.updateUser({ where: { id: userId.id }, data: { password: args.newPassword } }, '{id}')
             return {token: generateToken(userId)}
         },
-        async loginUser(parent, args, { prisma }, info) {
+        async loginUser(parent, args, { prisma, request }, info) {
             const user = await prisma.query.user({ where: { email: args.data.email } })
             if ( !user  ) return {error: `user not found`} // throw new Error(`Error: user with email: ${args.data.email} was not found`)
             const match = await bcrypt.compare(args.data.password, user.password)
@@ -148,14 +148,15 @@ export const Resolvers = {
               const res = await sendEmail(args.email, 'Confirm Email', `Please follow or copy this link in your browser: ${link} to confirm your email`, `<a href="${link}">click here to confirm your email</a>`)
               return {error: `please verify your email`}
             }
+            request.request.session.userId = user.id
             return {token: generateToken(user.id)}
         },
         async deleteUser(parent, args, { prisma, request }, info) {
-            return prisma.mutation.deleteUser({ where: { id: getUserId(request) } }, info)
+          return prisma.mutation.deleteUser({ where: { id: getSessionUserId(request) } }, info)
         },
         async updateUser(parent, args, { prisma, request }, info) {
             if (typeof args.data.password === 'string') args.data.password = await hashPassword(args.data.password)
-            return prisma.mutation.updateUser({ where: { id: getUserId(request) }, data: args.data }, info)
+            return prisma.mutation.updateUser({ where: { id: getSessionUserId(request) }, data: args.data }, info)
         }
     }
 }
