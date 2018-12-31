@@ -21,15 +21,15 @@ const server = new GraphQLServer({
     fragmentReplacements
 })
 
-const corsOptions = {
-  origin: 'http://localhost:3000',
-  credentials: true,
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+// const corsOptions = {
+//   origin: ['http://localhost:3000', 'http://localhost'],
+//   credentials: true,
+//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }
 
-server.express.use(cors(corsOptions))
-server.express.use(
-  session({
+// server.express.use(cors(corsOptions))
+server.express.use(session(
+  {
     name: "qid",
     secret: process.env.SESSION_SECRET,
     resave: false,

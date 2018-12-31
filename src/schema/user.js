@@ -75,7 +75,7 @@ export const Resolvers = {
         email: {
             fragment: 'fragment userId on User { id }',
             resolve(parent, args, { request }, info) {
-                const userId = getUserId(request, false)
+                const userId = getSessionUserId(request, false)
                 if (userId && userId === parent.id) {
                     return parent.email
                 } else { return null }
@@ -100,7 +100,7 @@ export const Resolvers = {
             return prisma.query.users(opArgs, info)
         },
         me(parent, args, { prisma, request }, info) {
-            return prisma.query.user({ where: { id: getUserId(request) } }, info)
+            return prisma.query.user({ where: { id: getSessionUserId(request) } }, info)
         }
     },
     Mutation: {
