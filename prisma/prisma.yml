@@ -6,3 +6,4 @@ datamodel:
   - model/base.graphql
   - model/appmodel.graphql
   - model/institute.graphql
+  - model/admin.graphql

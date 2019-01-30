@@ -59,9 +59,10 @@ extend type Mutation {
     signUpUser(data: CreateUserInput!): RegisterPayload!
     loginUser(data: LoginUserInput!): AuthPayload!
     deleteUser: User!
+    logoutUser: AuthPayload!
     updateUser(data: UpdateUserInput! ): User!
     sendForgotPasswordEmail(email: String!): AuthPayload!
-    changePassword(newPassword: String!, key: String!): AuthPayload!
+    changePassword(newPassword: String!): AuthPayload!
     confirmEmail(key: String!): AuthPayload!
 }
 `
@@ -74,8 +75,8 @@ export const Resolvers = {
     User: {
         email: {
             fragment: 'fragment userId on User { id }',
-            resolve(parent, args, { request }, info) {
-                const userId = getSessionUserId(request, false)
+            resolve(parent, args, { session }, info) {
+                const userId = getSessionUserId(session, false)
                 if (userId && userId === parent.id) {
                     return parent.email
                 } else { return null }
@@ -99,8 +100,9 @@ export const Resolvers = {
             }
             return prisma.query.users(opArgs, info)
         },
-        me(parent, args, { prisma, request }, info) {
-            return prisma.query.user({ where: { id: getSessionUserId(request) } }, info)
+        me(parent, args, { prisma, session }, info) {
+          console.log('me...')
+            return prisma.query.user({ where: { id: getSessionUserId(session) } }, info)
         }
     },
     Mutation: {
@@ -130,14 +132,13 @@ export const Resolvers = {
             console.log('response from mailgun: ', res)
             return { token }
         },
-        async changePassword(parent, args, { prisma }, info) {
-            const userId = getUserId({request: {headers: {authorization: `Bearer ${args.key}`}}}, false)
+        async changePassword(parent, args, { prisma, session }, info) {
+            const userId = getSessionUserId(session)
             if (!userId) return {error: 'invalid token'}
             if (typeof args.newPassword === 'string') args.newPassword = await hashPassword(args.newPassword)
-            const userCheck = await prisma.mutation.updateUser({ where: { id: userId.id }, data: { password: args.newPassword } }, '{id}')
-            return {token: generateToken(userId)}
+            return await prisma.mutation.updateUser({ where: { id: userId.id }, data: { password: args.newPassword } }, '{id}')
         },
-        async loginUser(parent, args, { prisma, request }, info) {
+        async loginUser(parent, args, { prisma, session }, info) {
             const user = await prisma.query.user({ where: { email: args.data.email } })
             if ( !user  ) return {error: `user not found`} // throw new Error(`Error: user with email: ${args.data.email} was not found`)
             const match = await bcrypt.compare(args.data.password, user.password)
@@ -148,15 +149,29 @@ export const Resolvers = {
               const res = await sendEmail(args.email, 'Confirm Email', `Please follow or copy this link in your browser: ${link} to confirm your email`, `<a href="${link}">click here to confirm your email</a>`)
               return {error: `please verify your email`}
             }
-            request.request.session.userId = user.id
+            console.log('login user...')
+            session.userId = user.id
+            console.log('>>>> ', session)
             return {token: generateToken(user.id)}
         },
-        async deleteUser(parent, args, { prisma, request }, info) {
-          return prisma.mutation.deleteUser({ where: { id: getSessionUserId(request) } }, info)
+        async deleteUser(parent, args, { prisma, session }, info) {
+          return prisma.mutation.deleteUser({ where: { id: getSessionUserId(session) } }, info)
         },
-        async updateUser(parent, args, { prisma, request }, info) {
+        async logoutUser(parent, args, {session, response}, info) {
+          const userId = getSessionUserId(session)
+          if (userId) {
+            console.log('USER ID:::', userId)
+            await session.destroy(err => {
+              if (err) { console.log('LOGOUTUSER MUTATION / SESSION DESTROY: ', err) }
+            })
+            response.clearCookie("qid")
+            return { token: 'true' }
+          }
+          return { error: 'no user authenticated...'}
+        },
+        async updateUser(parent, args, { prisma, session }, info) {
             if (typeof args.data.password === 'string') args.data.password = await hashPassword(args.data.password)
-            return prisma.mutation.updateUser({ where: { id: getSessionUserId(request) }, data: args.data }, info)
+            return prisma.mutation.updateUser({ where: { id: getSessionUserId(session) }, data: args.data }, info)
         }
     }
 }

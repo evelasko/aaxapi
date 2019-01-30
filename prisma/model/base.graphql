@@ -16,4 +16,5 @@ type User {
   branch: Branch @relation(name: "BranchToStudent")
   department: Branch @relation(name: "BranchToStaff")
   academicYear: Int @default(value: 0)
+  adminRole: AdminRole @relation(name: "UserToRoles")
 }

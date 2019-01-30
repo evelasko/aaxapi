@@ -1,5 +1,5 @@
 import { GraphQLServer, PubSub } from 'graphql-yoga'
-import cors from 'cors'
+import express from 'express'
 import session from 'express-session'
 
 import { typeDefs, resolvers, fragmentReplacements } from './schema'
@@ -14,20 +14,18 @@ const pubsub = new PubSub()
 const server = new GraphQLServer({
     typeDefs,
     resolvers,
-    middlewares: middlewareShield,
-    context(request) {
-        return { pubsub, prisma, request }
-    },
+    // middlewares: middlewareShield,
+    context:({request, response}) => ({
+        pubsub,
+        prisma,
+        request,
+        response,
+        session: request ? request.session : undefined,
+        url: request ? request.protocol + "://" + request.get("host") : ""
+    }),
     fragmentReplacements
 })
 
-// const corsOptions = {
-//   origin: ['http://localhost:3000', 'http://localhost'],
-//   credentials: true,
-//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-// }
-
-// server.express.use(cors(corsOptions))
 server.express.use(session(
   {
     name: "qid",
@@ -36,10 +34,11 @@ server.express.use(session(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      //secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 900000
     }
   })
 )
+server.express.use('/images', express.static('images'))
 
 export { server as default }

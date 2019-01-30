@@ -1,5 +1,5 @@
 # source: http://localhost:4466/aaxapi/dev
-# timestamp: Thu Dec 27 2018 10:50:40 GMT+0100 (Central European Standard Time)
+# timestamp: Wed Jan 30 2019 23:09:03 GMT+0100 (Central European Standard Time)
 
 type Address implements Node {
   id: ID!
@@ -407,7 +407,798 @@ input AddressWhereUniqueInput {
   id: ID
 }
 
+type AdminCompetence implements Node {
+  id: ID!
+  name: String!
+  description: String
+  roles(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminRole!]
+}
+
+"""A connection to a list of items."""
+type AdminCompetenceConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AdminCompetenceEdge]!
+  aggregate: AggregateAdminCompetence!
+}
+
+input AdminCompetenceCreateInput {
+  name: String!
+  description: String
+  roles: AdminRoleCreateManyWithoutCompetencesInput
+}
+
+input AdminCompetenceCreateManyWithoutRolesInput {
+  create: [AdminCompetenceCreateWithoutRolesInput!]
+  connect: [AdminCompetenceWhereUniqueInput!]
+}
+
+input AdminCompetenceCreateWithoutRolesInput {
+  name: String!
+  description: String
+}
+
+"""An edge in a connection."""
+type AdminCompetenceEdge {
+  """The item at the end of the edge."""
+  node: AdminCompetence!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum AdminCompetenceOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type AdminCompetencePreviousValues {
+  id: ID!
+  name: String!
+  description: String
+}
+
+input AdminCompetenceScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AdminCompetenceScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AdminCompetenceScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AdminCompetenceScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+}
+
+type AdminCompetenceSubscriptionPayload {
+  mutation: MutationType!
+  node: AdminCompetence
+  updatedFields: [String!]
+  previousValues: AdminCompetencePreviousValues
+}
+
+input AdminCompetenceSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AdminCompetenceSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AdminCompetenceSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AdminCompetenceSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AdminCompetenceWhereInput
+}
+
+input AdminCompetenceUpdateInput {
+  name: String
+  description: String
+  roles: AdminRoleUpdateManyWithoutCompetencesInput
+}
+
+input AdminCompetenceUpdateManyDataInput {
+  name: String
+  description: String
+}
+
+input AdminCompetenceUpdateManyMutationInput {
+  name: String
+  description: String
+}
+
+input AdminCompetenceUpdateManyWithoutRolesInput {
+  create: [AdminCompetenceCreateWithoutRolesInput!]
+  connect: [AdminCompetenceWhereUniqueInput!]
+  disconnect: [AdminCompetenceWhereUniqueInput!]
+  delete: [AdminCompetenceWhereUniqueInput!]
+  update: [AdminCompetenceUpdateWithWhereUniqueWithoutRolesInput!]
+  updateMany: [AdminCompetenceUpdateManyWithWhereNestedInput!]
+  deleteMany: [AdminCompetenceScalarWhereInput!]
+  upsert: [AdminCompetenceUpsertWithWhereUniqueWithoutRolesInput!]
+}
+
+input AdminCompetenceUpdateManyWithWhereNestedInput {
+  where: AdminCompetenceScalarWhereInput!
+  data: AdminCompetenceUpdateManyDataInput!
+}
+
+input AdminCompetenceUpdateWithoutRolesDataInput {
+  name: String
+  description: String
+}
+
+input AdminCompetenceUpdateWithWhereUniqueWithoutRolesInput {
+  where: AdminCompetenceWhereUniqueInput!
+  data: AdminCompetenceUpdateWithoutRolesDataInput!
+}
+
+input AdminCompetenceUpsertWithWhereUniqueWithoutRolesInput {
+  where: AdminCompetenceWhereUniqueInput!
+  update: AdminCompetenceUpdateWithoutRolesDataInput!
+  create: AdminCompetenceCreateWithoutRolesInput!
+}
+
+input AdminCompetenceWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AdminCompetenceWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AdminCompetenceWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AdminCompetenceWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  roles_every: AdminRoleWhereInput
+  roles_some: AdminRoleWhereInput
+  roles_none: AdminRoleWhereInput
+}
+
+input AdminCompetenceWhereUniqueInput {
+  id: ID
+  name: String
+}
+
+type AdminRole implements Node {
+  id: ID!
+  name: String!
+  competences(where: AdminCompetenceWhereInput, orderBy: AdminCompetenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminCompetence!]
+  admins(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+}
+
+"""A connection to a list of items."""
+type AdminRoleConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AdminRoleEdge]!
+  aggregate: AggregateAdminRole!
+}
+
+input AdminRoleCreateInput {
+  name: String!
+  competences: AdminCompetenceCreateManyWithoutRolesInput
+  admins: UserCreateManyWithoutAdminRoleInput
+}
+
+input AdminRoleCreateManyWithoutCompetencesInput {
+  create: [AdminRoleCreateWithoutCompetencesInput!]
+  connect: [AdminRoleWhereUniqueInput!]
+}
+
+input AdminRoleCreateOneWithoutAdminsInput {
+  create: AdminRoleCreateWithoutAdminsInput
+  connect: AdminRoleWhereUniqueInput
+}
+
+input AdminRoleCreateWithoutAdminsInput {
+  name: String!
+  competences: AdminCompetenceCreateManyWithoutRolesInput
+}
+
+input AdminRoleCreateWithoutCompetencesInput {
+  name: String!
+  admins: UserCreateManyWithoutAdminRoleInput
+}
+
+"""An edge in a connection."""
+type AdminRoleEdge {
+  """The item at the end of the edge."""
+  node: AdminRole!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum AdminRoleOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type AdminRolePreviousValues {
+  id: ID!
+  name: String!
+}
+
+input AdminRoleScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AdminRoleScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AdminRoleScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AdminRoleScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+type AdminRoleSubscriptionPayload {
+  mutation: MutationType!
+  node: AdminRole
+  updatedFields: [String!]
+  previousValues: AdminRolePreviousValues
+}
+
+input AdminRoleSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AdminRoleSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AdminRoleSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AdminRoleSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AdminRoleWhereInput
+}
+
+input AdminRoleUpdateInput {
+  name: String
+  competences: AdminCompetenceUpdateManyWithoutRolesInput
+  admins: UserUpdateManyWithoutAdminRoleInput
+}
+
+input AdminRoleUpdateManyDataInput {
+  name: String
+}
+
+input AdminRoleUpdateManyMutationInput {
+  name: String
+}
+
+input AdminRoleUpdateManyWithoutCompetencesInput {
+  create: [AdminRoleCreateWithoutCompetencesInput!]
+  connect: [AdminRoleWhereUniqueInput!]
+  disconnect: [AdminRoleWhereUniqueInput!]
+  delete: [AdminRoleWhereUniqueInput!]
+  update: [AdminRoleUpdateWithWhereUniqueWithoutCompetencesInput!]
+  updateMany: [AdminRoleUpdateManyWithWhereNestedInput!]
+  deleteMany: [AdminRoleScalarWhereInput!]
+  upsert: [AdminRoleUpsertWithWhereUniqueWithoutCompetencesInput!]
+}
+
+input AdminRoleUpdateManyWithWhereNestedInput {
+  where: AdminRoleScalarWhereInput!
+  data: AdminRoleUpdateManyDataInput!
+}
+
+input AdminRoleUpdateOneWithoutAdminsInput {
+  create: AdminRoleCreateWithoutAdminsInput
+  connect: AdminRoleWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: AdminRoleUpdateWithoutAdminsDataInput
+  upsert: AdminRoleUpsertWithoutAdminsInput
+}
+
+input AdminRoleUpdateWithoutAdminsDataInput {
+  name: String
+  competences: AdminCompetenceUpdateManyWithoutRolesInput
+}
+
+input AdminRoleUpdateWithoutCompetencesDataInput {
+  name: String
+  admins: UserUpdateManyWithoutAdminRoleInput
+}
+
+input AdminRoleUpdateWithWhereUniqueWithoutCompetencesInput {
+  where: AdminRoleWhereUniqueInput!
+  data: AdminRoleUpdateWithoutCompetencesDataInput!
+}
+
+input AdminRoleUpsertWithoutAdminsInput {
+  update: AdminRoleUpdateWithoutAdminsDataInput!
+  create: AdminRoleCreateWithoutAdminsInput!
+}
+
+input AdminRoleUpsertWithWhereUniqueWithoutCompetencesInput {
+  where: AdminRoleWhereUniqueInput!
+  update: AdminRoleUpdateWithoutCompetencesDataInput!
+  create: AdminRoleCreateWithoutCompetencesInput!
+}
+
+input AdminRoleWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AdminRoleWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AdminRoleWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AdminRoleWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  competences_every: AdminCompetenceWhereInput
+  competences_some: AdminCompetenceWhereInput
+  competences_none: AdminCompetenceWhereInput
+  admins_every: UserWhereInput
+  admins_some: UserWhereInput
+  admins_none: UserWhereInput
+}
+
+input AdminRoleWhereUniqueInput {
+  id: ID
+  name: String
+}
+
 type AggregateAddress {
+  count: Int!
+}
+
+type AggregateAdminCompetence {
+  count: Int!
+}
+
+type AggregateAdminRole {
   count: Int!
 }
 
@@ -2272,6 +3063,8 @@ type Mutation {
   createVenue(data: VenueCreateInput!): Venue!
   createProgram(data: ProgramCreateInput!): Program!
   createBranch(data: BranchCreateInput!): Branch!
+  createAdminRole(data: AdminRoleCreateInput!): AdminRole!
+  createAdminCompetence(data: AdminCompetenceCreateInput!): AdminCompetence!
   createLocation(data: LocationCreateInput!): Location!
   createAddress(data: AddressCreateInput!): Address!
   createPhoneNumber(data: PhoneNumberCreateInput!): PhoneNumber!
@@ -2281,6 +3074,8 @@ type Mutation {
   updateVenue(data: VenueUpdateInput!, where: VenueWhereUniqueInput!): Venue
   updateProgram(data: ProgramUpdateInput!, where: ProgramWhereUniqueInput!): Program
   updateBranch(data: BranchUpdateInput!, where: BranchWhereUniqueInput!): Branch
+  updateAdminRole(data: AdminRoleUpdateInput!, where: AdminRoleWhereUniqueInput!): AdminRole
+  updateAdminCompetence(data: AdminCompetenceUpdateInput!, where: AdminCompetenceWhereUniqueInput!): AdminCompetence
   updateAddress(data: AddressUpdateInput!, where: AddressWhereUniqueInput!): Address
   updatePhoneNumber(data: PhoneNumberUpdateInput!, where: PhoneNumberWhereUniqueInput!): PhoneNumber
   deleteUser(where: UserWhereUniqueInput!): User
@@ -2289,6 +3084,8 @@ type Mutation {
   deleteVenue(where: VenueWhereUniqueInput!): Venue
   deleteProgram(where: ProgramWhereUniqueInput!): Program
   deleteBranch(where: BranchWhereUniqueInput!): Branch
+  deleteAdminRole(where: AdminRoleWhereUniqueInput!): AdminRole
+  deleteAdminCompetence(where: AdminCompetenceWhereUniqueInput!): AdminCompetence
   deleteAddress(where: AddressWhereUniqueInput!): Address
   deletePhoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
@@ -2297,6 +3094,8 @@ type Mutation {
   upsertVenue(where: VenueWhereUniqueInput!, create: VenueCreateInput!, update: VenueUpdateInput!): Venue!
   upsertProgram(where: ProgramWhereUniqueInput!, create: ProgramCreateInput!, update: ProgramUpdateInput!): Program!
   upsertBranch(where: BranchWhereUniqueInput!, create: BranchCreateInput!, update: BranchUpdateInput!): Branch!
+  upsertAdminRole(where: AdminRoleWhereUniqueInput!, create: AdminRoleCreateInput!, update: AdminRoleUpdateInput!): AdminRole!
+  upsertAdminCompetence(where: AdminCompetenceWhereUniqueInput!, create: AdminCompetenceCreateInput!, update: AdminCompetenceUpdateInput!): AdminCompetence!
   upsertAddress(where: AddressWhereUniqueInput!, create: AddressCreateInput!, update: AddressUpdateInput!): Address!
   upsertPhoneNumber(where: PhoneNumberWhereUniqueInput!, create: PhoneNumberCreateInput!, update: PhoneNumberUpdateInput!): PhoneNumber!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -2305,6 +3104,8 @@ type Mutation {
   updateManyVenues(data: VenueUpdateManyMutationInput!, where: VenueWhereInput): BatchPayload!
   updateManyPrograms(data: ProgramUpdateManyMutationInput!, where: ProgramWhereInput): BatchPayload!
   updateManyBranches(data: BranchUpdateManyMutationInput!, where: BranchWhereInput): BatchPayload!
+  updateManyAdminRoles(data: AdminRoleUpdateManyMutationInput!, where: AdminRoleWhereInput): BatchPayload!
+  updateManyAdminCompetences(data: AdminCompetenceUpdateManyMutationInput!, where: AdminCompetenceWhereInput): BatchPayload!
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   updateManyAddresses(data: AddressUpdateManyMutationInput!, where: AddressWhereInput): BatchPayload!
   updateManyPhoneNumbers(data: PhoneNumberUpdateManyMutationInput!, where: PhoneNumberWhereInput): BatchPayload!
@@ -2314,6 +3115,8 @@ type Mutation {
   deleteManyVenues(where: VenueWhereInput): BatchPayload!
   deleteManyPrograms(where: ProgramWhereInput): BatchPayload!
   deleteManyBranches(where: BranchWhereInput): BatchPayload!
+  deleteManyAdminRoles(where: AdminRoleWhereInput): BatchPayload!
+  deleteManyAdminCompetences(where: AdminCompetenceWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyAddresses(where: AddressWhereInput): BatchPayload!
   deleteManyPhoneNumbers(where: PhoneNumberWhereInput): BatchPayload!
@@ -3632,6 +4435,8 @@ type Query {
   venues(where: VenueWhereInput, orderBy: VenueOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Venue]!
   programs(where: ProgramWhereInput, orderBy: ProgramOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Program]!
   branches(where: BranchWhereInput, orderBy: BranchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Branch]!
+  adminRoles(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminRole]!
+  adminCompetences(where: AdminCompetenceWhereInput, orderBy: AdminCompetenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminCompetence]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   addresses(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Address]!
   phoneNumbers(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhoneNumber]!
@@ -3641,6 +4446,8 @@ type Query {
   venue(where: VenueWhereUniqueInput!): Venue
   program(where: ProgramWhereUniqueInput!): Program
   branch(where: BranchWhereUniqueInput!): Branch
+  adminRole(where: AdminRoleWhereUniqueInput!): AdminRole
+  adminCompetence(where: AdminCompetenceWhereUniqueInput!): AdminCompetence
   address(where: AddressWhereUniqueInput!): Address
   phoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -3649,6 +4456,8 @@ type Query {
   venuesConnection(where: VenueWhereInput, orderBy: VenueOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VenueConnection!
   programsConnection(where: ProgramWhereInput, orderBy: ProgramOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProgramConnection!
   branchesConnection(where: BranchWhereInput, orderBy: BranchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BranchConnection!
+  adminRolesConnection(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminRoleConnection!
+  adminCompetencesConnection(where: AdminCompetenceWhereInput, orderBy: AdminCompetenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminCompetenceConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   addressesConnection(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AddressConnection!
   phoneNumbersConnection(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhoneNumberConnection!
@@ -3667,6 +4476,8 @@ type Subscription {
   venue(where: VenueSubscriptionWhereInput): VenueSubscriptionPayload
   program(where: ProgramSubscriptionWhereInput): ProgramSubscriptionPayload
   branch(where: BranchSubscriptionWhereInput): BranchSubscriptionPayload
+  adminRole(where: AdminRoleSubscriptionWhereInput): AdminRoleSubscriptionPayload
+  adminCompetence(where: AdminCompetenceSubscriptionWhereInput): AdminCompetenceSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
   phoneNumber(where: PhoneNumberSubscriptionWhereInput): PhoneNumberSubscriptionPayload
@@ -3690,6 +4501,7 @@ type User implements Node {
   branch: Branch
   department: Branch
   academicYear: Int
+  adminRole: AdminRole
 }
 
 """A connection to a list of items."""
@@ -3717,6 +4529,12 @@ input UserCreateInput {
   events: EventCreateManyWithoutAuthorInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
+  adminRole: AdminRoleCreateOneWithoutAdminsInput
+}
+
+input UserCreateManyWithoutAdminRoleInput {
+  create: [UserCreateWithoutAdminRoleInput!]
+  connect: [UserWhereUniqueInput!]
 }
 
 input UserCreateManyWithoutBranchInput {
@@ -3739,6 +4557,23 @@ input UserCreateOneWithoutNewsesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateWithoutAdminRoleInput {
+  name: String
+  lastname: String
+  email: String!
+  emailVerified: Boolean
+  password: String!
+  group: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  address: AddressCreateOneInput
+  phone: PhoneNumberCreateOneInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
+  branch: BranchCreateOneWithoutStudentsInput
+  department: BranchCreateOneWithoutStaffInput
+}
+
 input UserCreateWithoutBranchInput {
   name: String
   lastname: String
@@ -3753,6 +4588,7 @@ input UserCreateWithoutBranchInput {
   newses: NewsCreateManyWithoutAuthorInput
   events: EventCreateManyWithoutAuthorInput
   department: BranchCreateOneWithoutStaffInput
+  adminRole: AdminRoleCreateOneWithoutAdminsInput
 }
 
 input UserCreateWithoutDepartmentInput {
@@ -3769,6 +4605,7 @@ input UserCreateWithoutDepartmentInput {
   newses: NewsCreateManyWithoutAuthorInput
   events: EventCreateManyWithoutAuthorInput
   branch: BranchCreateOneWithoutStudentsInput
+  adminRole: AdminRoleCreateOneWithoutAdminsInput
 }
 
 input UserCreateWithoutEventsInput {
@@ -3785,6 +4622,7 @@ input UserCreateWithoutEventsInput {
   newses: NewsCreateManyWithoutAuthorInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
+  adminRole: AdminRoleCreateOneWithoutAdminsInput
 }
 
 input UserCreateWithoutNewsesInput {
@@ -3801,6 +4639,7 @@ input UserCreateWithoutNewsesInput {
   events: EventCreateManyWithoutAuthorInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
+  adminRole: AdminRoleCreateOneWithoutAdminsInput
 }
 
 """An edge in a connection."""
@@ -4206,6 +5045,7 @@ input UserUpdateInput {
   events: EventUpdateManyWithoutAuthorInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
+  adminRole: AdminRoleUpdateOneWithoutAdminsInput
 }
 
 input UserUpdateManyDataInput {
@@ -4228,6 +5068,17 @@ input UserUpdateManyMutationInput {
   group: UserGroup
   isAdmin: Boolean
   academicYear: Int
+}
+
+input UserUpdateManyWithoutAdminRoleInput {
+  create: [UserCreateWithoutAdminRoleInput!]
+  connect: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutAdminRoleInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutAdminRoleInput!]
 }
 
 input UserUpdateManyWithoutBranchInput {
@@ -4271,6 +5122,23 @@ input UserUpdateOneRequiredWithoutNewsesInput {
   upsert: UserUpsertWithoutNewsesInput
 }
 
+input UserUpdateWithoutAdminRoleDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  group: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  address: AddressUpdateOneInput
+  phone: PhoneNumberUpdateOneInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
+  branch: BranchUpdateOneWithoutStudentsInput
+  department: BranchUpdateOneWithoutStaffInput
+}
+
 input UserUpdateWithoutBranchDataInput {
   name: String
   lastname: String
@@ -4285,6 +5153,7 @@ input UserUpdateWithoutBranchDataInput {
   newses: NewsUpdateManyWithoutAuthorInput
   events: EventUpdateManyWithoutAuthorInput
   department: BranchUpdateOneWithoutStaffInput
+  adminRole: AdminRoleUpdateOneWithoutAdminsInput
 }
 
 input UserUpdateWithoutDepartmentDataInput {
@@ -4301,6 +5170,7 @@ input UserUpdateWithoutDepartmentDataInput {
   newses: NewsUpdateManyWithoutAuthorInput
   events: EventUpdateManyWithoutAuthorInput
   branch: BranchUpdateOneWithoutStudentsInput
+  adminRole: AdminRoleUpdateOneWithoutAdminsInput
 }
 
 input UserUpdateWithoutEventsDataInput {
@@ -4317,6 +5187,7 @@ input UserUpdateWithoutEventsDataInput {
   newses: NewsUpdateManyWithoutAuthorInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
+  adminRole: AdminRoleUpdateOneWithoutAdminsInput
 }
 
 input UserUpdateWithoutNewsesDataInput {
@@ -4333,6 +5204,12 @@ input UserUpdateWithoutNewsesDataInput {
   events: EventUpdateManyWithoutAuthorInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
+  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+}
+
+input UserUpdateWithWhereUniqueWithoutAdminRoleInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutAdminRoleDataInput!
 }
 
 input UserUpdateWithWhereUniqueWithoutBranchInput {
@@ -4353,6 +5230,12 @@ input UserUpsertWithoutEventsInput {
 input UserUpsertWithoutNewsesInput {
   update: UserUpdateWithoutNewsesDataInput!
   create: UserCreateWithoutNewsesInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutAdminRoleInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutAdminRoleDataInput!
+  create: UserCreateWithoutAdminRoleInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutBranchInput {
@@ -4670,6 +5553,7 @@ input UserWhereInput {
   events_none: EventWhereInput
   branch: BranchWhereInput
   department: BranchWhereInput
+  adminRole: AdminRoleWhereInput
 }
 
 input UserWhereUniqueInput {

@@ -1,5 +1,6 @@
 import moment from 'moment'
-import {getSessionUserId} from '../utils/getUserId'
+import {getSessionUserId, getUserGroup } from '../utils/getUserId'
+import { storeUpload, processUpload } from '../utils/upload'
 
 
 // ---------------------------------------------------
@@ -25,7 +26,7 @@ export const typeDef = `
         title: String!
         subtitle: String
         body: String!
-        imageURL: String
+        image: Upload
         date: DateTime!
         target: UserGroup
         published: Boolean
@@ -59,35 +60,44 @@ export const typeDef = `
 
 export const Resolvers = {
 
-    Event: {},
+    Event: {
+      imageURL: (parent, _, {url}) => parent.imageURL ? `${url}/images/${parent.imageURL}` : `${url}/images/default.png`
+    },
     Query: {
-        events(parent, args, { prisma }, info) {
-            return prisma.query.events(args, info)
+        async events(parent, args, { prisma, session }, info) {
+          const target = await getUserGroup(prisma, session)
+          const params = {where: { OR: [{
+                                          title_contains: args.query},{
+                                          subtitle_contains: args.query},{
+                                          body_contains: args.query }] } }
+          if (target) params.where.AND = [{target_in: target}]
+          return prisma.query.events(params, info)
         }
     },
     Mutation: {
-        createEvent(parent, args, { prisma, request }, info) {
+        async createEvent(parent, { data }, { prisma, session }, info) {
+            const imageURL = await processUpload(data.image)
             return prisma.mutation.createEvent({
                 data: {
-                    title: args.data.title,
-                    subtitle: args.data.subtitle,
-                    imageURL: args.data.imageURL,
-                    body: args.data.body,
-                    published: args.data.published || false,
-                    date: args.data.date,
-                    target: args.data.target || "PUBLIC",
-                    deleteUpon: args.data.deleteUpon || false,
-                    venue: { connect: { id: args.data.venue } },
-                    author: { connect: { id : getSessionUserId(request) } }
+                    title: data.title,
+                    subtitle: data.subtitle,
+                    imageURL,
+                    body: data.body,
+                    published: data.published || false,
+                    date: data.date,
+                    target: data.target || "PUBLIC",
+                    deleteUpon: data.deleteUpon || false,
+                    venue: { connect: { id: data.venue } },
+                    author: { connect: { id : getSessionUserId(session) } }
                 }
             }, info)
         },
-        async deleteEvent(parent, args, { prisma, request }, info) {
-            if (!await prisma.exists.Event({ id: args.id, author: {id: getSessionUserId(request)} }) ) throw new Error('Event not found in database...')
+        async deleteEvent(parent, args, { prisma, session }, info) {
+            if (!await prisma.exists.Event({ id: args.id, author: {id: getSessionUserId(session)} }) ) throw new Error('Event not found in database...')
             return prisma.mutation.deleteEvent({ where: { id: args.id }}, info)
         },
-        async updateEvent(parent, args, { prisma, request }, info) {
-            if ( !await prisma.exists.Event({ id: args.id, author: {id: getSessionUserId(request)} }) ) throw new Error('Event not found in database...')
+        async updateEvent(parent, args, { prisma, session }, info) {
+            if ( !await prisma.exists.Event({ id: args.id, author: {id: getSessionUserId(session)} }) ) throw new Error('Event not found in database...')
             return prisma.mutation.updateEvent({ where: { id: args.id }, data: args.data }, info)
         }
     }

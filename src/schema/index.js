@@ -8,6 +8,8 @@ import { typeDef as venue, Resolvers as venueResolvers } from './venue'
 
 const commonTypeDef = `
     scalar DateTime
+    scalar Upload
+
     type Query {
         _empty: String
     }
@@ -40,9 +42,9 @@ const commonTypeDef = `
 export const typeDefs = [ commonTypeDef, user, news, event, venue ]
 const resolversObject = {}
 export const resolvers = _.merge(
-    resolversObject, 
-    userResolvers, 
-    newsResolvers, 
+    resolversObject,
+    userResolvers,
+    newsResolvers,
     eventResolvers,
     venueResolvers)
 export const fragmentReplacements = extractFragmentReplacements(resolvers)

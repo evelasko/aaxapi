@@ -6,7 +6,7 @@ import Mailgun from 'mailgun-js'
 const options = {
   port: process.env.PORT || 4000,
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost'],
+    origin: ['http://localhost:3000', 'http://localhost', 'http://localhost:4000'],
     credentials: true,
     optionsSuccessStatus: 200
   } // some legacy browsers (IE11, various SmartTVs) choke on 204

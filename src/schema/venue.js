@@ -12,12 +12,12 @@ export const typeDef = `
         placeID: String
     }
     input VenueInput {
-        name: String
+        name: String!
         address: String
         placeID: String
     }
     extend type Query {
-        venues(query: String): [Venue!]!
+        venues(query: String): [Venue]!
     }
     extend type Mutation {
         createVenue(data: VenueInput! ): Venue!
@@ -34,7 +34,7 @@ export const Resolvers = {
     Venue: {},
     Query: {
         venues(parent, args, { prisma }, info) {
-            return prisma.query.venues(args, info)
+            return prisma.query.venues({where: {name_contains: args.query} }, info)
         }
     },
     Mutation: {
@@ -61,7 +61,7 @@ export const Resolvers = {
             const oldPlace = await prisma.query.Event({id: args.id}, '{ placeID }')
             if ( args.data.placeID && args.data.placeID != oldPlace.placeID ) {
                 const place = await getPlaceDetails(args.data.placeID)
-                args.data.address = place.formatted_address                
+                args.data.address = place.formatted_address
             }
             return prisma.mutation.updateVenue({ where: { id: args.id }, data: args.data }, info)
         }
