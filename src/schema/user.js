@@ -115,10 +115,11 @@ export const Resolvers = {
             const link = `${process.env.FRONT_END_HOST}/confirm-email/${token}`
             console.log('confirmation link: ', link)
             const res = await sendEmail(args.data.email, 'Confirm Email', `Please follow or copy this link in your browser: ${link} to confirm your email`, `<a href="${link}">click here to confirm your email</a>`)
-            console.log(res)
+            console.log('RESPONSE FROM MAILGUN: ', res)
             return {user, token}
         },
         async confirmEmail(parent, args, { prisma }, info) {
+            console.log('CONFIRMING EMAIL ADDRESS WITH TOKEN: ', args.key)
             const userId = getUserId({request: {headers: {authorization: `Bearer ${args.key}`}}}, false)
             if (!userId) return {error: 'invalid token'}
             const res = await prisma.mutation.updateUser({ where: { id: userId }, data: {emailVerified: true} }, info)
