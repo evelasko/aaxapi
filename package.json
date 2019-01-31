@@ -18,7 +18,7 @@
     "globalSetup": "./tests/jest/globalSetup.js",
     "globalTeardown": "./tests/jest/globaTeardown.js"
   },
-  "author": "",
+  "author": "Enrique Velasco",
   "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
