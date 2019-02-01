@@ -1,7 +1,7 @@
 import { GraphQLServer, PubSub } from 'graphql-yoga'
 import express from 'express'
 import session from 'express-session'
-const MemStore = process.env.STAGE==='dev' ? require('memorystore')(session) : require('connect-redis')(session)
+const RedisStore = require('connect-redis')(session)
 
 import { typeDefs, resolvers, fragmentReplacements } from './schema'
 import prisma from './prisma'
@@ -17,7 +17,7 @@ const server = new GraphQLServer({
     resolvers,
     // middlewares: middlewareShield,
     context:({request, response}) => ({
-        store: process.env.STAGE==='dev' ? new MemStore({ checkPeriod: 86400000 }) : new MemStore({ url: process.env.REDIS_URL }) ,
+        store: new RedisStore({ url: process.env.REDIS_URL}),
         pubsub,
         prisma,
         request,
