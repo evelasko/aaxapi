@@ -1,7 +1,10 @@
 import { GraphQLServer, PubSub } from 'graphql-yoga'
 import express from 'express'
 import session from 'express-session'
-const RedisStore = require('connect-redis')(session)
+import connectRedis from 'connect-redis'
+// const RedisStore = require('connect-redis')(session)
+import Redis from 'ioredis'
+import { RedisPubSub } from 'graphql-redis-subscriptions'
 
 import { typeDefs, resolvers, fragmentReplacements } from './schema'
 import prisma from './prisma'
@@ -10,6 +13,8 @@ import { middlewareShield } from './middleware/shield'
 
 initScheduleJob()
 
+const redis = new Redis(process.env.REDIS_URL)
+
 const pubsub = new PubSub()
 
 const server = new GraphQLServer({
@@ -17,7 +22,6 @@ const server = new GraphQLServer({
     resolvers,
     // middlewares: middlewareShield,
     context:({request, response}) => ({
-        store: new RedisStore({ url: process.env.REDIS_URL}),
         pubsub,
         prisma,
         request,
@@ -28,8 +32,11 @@ const server = new GraphQLServer({
     fragmentReplacements
 })
 
+const RedisStore = connectRedis(session)
+const redisSessionPrefix = "sess:"
 server.express.use(session(
   {
+    store: new RedisStore({ client: redis, prefix: redisSessionPrefix }),
     name: "qid",
     secret: process.env.SESSION_SECRET,
     resave: false,
