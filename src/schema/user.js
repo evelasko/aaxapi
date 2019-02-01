@@ -4,6 +4,7 @@ import { getUserId, getSessionUserId } from '../utils/getUserId'
 import { generateToken, generateResetToken } from '../utils/generateToken'
 import hashPassword from '../utils/hashPassword'
 import { sendEmail } from '../utils/sendEmail'
+import { userSessionIdPrefix } from '../constants.js'
 
 // ---------------------------------------------------
 //      TYPE DEFS
@@ -139,7 +140,7 @@ export const Resolvers = {
             if (typeof args.newPassword === 'string') args.newPassword = await hashPassword(args.newPassword)
             return await prisma.mutation.updateUser({ where: { id: userId.id }, data: { password: args.newPassword } }, '{id}')
         },
-        async loginUser(parent, args, { prisma, session }, info) {
+        async loginUser(parent, args, { prisma, session, request, redis }, info) {
             const user = await prisma.query.user({ where: { email: args.data.email } })
             if ( !user  ) return {error: `user not found`} // throw new Error(`Error: user with email: ${args.data.email} was not found`)
             const match = await bcrypt.compare(args.data.password, user.password)
@@ -151,9 +152,11 @@ export const Resolvers = {
               return {error: `please verify your email`}
             }
             console.log('login user...')
+            // login sucessful
             session.userId = user.id
+            if (request.sessionID) { await redis.lpush(`${userSessionIdPrefix}${user.id}`, req.sessionID) }
             console.log('>>>> ', session)
-            return {token: generateToken(user.id)}
+            return {token: 'Login Succesful'}
         },
         async deleteUser(parent, args, { prisma, session }, info) {
           return prisma.mutation.deleteUser({ where: { id: getSessionUserId(session) } }, info)

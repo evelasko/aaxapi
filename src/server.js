@@ -10,6 +10,7 @@ import { typeDefs, resolvers, fragmentReplacements } from './schema'
 import prisma from './prisma'
 import initScheduleJob from './utils/scheduler'
 import { middlewareShield } from './middleware/shield'
+import { redisSessionPrefix } from './constants.js'
 
 initScheduleJob()
 
@@ -22,6 +23,7 @@ const server = new GraphQLServer({
     resolvers,
     // middlewares: middlewareShield,
     context:({request, response}) => ({
+        redis,
         pubsub,
         prisma,
         request,
@@ -33,7 +35,6 @@ const server = new GraphQLServer({
 })
 
 const RedisStore = connectRedis(session)
-const redisSessionPrefix = "sess:"
 server.express.use(session(
   {
     store: new RedisStore({ client: redis, prefix: redisSessionPrefix }),
