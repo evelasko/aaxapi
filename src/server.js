@@ -34,6 +34,7 @@ const server = new GraphQLServer({
     fragmentReplacements
 })
 
+server.express.enable('trust proxy')
 const RedisStore = connectRedis(session)
 server.express.use(session(
   {
