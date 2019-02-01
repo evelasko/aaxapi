@@ -1,16 +1,7 @@
 import { GraphQLServer, PubSub } from 'graphql-yoga'
 import express from 'express'
 import session from 'express-session'
-if (process.env.REDIS_URL) {
-  console.log('Init Redis for Session Storage')
-  const RedisStore = require('connect-redis')(session)
-  const store = new RedisStore({ url: process.env.REDIS_URL })
-}
-else {
-  console.log('Init MemoryStore for Session Storage')
-  const MemoryStore = require('memorystore')(session)
-  const store = new MemoryStore({ checkPeriod: 86400000 }) // prune expired entries every 24h
-}
+const MemStore = process.env.STAGE==='dev' ? require('memorystore')(session) : require('connect-redis')(session)
 
 import { typeDefs, resolvers, fragmentReplacements } from './schema'
 import prisma from './prisma'
@@ -26,7 +17,7 @@ const server = new GraphQLServer({
     resolvers,
     // middlewares: middlewareShield,
     context:({request, response}) => ({
-        store,
+        store: process.env.STAGE==='dev' ? new MemStore({ checkPeriod: 86400000 }) : new MemStore({ url: process.env.REDIS_URL }) ,
         pubsub,
         prisma,
         request,
