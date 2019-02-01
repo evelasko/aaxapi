@@ -15,6 +15,8 @@ export const getUserId = (request, requireAuth = true) => {
 }
 
 export const getSessionUserId = session => {
+  console.log('SESSION >>>>>>>>> ', session)
+  console.log('COOKIE', session.cookie)
   if (session.userId) return session.userId
   throw new Error('Authentication required!')
 }
