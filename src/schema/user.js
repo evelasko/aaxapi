@@ -154,7 +154,7 @@ export const Resolvers = {
             console.log('login user...')
             // login sucessful
             session.userId = user.id
-            if (request.sessionID) { await redis.lpush(`${userSessionIdPrefix}${user.id}`, req.sessionID) }
+            if (request.sessionID) { await redis.lpush(`${userSessionIdPrefix}${user.id}`, request.sessionID) }
             console.log('>>>> ', session)
             return {token: 'Login Succesful'}
         },
