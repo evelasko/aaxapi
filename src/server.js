@@ -15,9 +15,7 @@ import { redisSessionPrefix } from './constants.js'
 initScheduleJob()
 
 const redis = new Redis(process.env.REDIS_URL)
-
 const pubsub = new PubSub()
-
 const server = new GraphQLServer({
     typeDefs,
     resolvers,
@@ -51,5 +49,6 @@ server.express.use(session(
   })
 )
 server.express.use('/images', express.static('images'))
+server.express.use('/resources', express.static('resources'))
 
 export { server as default }

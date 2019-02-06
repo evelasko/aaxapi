@@ -3,7 +3,7 @@ import isEmail from 'validator/lib/isEmail'
 import { getUserId, getSessionUserId } from '../utils/getUserId'
 import { generateToken, generateResetToken } from '../utils/generateToken'
 import hashPassword from '../utils/hashPassword'
-import { sendEmail } from '../utils/sendEmail'
+import { sendEmail } from '../utils/emailService.js'
 import { userSessionIdPrefix } from '../constants.js'
 
 // ---------------------------------------------------
@@ -19,18 +19,18 @@ type User {
     emailVerified: Boolean
     password: String!
     group: UserGroup!
+    groupRequest: UserGroup
     address: Address
     phone: PhoneNumber
     isAdmin: Boolean
     newses: [News!]!
     events: [Event!]!
 }
-type AuthPayload {
-    token: String
-    error: String
-}
-type RegisterPayload {
+type UserPayload {
   user: User
+  error: String
+}
+type AuthPayload {
   token: String
   error: String
 }
@@ -53,17 +53,18 @@ input UpdateUserInput {
     isAdmin: Boolean
 }
 extend type Query {
-    users(query: String, first: Int, skip: Int): [User!]!
-    me: User!
+    users(query: String): [User!]!
+    me: UserPayload
 }
 extend type Mutation {
-    signUpUser(data: CreateUserInput!): RegisterPayload!
+    signUpUser(data: CreateUserInput!): AuthPayload!
     loginUser(data: LoginUserInput!): AuthPayload!
-    deleteUser: User!
+    deleteUser: UserPayload!
     logoutUser: AuthPayload!
-    updateUser(data: UpdateUserInput! ): User!
+    updateUser(data: UpdateUserInput! ): UserPayload!
+    updateUserByAdmin(id: ID!, data: UpdateUserInput! ): AuthPayload!
     sendForgotPasswordEmail(email: String!): AuthPayload!
-    changePassword(newPassword: String!): AuthPayload!
+    changePassword(key: String, newPassword: String!): AuthPayload!
     confirmEmail(key: String!): AuthPayload!
 }
 `
@@ -77,7 +78,7 @@ export const Resolvers = {
         email: {
             fragment: 'fragment userId on User { id }',
             resolve(parent, args, { session }, info) {
-                const userId = getSessionUserId(session, false)
+                const userId = getSessionUserId(session)
                 if (userId && userId === parent.id) {
                     return parent.email
                 } else { return null }
@@ -85,97 +86,125 @@ export const Resolvers = {
         }
     },
     Query: {
-        users(parent, args, { prisma }, info) {
-            const opArgs = {
-                first: args.first,
-                skip: args.skip,
-                after: args.after,
-                orderBy: args.orderBy
-            }
-            if (args.query) {
-                opArgs.where = {
-                    OR: [
-                        { name_contains: args.query }
-                    ]
-                }
-            }
-            return prisma.query.users(opArgs, info)
+        users(parent, { query }, { prisma }, info) {
+          console.log('users query requested')
+            const q = query ?
+              {where: { OR: [ { name_contains: query }, {lastname_contains: query}, {email_contains: query} ] }}
+              :
+              null
+            return prisma.query.users(q && q, info)
         },
-        me(parent, args, { prisma, session }, info) {
-          console.log('me...')
-            return prisma.query.user({ where: { id: getSessionUserId(session) } }, info)
+        async me(parent, args, { prisma, session }, info) {
+            const id = getSessionUserId(session)
+            if (!id) return {error: 'Query: Me | Error: No user authenticated...'}
+            const user = await prisma.query.user({ where: { id } }, '{  id name lastname email group isAdmin }')
+            return { user }
         }
     },
     Mutation: {
         async signUpUser(parent, args, { prisma }, info) {
-            if (!isEmail(args.data.email)) return { error: 'email not valid' } // throw new Error('The email address is not valid')
-            if (await prisma.exists.User({email: args.data.email})) return { error: 'email already registered' }
+          try {
+            if (!isEmail(args.data.email)) return { error: '@signUpUser: email not valid' } // throw new Error('The email address is not valid')
+            if (await prisma.exists.User({email: args.data.email})) return { error: '@signUpUser: email already registered' }
             const password = await hashPassword(args.data.password)
-            const user = await prisma.mutation.createUser({ data: { ...args.data, password } })
-            const token = generateResetToken(user.id)
-            const link = `${process.env.FRONT_END_HOST}/confirm-email/${token}`
-            console.log('confirmation link: ', link)
-            const res = await sendEmail(args.data.email, 'Confirm Email', `Please follow or copy this link in your browser: ${link} to confirm your email`, `<a href="${link}">click here to confirm your email</a>`)
-            console.log('RESPONSE FROM MAILGUN: ', res)
-            return {user, token}
+            if (args.data.groupRequest != 'PUBLIC') {
+              await sendEmail('enrique.prez.velasco@gmail.com', 'aaXadmin: User Group Request', `User ${args.data.name} ${args.data.lastname} has requested to join ${args.data.groupRequest} group. Please review this case to confirm the join.`)
+            }
+            const id = await prisma.mutation.createUser({ data: { ...args.data, password } }, '{ id }')
+            const token = generateResetToken(id)
+            const link = `${process.env.FRONT_END_HOST}confirm-email/${token}`
+            const res = await sendEmail(
+                args.data.email,
+                'Tu nueva cuenta en alicialonso.org',
+                `Por favor usa el siguiente vínculo: ${link} para confirmar tu email`,
+                `templates/emailConfirmation.hbs`,
+                {
+                  confirmation_link: link
+                }
+            )
+            return { token }
+          }
+          catch(error) {
+            return { error: `@signUpUser: ${error.message}`}
+          }
         },
         async confirmEmail(parent, args, { prisma }, info) {
-            console.log('CONFIRMING EMAIL ADDRESS WITH TOKEN: ', args.key)
-            const userId = getUserId({request: {headers: {authorization: `Bearer ${args.key}`}}}, false)
-            if (!userId) return {error: 'invalid token'}
-            const res = await prisma.mutation.updateUser({ where: { id: userId }, data: {emailVerified: true} }, info)
-            return {token: 'email verified'}
+            const id = getUserId(args.key)
+            if (id.error) return {error: `@confirmEmail: ${id.error}`}
+            const res = await prisma.mutation.updateUser({ where: { id }, data: {emailVerified: true} }, '{ id emailVerified}')
+            if ( res.id === id && res.emailVerified ) { return { token: id }}
+            return { error: `@confirmEmail: oops... something went wrong while confirming your email` }
         },
         async sendForgotPasswordEmail(parent, args, { prisma }, info) {
-            if (! await prisma.exists.User({email: args.email})) return {error: 'email not found'}
+            if (! await prisma.exists.User({email: args.email})) return {error: 'Mutation: sendForgotPasswordEmail | Error: email not found'}
             const token = generateResetToken(await prisma.query.user({ where: { email: args.email } }, '{ id }'))
             const link = `${process.env.FRONT_END_HOST}/change-password/${token}`
-            const res = await sendEmail(args.email, 'Reset Password', `copy this link in your browser: ${link}`, `<a href="${link}">click here to reset your password</a>`)
-            console.log('response from mailgun: ', res)
+            const res = await sendEmail(args.email, 'Reset Password', `copy this link in your browser: ${link}`, `You requested to reset your password, <a href="${link}">click here to set a new password</a>`)
             return { token }
         },
         async changePassword(parent, args, { prisma, session }, info) {
-            const userId = getSessionUserId(session)
-            if (!userId) return {error: 'invalid token'}
+            const id = args.key ? getUserId(args.key) : getSessionUserId(session)
+            if (!id) return {error: '@changePassword: Invalid token or user not logged in'}
             if (typeof args.newPassword === 'string') args.newPassword = await hashPassword(args.newPassword)
-            return await prisma.mutation.updateUser({ where: { id: userId.id }, data: { password: args.newPassword } }, '{id}')
+            try {
+              const res = await prisma.mutation.updateUser({ where: { id }, data: { password: args.newPassword } }, '{ id }')
+              return { token: res.id }
+            } catch(error) { return {error: `@changePassword: ${error.message}`} }
+
         },
         async loginUser(parent, args, { prisma, session, request, redis }, info) {
             const user = await prisma.query.user({ where: { email: args.data.email } })
-            if ( !user  ) return {error: `user not found`} // throw new Error(`Error: user with email: ${args.data.email} was not found`)
+            if ( !user  ) return {error: `@loginUser: User not found`}
             const match = await bcrypt.compare(args.data.password, user.password)
-            if ( !match ) return {error: `invalid login`} // throw new Error('incorrect password, try again')
+            if ( !match ) return {error: `@loginUser: Invalid password`} // throw new Error('incorrect password, try again')
             if (!user.emailVerified) {
               const token = generateToken(user.id)
               const link = `${process.env.FRONT_END_HOST}/confirm-email/${token}`
               const res = await sendEmail(args.email, 'Confirm Email', `Please follow or copy this link in your browser: ${link} to confirm your email`, `<a href="${link}">click here to confirm your email</a>`)
-              return {error: `please verify your email`}
             }
-            console.log('login user...')
-            // login sucessful
             session.userId = user.id
             if (request.sessionID) { await redis.lpush(`${userSessionIdPrefix}${user.id}`, request.sessionID) }
-            console.log('>>>> ', session)
-            return {token: 'Login Succesful'}
+            console.log('request session: ', request.session)
+            console.log('end login mutation')
+            return { token: user.id }
         },
         async deleteUser(parent, args, { prisma, session }, info) {
-          return prisma.mutation.deleteUser({ where: { id: getSessionUserId(session) } }, info)
+          const id = getSessionUserId(session)
+          try {
+            return await prisma.mutation.deleteUser({ where: { id } }, info)
+          } catch(error) { return {error: `@deleteUser: ${error.message}`}}
         },
         async logoutUser(parent, args, {session, response}, info) {
-          const userId = getSessionUserId(session)
-          if (userId) {
-            console.log('USER ID:::', userId)
+          const id = getSessionUserId(session)
+          if (id) {
             await session.destroy(err => {
-              if (err) { console.log('LOGOUTUSER MUTATION / SESSION DESTROY: ', err) }
+              if (err) { console.log('ERROR @LOGOUTUSER MUTATION / SESSION DESTROY: ', err) }
             })
             response.clearCookie("qid")
-            return { token: 'true' }
+            return { token: id }
           }
-          return { error: 'no user authenticated...'}
+          return { error: '@logoutUser: no user authenticated...'}
         },
         async updateUser(parent, args, { prisma, session }, info) {
-            if (typeof args.data.password === 'string') args.data.password = await hashPassword(args.data.password)
-            return prisma.mutation.updateUser({ where: { id: getSessionUserId(session) }, data: args.data }, info)
+            const id = getSessionUserId(session)
+            try {
+            if (id) {
+              if (typeof args.data.password === 'string') args.data.password = await hashPassword(args.data.password)
+              return prisma.mutation.updateUser({ where: { id }, data: args.data }, info)
+            }} catch(error) { return {error: `@updateUser: ${error.message}`}}
+            return {error: `@updateUser: unknown error`}
+        },
+        async updateUserByAdmin(parent, { id, data: { isAdmin, group }, }, { prisma, session }, info) {
+            const adminId = getSessionUserId(session)
+            if (!adminId) { return {error: 'Authentication required'} }
+            if (! await prisma.query.user({where: {id: adminId}}, '{ isAdmin }')) { return {error: 'Needs admin permission for this task'}}
+            try {
+              if (isAdmin === true) { group = 'STAFF' }
+              const response = await prisma.mutation.updateUser({ where: { id }, data: { group, isAdmin } }, '{ id }')
+              if (response.id === id) { return {token: response.id} }
+            } catch(error) { return {error: `@updateUser: ${error.message}`} }
+            return {error: `@updateUser: unknown error`}
         }
+
     }
 }

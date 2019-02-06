@@ -1,4 +1,3 @@
-
 const mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
 
 /*
@@ -22,6 +21,10 @@ export const sendEmail = async (to, subject, text, html) => {
   })
   return res
 }
+
+
+
+
 
 /*
 const app = express();

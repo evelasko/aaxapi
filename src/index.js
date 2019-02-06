@@ -1,7 +1,8 @@
 import '@babel/polyfill/noConflict'
 import server from './server'
 import express from 'express'
-import Mailgun from 'mailgun-js'
+
+import {sendEmail} from './utils/emailService.js'
 
 const options = {
   port: process.env.PORT || 4000,
@@ -12,4 +13,4 @@ const options = {
   } // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
-server.start(options, () => { console.log('Server up and running!') })
+server.start(options, () => { console.log('Server up and running at: ', process.env.FRONT_END_HOST) })

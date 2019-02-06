@@ -1,35 +1,27 @@
 import jwt from 'jsonwebtoken'
 
-export const getUserId = (request, requireAuth = true) => {
-
-    const header = request.request ? request.request.headers.authorization : request.connection.context.Authorization
-
-    if (header) {
-        const decoded = jwt.verify( header.replace('Bearer ', '') , process.env.JWT_SECRET)
-        return decoded.userId
-    }
-    if (requireAuth) {
-        throw new Error('Athentication required!')
-    }
-    return null
+export const getUserId = (key) => {
+  try {
+    const { id } = jwt.verify(key, process.env.JWT_SECRET)
+    return id
+  } catch(error) { return {error: error.message} }
 }
 
 export const getSessionUserId = session => {
-  console.log('SESSION >>>>>>>>> ', session)
-  console.log('COOKIE', session.cookie)
   if (session.userId) return session.userId
-  throw new Error('Authentication required!')
+  return null
 }
 
 export const getUserGroup = async (prisma, session) => {
-  const userGroup = []
+  const id = getSessionUserId(session)
+  if (!id) return ['PUBLIC']
   try {
-    const usr = await prisma.query.user({where: {id: getSessionUserId(session)}}, '{group isAdmin}')
+    const usr = await prisma.query.user({where: { id }}, '{group isAdmin}')
     if (usr && !usr.isAdmin) { return userGroup.push('PUBLIC', usr.group) }
     else if (usr && usr.isAdmin) { return null }
   }
   catch(error) {
-    console.log('Error from query getUserGroup!: ', error)
+    return ['PUBLIC']
   }
   return ['PUBLIC']
 }

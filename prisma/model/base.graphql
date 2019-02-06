@@ -8,6 +8,7 @@ type User {
   updatedAt: DateTime!
   createdAt: DateTime!
   group: UserGroup! @default(value: "PUBLIC")
+  groupRequest: UserGroup @default(value: "PUBLIC")
   address: Address
   phone: PhoneNumber
   isAdmin: Boolean! @default(value: "false")
