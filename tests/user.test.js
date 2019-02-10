@@ -8,23 +8,23 @@ const client = new ApolloBoost({ uri: 'http://localhost:4000' })
 
 beforeEach(async () => {
     await prisma.mutation.deleteManyUsers()
-    await prisma.mutation.signUpUser({ data: {
-        name: "Jane", email: "j@email.com", password: bcrypt.hashSync('contra12345')
-    }})
+    await prisma.mutation.createUser({ data: {
+        name: "Jane", email: "j@email.com", password: bcrypt.hashSync('1234567890')
+    }}, '{ id }')
 })
 
 
 test('Should sign a user up', async () => {
     const createUser = gql`
-        mutation {
-            signUpUser( data: { 
-                name: "Ernesto",
-                email: "ernesto@example.com",
-                password: "contra12345"
-                } ) { token, user { id } }
+        mutation SignUpUser ($email: String!, $password: String!) {
+            signUpUser( data: { name: "Ernesto", email: $email, password: $password } )
+            { token error }
         }
     `
-    const response = await client.mutate({ mutation: createUser })
-    const exists = await prisma.exists.User({ id: response.data.signUpUser.user.id })
+    const response = await client.mutate({ mutation: createUser, variables: {
+      email: 'ernesto@example.com',
+      password: bcrypt.hashSync('1234567890'),
+    }})
+    const exists = await prisma.exists.User({ id: response.data.signUpUser.token })
     expect(exists).toBe(true)
 })

@@ -16,13 +16,18 @@ export const typeDef = `
         address: String
         placeID: String
     }
+    input UpdateVenueInput {
+      name: String
+      address: String
+      placeID: String
+    }
     extend type Query {
         venues(query: String): [Venue]!
     }
     extend type Mutation {
         createVenue(data: VenueInput! ): Venue!
         deleteVenue(id: ID!): Venue!
-        updateVenue(id: ID!, data: VenueInput!): Venue!
+        updateVenue(id: ID!, data: UpdateVenueInput!): AuthPayload!
     }
 `
 
@@ -39,11 +44,6 @@ export const Resolvers = {
     },
     Mutation: {
         async createVenue(parent, args, { prisma, request }, info) {
-            if (!args.data.address && !args.data.placeID) throw new Error('Please provide either address or placeID')
-            if (args.data.placeID) {
-                const place = await getPlaceDetails(args.data.placeID)
-                args.data.address = place.formatted_address
-            }
             return prisma.mutation.createVenue({
                 data: {
                     name: args.data.name,
@@ -56,14 +56,12 @@ export const Resolvers = {
             if (!await prisma.exists.Venue({ id: args.id }) ) throw new Error('Venue not found in database...')
             return prisma.mutation.deleteVenue({ where: { id: args.id }}, info)
         },
-        async updateVenue(parent, args, { prisma, request }, info) {
-            if ( !await prisma.exists.Venue({ id: args.id }) ) throw new Error('Venue not found in database...')
-            const oldPlace = await prisma.query.Event({id: args.id}, '{ placeID }')
-            if ( args.data.placeID && args.data.placeID != oldPlace.placeID ) {
-                const place = await getPlaceDetails(args.data.placeID)
-                args.data.address = place.formatted_address
-            }
-            return prisma.mutation.updateVenue({ where: { id: args.id }, data: args.data }, info)
+        async updateVenue(parent, {id, data}, { prisma, request }, info) {
+            if ( !await prisma.exists.Venue({ id }) ) throw new Error('Venue not found in database...')
+            try {
+              const token = prisma.mutation.updateVenue({ where: { id }, data }, '{id}')
+              return {token: token.id}
+            } catch(error) { return {error: error.message} }
         }
     }
 }

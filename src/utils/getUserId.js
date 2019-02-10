@@ -14,11 +14,13 @@ export const getSessionUserId = session => {
 
 export const getUserGroup = async (prisma, session) => {
   const id = getSessionUserId(session)
+  console.log('ID: ', id || 'none')
   if (!id) return ['PUBLIC']
   try {
     const usr = await prisma.query.user({where: { id }}, '{group isAdmin}')
-    if (usr && !usr.isAdmin) { return userGroup.push('PUBLIC', usr.group) }
-    else if (usr && usr.isAdmin) { return null }
+    if (usr.isAdmin) { return null }
+    if (usr.group != 'PUBLIC') { return ['PUBLIC', usr.group] }
+    // else if (usr && usr.isAdmin) { return null }
   }
   catch(error) {
     return ['PUBLIC']

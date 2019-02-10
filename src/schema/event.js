@@ -1,6 +1,8 @@
 import moment from 'moment'
+import * as _ from 'lodash'
 import {getSessionUserId, getUserGroup } from '../utils/getUserId'
-import { storeUpload, processUpload } from '../utils/upload'
+import { storeUpload, processUpload, deleteImage } from '../utils/upload'
+import { isBeforeNow, aWeekFromNow } from '../utils/time'
 
 
 // ---------------------------------------------------
@@ -37,6 +39,7 @@ export const typeDef = `
         title: String
         subtitle: String
         body: String
+        image: Upload
         imageURL: String
         date: DateTime
         target: UserGroup
@@ -50,7 +53,7 @@ export const typeDef = `
     extend type Mutation {
         createEvent(data: CreateEventInput! ): Event!
         deleteEvent(id: ID!): Event!
-        updateEvent(id: ID!, data:UpdateEventInput!): Event!
+        updateEvent(id: ID!, data:UpdateEventInput!): AuthPayload!
     }
 `
 
@@ -76,7 +79,8 @@ export const Resolvers = {
     },
     Mutation: {
         async createEvent(parent, { data }, { prisma, session }, info) {
-            const imageURL = await processUpload(data.image)
+            let imageURL = 'default.png'
+            if (data.image) {imageURL = await processUpload(data.image)}
             return prisma.mutation.createEvent({
                 data: {
                     title: data.title,
@@ -92,13 +96,26 @@ export const Resolvers = {
                 }
             }, info)
         },
-        async deleteEvent(parent, args, { prisma, session }, info) {
-            if (!await prisma.exists.Event({ id: args.id, author: {id: getSessionUserId(session)} }) ) throw new Error('Event not found in database...')
-            return prisma.mutation.deleteEvent({ where: { id: args.id }}, info)
+        async deleteEvent(parent, {id}, { prisma, session }, info) {
+            if (!await prisma.exists.Event({ id , author: {id: getSessionUserId(session)} }) ) throw new Error('Event not found in database...')
+            const original = await prisma.query.event({where: {id}}, '{ imageURL }')
+            deleteImage(original.imageURL)
+            return prisma.mutation.deleteEvent({ where: {id}}, info)
         },
-        async updateEvent(parent, args, { prisma, session }, info) {
-            if ( !await prisma.exists.Event({ id: args.id, author: {id: getSessionUserId(session)} }) ) throw new Error('Event not found in database...')
-            return prisma.mutation.updateEvent({ where: { id: args.id }, data: args.data }, info)
+        async updateEvent(parent, {id, data}, { prisma, session }, info) {
+            if ( !await prisma.exists.Event({ id, author: {id: getSessionUserId(session)} }) ) throw new Error('Event not found in database...')
+            if ( data.date && !isBeforeNow(data.date) ) throw new Error('Event date cannot be before now...')
+            if (data.image) {
+              const { imageURL } = await prisma.query.event({where: {id}}, '{ imageURL }')
+              deleteImage(imageURL)
+              data.imageURL = await processUpload(data.image)
+              data = _.omit(data, 'image')
+            }
+            if (data.venue) { data.venue = {connect: { id: data.venue}} }
+            try {
+              const token = prisma.mutation.updateEvent({ where: { id }, data }, '{id}')
+              return { token: token.id }
+            } catch(error) { return {error: error.message} }
         }
     }
 }

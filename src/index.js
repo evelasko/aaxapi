@@ -1,8 +1,5 @@
 import '@babel/polyfill/noConflict'
 import server from './server'
-import express from 'express'
-
-import {sendEmail} from './utils/emailService.js'
 
 const options = {
   port: process.env.PORT || 4000,

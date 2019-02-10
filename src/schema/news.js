@@ -107,7 +107,6 @@ export const Resolvers = {
             if (!isBeforeNow(data.expiration)) throw new Error('Expiration cannot be before now...')
             let imageURL = 'default.png'
             if (data.image) {imageURL = await processUpload(data.image)}
-            console.log('>>>>>>> ', imageURL)
             return prisma.mutation.createNews({
                 data: {
                     title: data.title,
@@ -133,10 +132,8 @@ export const Resolvers = {
         async updateNews(parent, {id, data}, { prisma, session }, info) {
             if ( !await prisma.exists.News({ id, author: {id: getSessionUserId(session)} }) ) throw new Error('News not found')
             if ( data.expiration && !isBeforeNow(data.expiration) ) throw new Error('Expiration cannot be before now...')
-
             if (data.image) {
               const original = await prisma.query.news({where: {id}}, '{ imageURL }')
-
               deleteImage(original.imageURL)
               data.imageURL = await processUpload(data.image)
               data = _.omit(data, 'image')

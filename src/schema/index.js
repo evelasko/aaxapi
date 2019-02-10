@@ -37,6 +37,12 @@ const commonTypeDef = `
         PUBLIC
         STUDENT
     }
+    enum nIdType {
+      PASSPORT
+      NATIONALID
+      SOCIALSECURITY
+      OTHER
+    }
 `
 
 export const typeDefs = [ commonTypeDef, user, news, event, venue ]

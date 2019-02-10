@@ -3,6 +3,12 @@ enum UserGroup {
   STAFF
   STUDENT
 }
+enum nIdType {
+  PASSPORT
+  NATIONALID
+  SOCIALSECURITY
+  OTHER
+}
 type Address {
   id: ID! @unique
   line1: String!
@@ -11,14 +17,22 @@ type Address {
   state: String!
   country: String!
   location: Location!
+  user: User! @relation(name: "UserToAddress", onDelete: SET_NULL )
 }
 type PhoneNumber {
   id: ID! @unique
   countryCode: Int!
   phone: Int! @unique
   verified: Boolean! @default(value: "false")
+  user: User! @relation(name: "UserToPhone", onDelete: SET_NULL )
 }
 type Location {
   latitude: Float!
   longitude: Float!
+}
+type nID {
+  nID: String!@unique
+  sourceType: nIdType!
+  verified: Boolean! @default(value: "false")
+  user: User! @relation(name: "UserToNationalID", onDelete: SET_NULL)
 }

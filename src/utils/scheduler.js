@@ -1,17 +1,21 @@
 import schedule from 'node-schedule'
 import moment from 'moment'
+import { deleteImage } from './upload.js'
 import prisma from '../prisma'
 
 const processNews = async () => {
     const newses = await prisma.query.newses({where: {
                                                   published: true,
                                                   expiration_lte: moment().format()
-                                                }}, '{ id title expiration deleteUpon }')
+                                                }}, '{ id title expiration deleteUpon imageURL }')
                                      .catch(e => console.log(e))
     if (!newses.length) return 0
     newses.forEach(async news => {
-      if (news.deleteUpon) await prisma.mutation.deleteNews({where: {id: news.id}}, '{id}')
+      if (news.deleteUpon) {
+        await prisma.mutation.deleteNews({where: {id: news.id}}, '{id}')
                                                 .catch(e => console.log(e))
+        deleteImage(news.imageURL)
+      }
       else await prisma.mutation.updateNews({where: { id: news.id }, data: { published: false } }, '{id}')
                                 .catch(e => console.log(e))
     })
@@ -22,12 +26,15 @@ const processEvent = async () => {
     const events = await prisma.query.events({ where: {
                                                   published: true,
                                                   date_lte: moment().format()
-                                                }}, '{ id title date deleteUpon }')
+                                                }}, '{ id title date deleteUpon imageURL}')
                                      .catch(e => console.log(e))
     if (!events.length) return 0
     events.forEach(async event => {
-      if (event.deleteUpon) await prisma.mutation.deleteEvent({ where: {id: event.id}}, '{id}')
+      if (event.deleteUpon) {
+        await prisma.mutation.deleteEvent({ where: {id: event.id}}, '{id}')
                                                  .catch(e => console.log(e))
+        deleteImage(event.imageURL)
+      }
       else await prisma.mutation.updateEvent({where: { id: event.id }, data: { published: false } }, '{id}')
                                 .catch(e => console.log(e))
     })
@@ -51,7 +58,10 @@ const initScheduleJob = () => {
   var rule = new schedule.RecurrenceRule()
   rule.dayOfWeek = [0, new schedule.Range(0, 6)]
   rule.hour = [1, new schedule.Range(7, 21)]
-  schedule.scheduleJob('archiverJob', rule, () => { job() })
+  schedule.scheduleJob('archiverJob', '15 * * * *', () => { job() }) // rule
+  // schedule.scheduleJob('test','08 * * * *', () => {
+  //   console.log('@scheduleJob test on:', moment().format())
+  // })
 }
 
 export { initScheduleJob as default }

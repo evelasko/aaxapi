@@ -1,5 +1,5 @@
 # source: http://localhost:4466/aaxapi/dev
-# timestamp: Wed Jan 30 2019 23:09:03 GMT+0100 (Central European Standard Time)
+# timestamp: Fri Feb 08 2019 11:01:23 GMT+0100 (Central European Standard Time)
 
 type Address implements Node {
   id: ID!
@@ -9,6 +9,7 @@ type Address implements Node {
   state: String!
   country: String!
   location: Location!
+  user: User!
 }
 
 """A connection to a list of items."""
@@ -28,11 +29,21 @@ input AddressCreateInput {
   state: String!
   country: String!
   location: LocationCreateOneInput!
+  user: UserCreateOneWithoutAddressInput!
 }
 
-input AddressCreateOneInput {
-  create: AddressCreateInput
+input AddressCreateOneWithoutUserInput {
+  create: AddressCreateWithoutUserInput
   connect: AddressWhereUniqueInput
+}
+
+input AddressCreateWithoutUserInput {
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  country: String!
+  location: LocationCreateOneInput!
 }
 
 """An edge in a connection."""
@@ -111,15 +122,6 @@ input AddressSubscriptionWhereInput {
   node: AddressWhereInput
 }
 
-input AddressUpdateDataInput {
-  line1: String
-  line2: String
-  city: String
-  state: String
-  country: String
-  location: LocationUpdateOneRequiredInput
-}
-
 input AddressUpdateInput {
   line1: String
   line2: String
@@ -127,6 +129,7 @@ input AddressUpdateInput {
   state: String
   country: String
   location: LocationUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutAddressInput
 }
 
 input AddressUpdateManyMutationInput {
@@ -137,18 +140,27 @@ input AddressUpdateManyMutationInput {
   country: String
 }
 
-input AddressUpdateOneInput {
-  create: AddressCreateInput
+input AddressUpdateOneWithoutUserInput {
+  create: AddressCreateWithoutUserInput
   connect: AddressWhereUniqueInput
   disconnect: Boolean
   delete: Boolean
-  update: AddressUpdateDataInput
-  upsert: AddressUpsertNestedInput
+  update: AddressUpdateWithoutUserDataInput
+  upsert: AddressUpsertWithoutUserInput
 }
 
-input AddressUpsertNestedInput {
-  update: AddressUpdateDataInput!
-  create: AddressCreateInput!
+input AddressUpdateWithoutUserDataInput {
+  line1: String
+  line2: String
+  city: String
+  state: String
+  country: String
+  location: LocationUpdateOneRequiredInput
+}
+
+input AddressUpsertWithoutUserInput {
+  update: AddressUpdateWithoutUserDataInput!
+  create: AddressCreateWithoutUserInput!
 }
 
 input AddressWhereInput {
@@ -401,6 +413,7 @@ input AddressWhereInput {
   """All values not ending with the given string."""
   country_not_ends_with: String
   location: LocationWhereInput
+  user: UserWhereInput
 }
 
 input AddressWhereUniqueInput {
@@ -1215,6 +1228,10 @@ type AggregateLocation {
 }
 
 type AggregateNews {
+  count: Int!
+}
+
+type AggregatenID {
   count: Int!
 }
 
@@ -3057,6 +3074,9 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
+  createAddress(data: AddressCreateInput!): Address!
+  createPhoneNumber(data: PhoneNumberCreateInput!): PhoneNumber!
+  createnID(data: nIDCreateInput!): nID!
   createUser(data: UserCreateInput!): User!
   createNews(data: NewsCreateInput!): News!
   createEvent(data: EventCreateInput!): Event!
@@ -3066,8 +3086,9 @@ type Mutation {
   createAdminRole(data: AdminRoleCreateInput!): AdminRole!
   createAdminCompetence(data: AdminCompetenceCreateInput!): AdminCompetence!
   createLocation(data: LocationCreateInput!): Location!
-  createAddress(data: AddressCreateInput!): Address!
-  createPhoneNumber(data: PhoneNumberCreateInput!): PhoneNumber!
+  updateAddress(data: AddressUpdateInput!, where: AddressWhereUniqueInput!): Address
+  updatePhoneNumber(data: PhoneNumberUpdateInput!, where: PhoneNumberWhereUniqueInput!): PhoneNumber
+  updatenID(data: nIDUpdateInput!, where: nIDWhereUniqueInput!): nID
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateNews(data: NewsUpdateInput!, where: NewsWhereUniqueInput!): News
   updateEvent(data: EventUpdateInput!, where: EventWhereUniqueInput!): Event
@@ -3076,8 +3097,9 @@ type Mutation {
   updateBranch(data: BranchUpdateInput!, where: BranchWhereUniqueInput!): Branch
   updateAdminRole(data: AdminRoleUpdateInput!, where: AdminRoleWhereUniqueInput!): AdminRole
   updateAdminCompetence(data: AdminCompetenceUpdateInput!, where: AdminCompetenceWhereUniqueInput!): AdminCompetence
-  updateAddress(data: AddressUpdateInput!, where: AddressWhereUniqueInput!): Address
-  updatePhoneNumber(data: PhoneNumberUpdateInput!, where: PhoneNumberWhereUniqueInput!): PhoneNumber
+  deleteAddress(where: AddressWhereUniqueInput!): Address
+  deletePhoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
+  deletenID(where: nIDWhereUniqueInput!): nID
   deleteUser(where: UserWhereUniqueInput!): User
   deleteNews(where: NewsWhereUniqueInput!): News
   deleteEvent(where: EventWhereUniqueInput!): Event
@@ -3086,8 +3108,9 @@ type Mutation {
   deleteBranch(where: BranchWhereUniqueInput!): Branch
   deleteAdminRole(where: AdminRoleWhereUniqueInput!): AdminRole
   deleteAdminCompetence(where: AdminCompetenceWhereUniqueInput!): AdminCompetence
-  deleteAddress(where: AddressWhereUniqueInput!): Address
-  deletePhoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
+  upsertAddress(where: AddressWhereUniqueInput!, create: AddressCreateInput!, update: AddressUpdateInput!): Address!
+  upsertPhoneNumber(where: PhoneNumberWhereUniqueInput!, create: PhoneNumberCreateInput!, update: PhoneNumberUpdateInput!): PhoneNumber!
+  upsertnID(where: nIDWhereUniqueInput!, create: nIDCreateInput!, update: nIDUpdateInput!): nID!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertNews(where: NewsWhereUniqueInput!, create: NewsCreateInput!, update: NewsUpdateInput!): News!
   upsertEvent(where: EventWhereUniqueInput!, create: EventCreateInput!, update: EventUpdateInput!): Event!
@@ -3096,8 +3119,9 @@ type Mutation {
   upsertBranch(where: BranchWhereUniqueInput!, create: BranchCreateInput!, update: BranchUpdateInput!): Branch!
   upsertAdminRole(where: AdminRoleWhereUniqueInput!, create: AdminRoleCreateInput!, update: AdminRoleUpdateInput!): AdminRole!
   upsertAdminCompetence(where: AdminCompetenceWhereUniqueInput!, create: AdminCompetenceCreateInput!, update: AdminCompetenceUpdateInput!): AdminCompetence!
-  upsertAddress(where: AddressWhereUniqueInput!, create: AddressCreateInput!, update: AddressUpdateInput!): Address!
-  upsertPhoneNumber(where: PhoneNumberWhereUniqueInput!, create: PhoneNumberCreateInput!, update: PhoneNumberUpdateInput!): PhoneNumber!
+  updateManyAddresses(data: AddressUpdateManyMutationInput!, where: AddressWhereInput): BatchPayload!
+  updateManyPhoneNumbers(data: PhoneNumberUpdateManyMutationInput!, where: PhoneNumberWhereInput): BatchPayload!
+  updateManyNIDs(data: nIDUpdateManyMutationInput!, where: nIDWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyNewses(data: NewsUpdateManyMutationInput!, where: NewsWhereInput): BatchPayload!
   updateManyEvents(data: EventUpdateManyMutationInput!, where: EventWhereInput): BatchPayload!
@@ -3107,8 +3131,9 @@ type Mutation {
   updateManyAdminRoles(data: AdminRoleUpdateManyMutationInput!, where: AdminRoleWhereInput): BatchPayload!
   updateManyAdminCompetences(data: AdminCompetenceUpdateManyMutationInput!, where: AdminCompetenceWhereInput): BatchPayload!
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
-  updateManyAddresses(data: AddressUpdateManyMutationInput!, where: AddressWhereInput): BatchPayload!
-  updateManyPhoneNumbers(data: PhoneNumberUpdateManyMutationInput!, where: PhoneNumberWhereInput): BatchPayload!
+  deleteManyAddresses(where: AddressWhereInput): BatchPayload!
+  deleteManyPhoneNumbers(where: PhoneNumberWhereInput): BatchPayload!
+  deleteManyNIDs(where: nIDWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyNewses(where: NewsWhereInput): BatchPayload!
   deleteManyEvents(where: EventWhereInput): BatchPayload!
@@ -3118,8 +3143,6 @@ type Mutation {
   deleteManyAdminRoles(where: AdminRoleWhereInput): BatchPayload!
   deleteManyAdminCompetences(where: AdminCompetenceWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
-  deleteManyAddresses(where: AddressWhereInput): BatchPayload!
-  deleteManyPhoneNumbers(where: PhoneNumberWhereInput): BatchPayload!
   executeRaw(database: PrismaDatabase, query: String!): Json!
 }
 
@@ -3952,6 +3975,220 @@ input NewsWhereUniqueInput {
   id: ID
 }
 
+type nID {
+  nID: String!
+  sourceType: nIdType!
+  verified: Boolean!
+  user: User!
+}
+
+"""A connection to a list of items."""
+type nIDConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [nIDEdge]!
+  aggregate: AggregatenID!
+}
+
+input nIDCreateInput {
+  nID: String!
+  sourceType: nIdType!
+  verified: Boolean
+  user: UserCreateOneWithoutNIDInput!
+}
+
+input nIDCreateOneWithoutUserInput {
+  create: nIDCreateWithoutUserInput
+  connect: nIDWhereUniqueInput
+}
+
+input nIDCreateWithoutUserInput {
+  nID: String!
+  sourceType: nIdType!
+  verified: Boolean
+}
+
+"""An edge in a connection."""
+type nIDEdge {
+  """The item at the end of the edge."""
+  node: nID!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum nIDOrderByInput {
+  nID_ASC
+  nID_DESC
+  sourceType_ASC
+  sourceType_DESC
+  verified_ASC
+  verified_DESC
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type nIDPreviousValues {
+  nID: String!
+  sourceType: nIdType!
+  verified: Boolean!
+}
+
+type nIDSubscriptionPayload {
+  mutation: MutationType!
+  node: nID
+  updatedFields: [String!]
+  previousValues: nIDPreviousValues
+}
+
+input nIDSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [nIDSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [nIDSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [nIDSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: nIDWhereInput
+}
+
+enum nIdType {
+  PASSPORT
+  NATIONALID
+  SOCIALSECURITY
+  OTHER
+}
+
+input nIDUpdateInput {
+  nID: String
+  sourceType: nIdType
+  verified: Boolean
+  user: UserUpdateOneRequiredWithoutNIDInput
+}
+
+input nIDUpdateManyMutationInput {
+  nID: String
+  sourceType: nIdType
+  verified: Boolean
+}
+
+input nIDUpdateOneWithoutUserInput {
+  create: nIDCreateWithoutUserInput
+  connect: nIDWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: nIDUpdateWithoutUserDataInput
+  upsert: nIDUpsertWithoutUserInput
+}
+
+input nIDUpdateWithoutUserDataInput {
+  nID: String
+  sourceType: nIdType
+  verified: Boolean
+}
+
+input nIDUpsertWithoutUserInput {
+  update: nIDUpdateWithoutUserDataInput!
+  create: nIDCreateWithoutUserInput!
+}
+
+input nIDWhereInput {
+  """Logical AND on all given filters."""
+  AND: [nIDWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [nIDWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [nIDWhereInput!]
+  nID: String
+
+  """All values that are not equal to given value."""
+  nID_not: String
+
+  """All values that are contained in given list."""
+  nID_in: [String!]
+
+  """All values that are not contained in given list."""
+  nID_not_in: [String!]
+
+  """All values less than the given value."""
+  nID_lt: String
+
+  """All values less than or equal the given value."""
+  nID_lte: String
+
+  """All values greater than the given value."""
+  nID_gt: String
+
+  """All values greater than or equal the given value."""
+  nID_gte: String
+
+  """All values containing the given string."""
+  nID_contains: String
+
+  """All values not containing the given string."""
+  nID_not_contains: String
+
+  """All values starting with the given string."""
+  nID_starts_with: String
+
+  """All values not starting with the given string."""
+  nID_not_starts_with: String
+
+  """All values ending with the given string."""
+  nID_ends_with: String
+
+  """All values not ending with the given string."""
+  nID_not_ends_with: String
+  sourceType: nIdType
+
+  """All values that are not equal to given value."""
+  sourceType_not: nIdType
+
+  """All values that are contained in given list."""
+  sourceType_in: [nIdType!]
+
+  """All values that are not contained in given list."""
+  sourceType_not_in: [nIdType!]
+  verified: Boolean
+
+  """All values that are not equal to given value."""
+  verified_not: Boolean
+  user: UserWhereInput
+}
+
+input nIDWhereUniqueInput {
+  nID: String
+}
+
 """An object with an ID"""
 interface Node {
   """The id of the object."""
@@ -3978,6 +4215,7 @@ type PhoneNumber implements Node {
   countryCode: Int!
   phone: Int!
   verified: Boolean!
+  user: User!
 }
 
 """A connection to a list of items."""
@@ -3994,11 +4232,18 @@ input PhoneNumberCreateInput {
   countryCode: Int!
   phone: Int!
   verified: Boolean
+  user: UserCreateOneWithoutPhoneInput!
 }
 
-input PhoneNumberCreateOneInput {
-  create: PhoneNumberCreateInput
+input PhoneNumberCreateOneWithoutUserInput {
+  create: PhoneNumberCreateWithoutUserInput
   connect: PhoneNumberWhereUniqueInput
+}
+
+input PhoneNumberCreateWithoutUserInput {
+  countryCode: Int!
+  phone: Int!
+  verified: Boolean
 }
 
 """An edge in a connection."""
@@ -4071,16 +4316,11 @@ input PhoneNumberSubscriptionWhereInput {
   node: PhoneNumberWhereInput
 }
 
-input PhoneNumberUpdateDataInput {
-  countryCode: Int
-  phone: Int
-  verified: Boolean
-}
-
 input PhoneNumberUpdateInput {
   countryCode: Int
   phone: Int
   verified: Boolean
+  user: UserUpdateOneRequiredWithoutPhoneInput
 }
 
 input PhoneNumberUpdateManyMutationInput {
@@ -4089,18 +4329,24 @@ input PhoneNumberUpdateManyMutationInput {
   verified: Boolean
 }
 
-input PhoneNumberUpdateOneInput {
-  create: PhoneNumberCreateInput
+input PhoneNumberUpdateOneWithoutUserInput {
+  create: PhoneNumberCreateWithoutUserInput
   connect: PhoneNumberWhereUniqueInput
   disconnect: Boolean
   delete: Boolean
-  update: PhoneNumberUpdateDataInput
-  upsert: PhoneNumberUpsertNestedInput
+  update: PhoneNumberUpdateWithoutUserDataInput
+  upsert: PhoneNumberUpsertWithoutUserInput
 }
 
-input PhoneNumberUpsertNestedInput {
-  update: PhoneNumberUpdateDataInput!
-  create: PhoneNumberCreateInput!
+input PhoneNumberUpdateWithoutUserDataInput {
+  countryCode: Int
+  phone: Int
+  verified: Boolean
+}
+
+input PhoneNumberUpsertWithoutUserInput {
+  update: PhoneNumberUpdateWithoutUserDataInput!
+  create: PhoneNumberCreateWithoutUserInput!
 }
 
 input PhoneNumberWhereInput {
@@ -4200,6 +4446,7 @@ input PhoneNumberWhereInput {
 
   """All values that are not equal to given value."""
   verified_not: Boolean
+  user: UserWhereInput
 }
 
 input PhoneNumberWhereUniqueInput {
@@ -4429,6 +4676,9 @@ input ProgramWhereUniqueInput {
 }
 
 type Query {
+  addresses(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Address]!
+  phoneNumbers(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhoneNumber]!
+  nIDs(where: nIDWhereInput, orderBy: nIDOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [nID]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   newses(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [News]!
   events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event]!
@@ -4438,8 +4688,9 @@ type Query {
   adminRoles(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminRole]!
   adminCompetences(where: AdminCompetenceWhereInput, orderBy: AdminCompetenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminCompetence]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
-  addresses(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Address]!
-  phoneNumbers(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhoneNumber]!
+  address(where: AddressWhereUniqueInput!): Address
+  phoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
+  nID(where: nIDWhereUniqueInput!): nID
   user(where: UserWhereUniqueInput!): User
   news(where: NewsWhereUniqueInput!): News
   event(where: EventWhereUniqueInput!): Event
@@ -4448,8 +4699,9 @@ type Query {
   branch(where: BranchWhereUniqueInput!): Branch
   adminRole(where: AdminRoleWhereUniqueInput!): AdminRole
   adminCompetence(where: AdminCompetenceWhereUniqueInput!): AdminCompetence
-  address(where: AddressWhereUniqueInput!): Address
-  phoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
+  addressesConnection(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AddressConnection!
+  phoneNumbersConnection(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhoneNumberConnection!
+  nIDsConnection(where: nIDWhereInput, orderBy: nIDOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): nIDConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   newsesConnection(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): NewsConnection!
   eventsConnection(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EventConnection!
@@ -4459,8 +4711,6 @@ type Query {
   adminRolesConnection(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminRoleConnection!
   adminCompetencesConnection(where: AdminCompetenceWhereInput, orderBy: AdminCompetenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminCompetenceConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
-  addressesConnection(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AddressConnection!
-  phoneNumbersConnection(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhoneNumberConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -4470,6 +4720,9 @@ type Query {
 }
 
 type Subscription {
+  address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
+  phoneNumber(where: PhoneNumberSubscriptionWhereInput): PhoneNumberSubscriptionPayload
+  nID(where: nIDSubscriptionWhereInput): nIDSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   news(where: NewsSubscriptionWhereInput): NewsSubscriptionPayload
   event(where: EventSubscriptionWhereInput): EventSubscriptionPayload
@@ -4479,8 +4732,6 @@ type Subscription {
   adminRole(where: AdminRoleSubscriptionWhereInput): AdminRoleSubscriptionPayload
   adminCompetence(where: AdminCompetenceSubscriptionWhereInput): AdminCompetenceSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
-  address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
-  phoneNumber(where: PhoneNumberSubscriptionWhereInput): PhoneNumberSubscriptionPayload
 }
 
 type User implements Node {
@@ -4490,9 +4741,11 @@ type User implements Node {
   email: String!
   emailVerified: Boolean!
   password: String!
+  nID: nID
   updatedAt: DateTime!
   createdAt: DateTime!
   group: UserGroup!
+  groupRequest: UserGroup
   address: Address
   phone: PhoneNumber
   isAdmin: Boolean!
@@ -4521,10 +4774,12 @@ input UserCreateInput {
   emailVerified: Boolean
   password: String!
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressCreateOneInput
-  phone: PhoneNumberCreateOneInput
+  nID: nIDCreateOneWithoutUserInput
+  address: AddressCreateOneWithoutUserInput
+  phone: PhoneNumberCreateOneWithoutUserInput
   newses: NewsCreateManyWithoutAuthorInput
   events: EventCreateManyWithoutAuthorInput
   branch: BranchCreateOneWithoutStudentsInput
@@ -4547,6 +4802,11 @@ input UserCreateManyWithoutDepartmentInput {
   connect: [UserWhereUniqueInput!]
 }
 
+input UserCreateOneWithoutAddressInput {
+  create: UserCreateWithoutAddressInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateOneWithoutEventsInput {
   create: UserCreateWithoutEventsInput
   connect: UserWhereUniqueInput
@@ -4557,6 +4817,35 @@ input UserCreateOneWithoutNewsesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutNIDInput {
+  create: UserCreateWithoutNIDInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutPhoneInput {
+  create: UserCreateWithoutPhoneInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutAddressInput {
+  name: String
+  lastname: String
+  email: String!
+  emailVerified: Boolean
+  password: String!
+  group: UserGroup
+  groupRequest: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  nID: nIDCreateOneWithoutUserInput
+  phone: PhoneNumberCreateOneWithoutUserInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
+  branch: BranchCreateOneWithoutStudentsInput
+  department: BranchCreateOneWithoutStaffInput
+  adminRole: AdminRoleCreateOneWithoutAdminsInput
+}
+
 input UserCreateWithoutAdminRoleInput {
   name: String
   lastname: String
@@ -4564,10 +4853,12 @@ input UserCreateWithoutAdminRoleInput {
   emailVerified: Boolean
   password: String!
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressCreateOneInput
-  phone: PhoneNumberCreateOneInput
+  nID: nIDCreateOneWithoutUserInput
+  address: AddressCreateOneWithoutUserInput
+  phone: PhoneNumberCreateOneWithoutUserInput
   newses: NewsCreateManyWithoutAuthorInput
   events: EventCreateManyWithoutAuthorInput
   branch: BranchCreateOneWithoutStudentsInput
@@ -4581,10 +4872,12 @@ input UserCreateWithoutBranchInput {
   emailVerified: Boolean
   password: String!
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressCreateOneInput
-  phone: PhoneNumberCreateOneInput
+  nID: nIDCreateOneWithoutUserInput
+  address: AddressCreateOneWithoutUserInput
+  phone: PhoneNumberCreateOneWithoutUserInput
   newses: NewsCreateManyWithoutAuthorInput
   events: EventCreateManyWithoutAuthorInput
   department: BranchCreateOneWithoutStaffInput
@@ -4598,10 +4891,12 @@ input UserCreateWithoutDepartmentInput {
   emailVerified: Boolean
   password: String!
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressCreateOneInput
-  phone: PhoneNumberCreateOneInput
+  nID: nIDCreateOneWithoutUserInput
+  address: AddressCreateOneWithoutUserInput
+  phone: PhoneNumberCreateOneWithoutUserInput
   newses: NewsCreateManyWithoutAuthorInput
   events: EventCreateManyWithoutAuthorInput
   branch: BranchCreateOneWithoutStudentsInput
@@ -4615,10 +4910,12 @@ input UserCreateWithoutEventsInput {
   emailVerified: Boolean
   password: String!
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressCreateOneInput
-  phone: PhoneNumberCreateOneInput
+  nID: nIDCreateOneWithoutUserInput
+  address: AddressCreateOneWithoutUserInput
+  phone: PhoneNumberCreateOneWithoutUserInput
   newses: NewsCreateManyWithoutAuthorInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
@@ -4632,10 +4929,50 @@ input UserCreateWithoutNewsesInput {
   emailVerified: Boolean
   password: String!
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressCreateOneInput
-  phone: PhoneNumberCreateOneInput
+  nID: nIDCreateOneWithoutUserInput
+  address: AddressCreateOneWithoutUserInput
+  phone: PhoneNumberCreateOneWithoutUserInput
+  events: EventCreateManyWithoutAuthorInput
+  branch: BranchCreateOneWithoutStudentsInput
+  department: BranchCreateOneWithoutStaffInput
+  adminRole: AdminRoleCreateOneWithoutAdminsInput
+}
+
+input UserCreateWithoutNIDInput {
+  name: String
+  lastname: String
+  email: String!
+  emailVerified: Boolean
+  password: String!
+  group: UserGroup
+  groupRequest: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  address: AddressCreateOneWithoutUserInput
+  phone: PhoneNumberCreateOneWithoutUserInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
+  branch: BranchCreateOneWithoutStudentsInput
+  department: BranchCreateOneWithoutStaffInput
+  adminRole: AdminRoleCreateOneWithoutAdminsInput
+}
+
+input UserCreateWithoutPhoneInput {
+  name: String
+  lastname: String
+  email: String!
+  emailVerified: Boolean
+  password: String!
+  group: UserGroup
+  groupRequest: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  nID: nIDCreateOneWithoutUserInput
+  address: AddressCreateOneWithoutUserInput
+  newses: NewsCreateManyWithoutAuthorInput
   events: EventCreateManyWithoutAuthorInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
@@ -4676,6 +5013,8 @@ enum UserOrderByInput {
   createdAt_DESC
   group_ASC
   group_DESC
+  groupRequest_ASC
+  groupRequest_DESC
   isAdmin_ASC
   isAdmin_DESC
   academicYear_ASC
@@ -4692,6 +5031,7 @@ type UserPreviousValues {
   updatedAt: DateTime!
   createdAt: DateTime!
   group: UserGroup!
+  groupRequest: UserGroup
   isAdmin: Boolean!
   academicYear: Int
 }
@@ -4963,6 +5303,16 @@ input UserScalarWhereInput {
 
   """All values that are not contained in given list."""
   group_not_in: [UserGroup!]
+  groupRequest: UserGroup
+
+  """All values that are not equal to given value."""
+  groupRequest_not: UserGroup
+
+  """All values that are contained in given list."""
+  groupRequest_in: [UserGroup!]
+
+  """All values that are not contained in given list."""
+  groupRequest_not_in: [UserGroup!]
   isAdmin: Boolean
 
   """All values that are not equal to given value."""
@@ -5037,10 +5387,12 @@ input UserUpdateInput {
   emailVerified: Boolean
   password: String
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressUpdateOneInput
-  phone: PhoneNumberUpdateOneInput
+  nID: nIDUpdateOneWithoutUserInput
+  address: AddressUpdateOneWithoutUserInput
+  phone: PhoneNumberUpdateOneWithoutUserInput
   newses: NewsUpdateManyWithoutAuthorInput
   events: EventUpdateManyWithoutAuthorInput
   branch: BranchUpdateOneWithoutStudentsInput
@@ -5055,6 +5407,7 @@ input UserUpdateManyDataInput {
   emailVerified: Boolean
   password: String
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
 }
@@ -5066,6 +5419,7 @@ input UserUpdateManyMutationInput {
   emailVerified: Boolean
   password: String
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
 }
@@ -5108,6 +5462,13 @@ input UserUpdateManyWithWhereNestedInput {
   data: UserUpdateManyDataInput!
 }
 
+input UserUpdateOneRequiredWithoutAddressInput {
+  create: UserCreateWithoutAddressInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutAddressDataInput
+  upsert: UserUpsertWithoutAddressInput
+}
+
 input UserUpdateOneRequiredWithoutEventsInput {
   create: UserCreateWithoutEventsInput
   connect: UserWhereUniqueInput
@@ -5122,6 +5483,39 @@ input UserUpdateOneRequiredWithoutNewsesInput {
   upsert: UserUpsertWithoutNewsesInput
 }
 
+input UserUpdateOneRequiredWithoutNIDInput {
+  create: UserCreateWithoutNIDInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutNIDDataInput
+  upsert: UserUpsertWithoutNIDInput
+}
+
+input UserUpdateOneRequiredWithoutPhoneInput {
+  create: UserCreateWithoutPhoneInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutPhoneDataInput
+  upsert: UserUpsertWithoutPhoneInput
+}
+
+input UserUpdateWithoutAddressDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  group: UserGroup
+  groupRequest: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  nID: nIDUpdateOneWithoutUserInput
+  phone: PhoneNumberUpdateOneWithoutUserInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
+  branch: BranchUpdateOneWithoutStudentsInput
+  department: BranchUpdateOneWithoutStaffInput
+  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+}
+
 input UserUpdateWithoutAdminRoleDataInput {
   name: String
   lastname: String
@@ -5129,10 +5523,12 @@ input UserUpdateWithoutAdminRoleDataInput {
   emailVerified: Boolean
   password: String
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressUpdateOneInput
-  phone: PhoneNumberUpdateOneInput
+  nID: nIDUpdateOneWithoutUserInput
+  address: AddressUpdateOneWithoutUserInput
+  phone: PhoneNumberUpdateOneWithoutUserInput
   newses: NewsUpdateManyWithoutAuthorInput
   events: EventUpdateManyWithoutAuthorInput
   branch: BranchUpdateOneWithoutStudentsInput
@@ -5146,10 +5542,12 @@ input UserUpdateWithoutBranchDataInput {
   emailVerified: Boolean
   password: String
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressUpdateOneInput
-  phone: PhoneNumberUpdateOneInput
+  nID: nIDUpdateOneWithoutUserInput
+  address: AddressUpdateOneWithoutUserInput
+  phone: PhoneNumberUpdateOneWithoutUserInput
   newses: NewsUpdateManyWithoutAuthorInput
   events: EventUpdateManyWithoutAuthorInput
   department: BranchUpdateOneWithoutStaffInput
@@ -5163,10 +5561,12 @@ input UserUpdateWithoutDepartmentDataInput {
   emailVerified: Boolean
   password: String
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressUpdateOneInput
-  phone: PhoneNumberUpdateOneInput
+  nID: nIDUpdateOneWithoutUserInput
+  address: AddressUpdateOneWithoutUserInput
+  phone: PhoneNumberUpdateOneWithoutUserInput
   newses: NewsUpdateManyWithoutAuthorInput
   events: EventUpdateManyWithoutAuthorInput
   branch: BranchUpdateOneWithoutStudentsInput
@@ -5180,10 +5580,12 @@ input UserUpdateWithoutEventsDataInput {
   emailVerified: Boolean
   password: String
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressUpdateOneInput
-  phone: PhoneNumberUpdateOneInput
+  nID: nIDUpdateOneWithoutUserInput
+  address: AddressUpdateOneWithoutUserInput
+  phone: PhoneNumberUpdateOneWithoutUserInput
   newses: NewsUpdateManyWithoutAuthorInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
@@ -5197,10 +5599,50 @@ input UserUpdateWithoutNewsesDataInput {
   emailVerified: Boolean
   password: String
   group: UserGroup
+  groupRequest: UserGroup
   isAdmin: Boolean
   academicYear: Int
-  address: AddressUpdateOneInput
-  phone: PhoneNumberUpdateOneInput
+  nID: nIDUpdateOneWithoutUserInput
+  address: AddressUpdateOneWithoutUserInput
+  phone: PhoneNumberUpdateOneWithoutUserInput
+  events: EventUpdateManyWithoutAuthorInput
+  branch: BranchUpdateOneWithoutStudentsInput
+  department: BranchUpdateOneWithoutStaffInput
+  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+}
+
+input UserUpdateWithoutNIDDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  group: UserGroup
+  groupRequest: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  address: AddressUpdateOneWithoutUserInput
+  phone: PhoneNumberUpdateOneWithoutUserInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
+  branch: BranchUpdateOneWithoutStudentsInput
+  department: BranchUpdateOneWithoutStaffInput
+  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+}
+
+input UserUpdateWithoutPhoneDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  group: UserGroup
+  groupRequest: UserGroup
+  isAdmin: Boolean
+  academicYear: Int
+  nID: nIDUpdateOneWithoutUserInput
+  address: AddressUpdateOneWithoutUserInput
+  newses: NewsUpdateManyWithoutAuthorInput
   events: EventUpdateManyWithoutAuthorInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
@@ -5222,6 +5664,11 @@ input UserUpdateWithWhereUniqueWithoutDepartmentInput {
   data: UserUpdateWithoutDepartmentDataInput!
 }
 
+input UserUpsertWithoutAddressInput {
+  update: UserUpdateWithoutAddressDataInput!
+  create: UserCreateWithoutAddressInput!
+}
+
 input UserUpsertWithoutEventsInput {
   update: UserUpdateWithoutEventsDataInput!
   create: UserCreateWithoutEventsInput!
@@ -5230,6 +5677,16 @@ input UserUpsertWithoutEventsInput {
 input UserUpsertWithoutNewsesInput {
   update: UserUpdateWithoutNewsesDataInput!
   create: UserCreateWithoutNewsesInput!
+}
+
+input UserUpsertWithoutNIDInput {
+  update: UserUpdateWithoutNIDDataInput!
+  create: UserCreateWithoutNIDInput!
+}
+
+input UserUpsertWithoutPhoneInput {
+  update: UserUpdateWithoutPhoneDataInput!
+  create: UserCreateWithoutPhoneInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutAdminRoleInput {
@@ -5517,6 +5974,16 @@ input UserWhereInput {
 
   """All values that are not contained in given list."""
   group_not_in: [UserGroup!]
+  groupRequest: UserGroup
+
+  """All values that are not equal to given value."""
+  groupRequest_not: UserGroup
+
+  """All values that are contained in given list."""
+  groupRequest_in: [UserGroup!]
+
+  """All values that are not contained in given list."""
+  groupRequest_not_in: [UserGroup!]
   isAdmin: Boolean
 
   """All values that are not equal to given value."""
@@ -5543,6 +6010,7 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   academicYear_gte: Int
+  nID: nIDWhereInput
   address: AddressWhereInput
   phone: PhoneNumberWhereInput
   newses_every: NewsWhereInput
