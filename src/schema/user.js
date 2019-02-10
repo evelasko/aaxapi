@@ -115,7 +115,7 @@ export const Resolvers = {
             if (await prisma.exists.User({email: data.email})) return { error: '@signUpUser: email already registered' }
             const password = await hashPassword(data.password)
             if (data.groupRequest && data.groupRequest != 'PUBLIC') {
-              await sendEmail('enrique.prez.velasco@gmail.com', 'aaXadmin: User Group Request', `User ${args.data.name} ${args.data.lastname} has requested to join ${args.data.groupRequest} group. Please review this case to confirm the join.`)
+              await sendEmail('enrique.prez.velasco@gmail.com', 'aaXadmin: User Group Request', `User ${data.name} ${data.lastname} has requested to join ${data.groupRequest} group. Please review this case to confirm the join.`)
             }
             data.group = 'PUBLIC'
             const user = await prisma.mutation.createUser({ data: { ...data, password } }, '{ id }')
