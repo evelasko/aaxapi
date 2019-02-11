@@ -5,7 +5,6 @@ import connectRedis from 'connect-redis'
 // const RedisStore = require('connect-redis')(session)
 import Redis from 'ioredis'
 import { RedisPubSub } from 'graphql-redis-subscriptions'
-// import { ApolloEngine } from 'apollo-engine'
 import { typeDefs, resolvers, fragmentReplacements } from './schema'
 import prisma from './prisma'
 import initScheduleJob from './utils/scheduler'
@@ -50,9 +49,5 @@ server.express.use(session(
 )
 server.express.use('/images', express.static('images'))
 server.express.use('/resources', express.static('resources'))
-
-// Apollo Engine
-// const engine = new ApolloEngine()
-// engine.listen({port: process.env.PORT || 3000, expressApp: server.express}, () => {console.log('Engine Server running!')})
 
 export { server as default }
