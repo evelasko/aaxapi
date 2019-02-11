@@ -202,11 +202,14 @@ export const Resolvers = {
               const { group, groupRequest } = await prisma.query.user({where: {id}}, '{ group groupRequest }')
               if (!groupRequest) { return {error:'@confirmGroupRequest: no request found...'}}
               if (confirm && groupRequest) {
-                const res = await prisma.mutation.updateUser({where: {id}, data:{group: groupRequest, groupRequest: null}}, '{id email}' )
+                const res = await prisma.mutation.updateUser({where: {id}, data:{group: groupRequest, groupRequest: null}}, '{id email name lastname}' )
+                console.log('RES: ', res)
+                sendConfirmGroup(res.email, res.name, groupRequest)
                 return {token: res.id}
               }
               else {
-                const res = await prisma.mutation.updateUser({where: {id}, data:{groupRequest: null}}, '{id}' )
+                const res = await prisma.mutation.updateUser({where: {id}, data:{groupRequest: null}}, '{id, email, name}' )
+                sendRejectGroup(res.email, res.name, groupRequest)
                 return {token: res.id}
               }
             } catch(error) { return {error: `@confirmGroupRequest: ${error}`}}

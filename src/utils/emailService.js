@@ -53,8 +53,8 @@ export const sendConfirmGroup = async (to, name, groupRequest) => {
   groupRequest = UserGroups[groupRequest][0]
   const res = await sendEmail(
       to,
-      'Bienvenido a su nuevos grupo en alicialonso.org',
-      `Por favor usa el siguiente vínculo: ${link} para iniciar sesión en tu cuenta y acceder al nuevo contenido.`,
+      `Bienvenido al colectivo ${groupRequest} @alicialonso.org`,
+      `Por favor usa el siguiente vínculo: ${process.env.APP_HOST} para iniciar sesión en tu cuenta y acceder al nuevo contenido.`,
       `templates/confirmGroupRequest.hbs`,
       { link: process.env.APP_HOST, name, groupRequest }
   )
