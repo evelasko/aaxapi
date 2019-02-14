@@ -104,7 +104,7 @@ export const Resolvers = {
         async userGroupRequest(parent, args, { prisma, session }, info) {
             const id = getSessionUserId(session)
             if (!id) return {error: '@userGroupRequest: Authentication required...'}
-            if (! await prisma.query.user({where: {id}}, '{ isAdmin }')) { return {error: '@userGroupRequest: Needs admin permission for this task'}}
+            if (!session.isAdmin) { return {error: '@userGroupRequest: Needs admin permission for this task'}}
             return await prisma.query.users({where: {groupRequest_not: null}}, info)
         }
     },
@@ -119,6 +119,7 @@ export const Resolvers = {
             }
             data.group = 'PUBLIC'
             const user = await prisma.mutation.createUser({ data: { ...data, password } }, '{ id }')
+            // UPDATE USERS CACHE
             const token = generateResetToken(user)
             const link = `${process.env.FRONT_END_HOST}confirm-email/${token}`
             const res = await sendConfirmationEmail(data.email, link)
@@ -132,7 +133,10 @@ export const Resolvers = {
             const id = getUserId(args.key)
             if (id.error) return {error: `@confirmEmail: ${id.error}`}
             const res = await prisma.mutation.updateUser({ where: { id }, data: {emailVerified: true} }, '{ id emailVerified}')
-            if ( res.id === id && res.emailVerified ) { return { token: id }}
+            if ( res.id === id && res.emailVerified ) {
+              // UPDATE USERS CACHE
+              return { token: id }
+            }
             return { error: `@confirmEmail: oops... something went wrong while confirming your email` }
         },
         async sendForgotPasswordEmail(parent, {email}, { prisma }, info) {
@@ -149,6 +153,7 @@ export const Resolvers = {
             if (typeof args.newPassword === 'string') args.newPassword = await hashPassword(args.newPassword)
             try {
               const res = await prisma.mutation.updateUser({ where: { id }, data: { password: args.newPassword } }, '{ id }')
+              // UPDATE USERS CACHE
               return { token: res.id }
             } catch(error) { return {error: `@changePassword: ${error.message}`} }
 
@@ -174,6 +179,7 @@ export const Resolvers = {
           const id = getSessionUserId(session)
           try {
             return await prisma.mutation.deleteUser({ where: { id } }, info)
+            // UPDATE USERS CACHE (TAKE CARE OF THE RETURN STATEMENT IN THE LINE ABOVE)
           } catch(error) { return {error: `@deleteUser: ${error.message}`}}
         },
         async logoutUser(parent, args, {session, response}, info) {
@@ -193,6 +199,7 @@ export const Resolvers = {
             if (id) {
               if (typeof args.data.password === 'string') args.data.password = await hashPassword(args.data.password)
               return prisma.mutation.updateUser({ where: { id }, data: args.data }, info)
+              // UPDATE USERS CACHE (TAKE CARE OF THE RETURN STATEMENT IN THE LINE ABOVE)
             }} catch(error) { return {error: `@updateUser: ${error.message}`}}
             return {error: `@updateUser: unknown error`}
         },
@@ -205,12 +212,13 @@ export const Resolvers = {
               if (!groupRequest) { return {error:'@confirmGroupRequest: no request found...'}}
               if (confirm && groupRequest) {
                 const res = await prisma.mutation.updateUser({where: {id}, data:{group: groupRequest, groupRequest: null}}, '{id email name lastname}' )
-                console.log('RES: ', res)
+                // UPDATE USERS CACHE
                 sendConfirmGroup(res.email, res.name, groupRequest)
                 return {token: res.id}
               }
               else {
                 const res = await prisma.mutation.updateUser({where: {id}, data:{groupRequest: null}}, '{id, email, name}' )
+                // UPDATE USERS CACHE
                 sendRejectGroup(res.email, res.name, groupRequest)
                 return {token: res.id}
               }
@@ -223,6 +231,7 @@ export const Resolvers = {
             if (! await prisma.exists.User({id})) return {error: 'setAdmin: user not found'}
             try {
               const res = await prisma.mutation.updateUser({where: {id}, data:{isAdmin:true}}, '{id}')
+              // UPDATE USERS CACHE
               return {token: res.id}
             } catch(error) { return {error: `@setAdmin: ${error.message}`}}
         },
@@ -233,6 +242,7 @@ export const Resolvers = {
             if (! await prisma.exists.User({id})) return {error: 'setAdmin: user not found'}
             try {
               const res = await prisma.mutation.updateUser({where: {id}, data:{isAdmin:false}}, '{id}')
+              // UPDATE USERS CACHE
               return {token: res.id}
             } catch(error) { return {error: `@unsetAdmin: ${error.message}`}}
         }

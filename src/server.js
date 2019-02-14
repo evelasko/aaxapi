@@ -12,7 +12,7 @@ import prisma from './prisma'
 import initScheduleJob from './utils/scheduler'
 import { middlewareShield } from './middleware/shield'
 import { redisSessionPrefix } from './constants.js'
-import { cacheUsers } from './cache'
+import { cacheUsers } from './cache.js'
 
 export const redis = new Redis(process.env.REDIS_URL)
 const pubsub = new PubSub()
@@ -52,7 +52,8 @@ server.express.use(session(
 server.express.use('/images', express.static('images'))
 server.express.use('/resources', express.static('resources'))
 
-cacheUsers() // update users cache at redis
+console.log('cacheUsers: ', cacheUsers)
+// cacheUsers() // update users cache at redis
 initScheduleJob() // init scheduler for outdated nodes
 
 // const engine = new ApolloEngine({ apiKey: process.env.ENGINE_API_KEY })

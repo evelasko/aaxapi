@@ -9,10 +9,10 @@ export const getUserId = (key) => {
 }
 
 export const getSessionUserId = session => {
-  console.log('SESSION: ', session)
   if (session.userId) return session.userId
   return null
 }
+
 
 // export const getSessionUserData = async session => {
 //   const users = await getCachedUsers()
