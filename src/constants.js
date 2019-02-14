@@ -1,7 +1,8 @@
 export const redisSessionPrefix = "sess:"
 export const userSessionIdPrefix = "userSids:"
 export const forgotPasswordPrefix = "forgotPassword:"
-export const listingCacheKey = "listingCache"
+export const usersCacheKey = 'usersCache'
+export const usersCachedProperties = `id, email, "isAdmin", "emailVerified", password, name, lastname`
 
 // Institutional Data
 export const institutional_context = {

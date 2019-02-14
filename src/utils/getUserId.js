@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { getCachedUsers } from '../cache'
 
 export const getUserId = (key) => {
   try {
@@ -8,9 +9,15 @@ export const getUserId = (key) => {
 }
 
 export const getSessionUserId = session => {
+  console.log('SESSION: ', session)
   if (session.userId) return session.userId
   return null
 }
+
+// export const getSessionUserData = async session => {
+//   const users = await getCachedUsers()
+//   if (session.userId && ) return
+// }
 
 export const getUserGroup = async (prisma, session) => {
   const id = getSessionUserId(session)

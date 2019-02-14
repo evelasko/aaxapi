@@ -52,6 +52,7 @@
     "nodemailer": "^5.1.1",
     "nodemailer-mailgun-transport": "^1.4.0",
     "nodemailer-smtp-transport": "^2.7.4",
+    "pg": "^7.8.0",
     "prisma-binding": "^2.2.12",
     "pug": "^2.0.3",
     "shortid": "^2.2.14",

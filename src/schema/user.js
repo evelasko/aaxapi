@@ -165,6 +165,8 @@ export const Resolvers = {
               return {error: '@loginUser: eMail not verified'}
             }
             session.userId = user.id
+            session.isAdmin = user.isAdmin
+            session.group = user.group
             if (request.sessionID) { await redis.lpush(`${userSessionIdPrefix}${user.id}`, request.sessionID) }
             return { token: user.id }
         },
