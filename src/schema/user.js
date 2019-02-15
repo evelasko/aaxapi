@@ -3,8 +3,10 @@ import isEmail from 'validator/lib/isEmail'
 import { getUserId, getSessionUserId } from '../utils/getUserId'
 import { generateToken, generateResetToken } from '../utils/generateToken'
 import hashPassword from '../utils/hashPassword'
-import { sendEmail, sendConfirmationEmail, sendResetPassword, sendConfirmGroup, sendRejectGroup } from '../utils/emailService.js'
-import { userSessionIdPrefix } from '../constants.js'
+import { sendEmail, sendConfirmationEmail, sendResetPassword, sendConfirmGroup, sendRejectGroup } from '../utils/emailService'
+import { userSessionIdPrefix } from '../constants'
+import { cacheUsers } from '../cache'
+import { getUserByEmail, getUserById } from '../utils/queryUsersCache'
 
 // ---------------------------------------------------
 //      TYPE DEFS
@@ -95,10 +97,10 @@ export const Resolvers = {
             if (group) q.where.AND = [{group}]
             return prisma.query.users(q, info)
         },
-        async me(parent, args, { prisma, session }, info) {
+        async me(parent, args, { session }, info) {
             const id = getSessionUserId(session)
             if (!id) return {error: 'Query: Me | Error: No user authenticated...'}
-            const user = await prisma.query.user({ where: { id } }, '{  id name lastname email group isAdmin }')
+            const user = getUserById(id)
             return { user }
         },
         async userGroupRequest(parent, args, { prisma, session }, info) {
@@ -112,39 +114,38 @@ export const Resolvers = {
         async signUpUser(parent, {data}, { prisma }, info) {
           try {
             if (!isEmail(data.email)) return { error: '@signUpUser: email not valid' } // throw new Error('The email address is not valid')
-            if (await prisma.exists.User({email: data.email})) return { error: '@signUpUser: email already registered' }
+            if (!getUserByEmail(data.email)) return { error: '@signUpUser: email already registered' } // if (await prisma.exists.User({email: data.email})) return { error: '@signUpUser: email already registered' }
             const password = await hashPassword(data.password)
             if (data.groupRequest && data.groupRequest != 'PUBLIC') {
               await sendEmail('enrique.prez.velasco@gmail.com', 'aaXadmin: User Group Request', `User ${data.name} ${data.lastname} has requested to join ${data.groupRequest} group. Please review this case to confirm the join.`)
             }
             data.group = 'PUBLIC'
             const user = await prisma.mutation.createUser({ data: { ...data, password } }, '{ id }')
-            // UPDATE USERS CACHE
+            await cacheUsers()
             const token = generateResetToken(user)
             const link = `${process.env.FRONT_END_HOST}confirm-email/${token}`
             const res = await sendConfirmationEmail(data.email, link)
             return { token: user.id }
           }
-          catch(error) {
-            return { error: `@signUpUser: ${error.message}`}
-          }
+          catch(error) { return { error: `@signUpUser: ${error.message}`} }
         },
         async confirmEmail(parent, args, { prisma }, info) {
             const id = getUserId(args.key)
             if (id.error) return {error: `@confirmEmail: ${id.error}`}
             const res = await prisma.mutation.updateUser({ where: { id }, data: {emailVerified: true} }, '{ id emailVerified}')
             if ( res.id === id && res.emailVerified ) {
-              // UPDATE USERS CACHE
+              await cacheUsers()
               return { token: id }
             }
             return { error: `@confirmEmail: oops... something went wrong while confirming your email` }
         },
         async sendForgotPasswordEmail(parent, {email}, { prisma }, info) {
-            if (! await prisma.exists.User({ email })) return {error: 'Mutation: sendForgotPasswordEmail | Error: email not found'}
-            const token = generateResetToken(await prisma.query.user({ where: { email } }, '{ id }'))
+            const user = getUserByEmail(email)
+            if (!user) return {error: 'Mutation: sendForgotPasswordEmail | Error: email not found'} // (! await prisma.exists.User({ email })) return {error: 'Mutation: sendForgotPasswordEmail | Error: email not found'}
+            const token = generateResetToken({id: user.id})
             const link = `${process.env.FRONT_END_HOST}change-password/${token}`
-            const { name } = await prisma.query.user({ where: { email } }, '{ name }')
-            const res = await sendResetPassword(email, link, name)
+            // const { name } = await prisma.query.user({ where: { email } }, '{ name }')
+            const res = await sendResetPassword(email, link, user.name)
             return { token }
         },
         async changePassword(parent, args, { prisma, session }, info) {
@@ -153,20 +154,21 @@ export const Resolvers = {
             if (typeof args.newPassword === 'string') args.newPassword = await hashPassword(args.newPassword)
             try {
               const res = await prisma.mutation.updateUser({ where: { id }, data: { password: args.newPassword } }, '{ id }')
-              // UPDATE USERS CACHE
+              await cacheUsers()
               return { token: res.id }
             } catch(error) { return {error: `@changePassword: ${error.message}`} }
 
         },
-        async loginUser(parent, args, { prisma, session, request, redis }, info) {
-            const user = await prisma.query.user({ where: { email: args.data.email } })
+        async loginUser(parent, {data}, { session, request, redis }, info) {
+            if (!isEmail(data.email)) return { error: '@signUpUser: email not valid' }
+            const user = await getUserByEmail(data.email)
             if ( !user  ) return {error: `@loginUser: User not found`}
-            const match = await bcrypt.compare(args.data.password, user.password)
+            const match = await bcrypt.compare(data.password, user.password)
             if ( !match ) return {error: `@loginUser: Invalid password`} // throw new Error('incorrect password, try again')
             if (!user.emailVerified) {
               const token = generateResetToken({id: user.id})
               const link = `${process.env.FRONT_END_HOST}confirm-email/${token}`
-              const res = await sendConfirmationEmail(args.data.email, link)
+              const res = await sendConfirmationEmail(data.email, link)
               return {error: '@loginUser: eMail not verified'}
             }
             session.userId = user.id
@@ -178,8 +180,9 @@ export const Resolvers = {
         async deleteUser(parent, args, { prisma, session }, info) {
           const id = getSessionUserId(session)
           try {
-            return await prisma.mutation.deleteUser({ where: { id } }, info)
-            // UPDATE USERS CACHE (TAKE CARE OF THE RETURN STATEMENT IN THE LINE ABOVE)
+            const res = await prisma.mutation.deleteUser({ where: { id } }, info)
+            await cacheUsers()
+            return res
           } catch(error) { return {error: `@deleteUser: ${error.message}`}}
         },
         async logoutUser(parent, args, {session, response}, info) {
@@ -198,51 +201,53 @@ export const Resolvers = {
             try {
             if (id) {
               if (typeof args.data.password === 'string') args.data.password = await hashPassword(args.data.password)
-              return prisma.mutation.updateUser({ where: { id }, data: args.data }, info)
-              // UPDATE USERS CACHE (TAKE CARE OF THE RETURN STATEMENT IN THE LINE ABOVE)
+              const res = prisma.mutation.updateUser({ where: { id }, data: args.data }, info)
+              await cacheUsers()
+              return res
             }} catch(error) { return {error: `@updateUser: ${error.message}`}}
             return {error: `@updateUser: unknown error`}
         },
         async confirmGroupRequest(parent, { id, confirm }, { prisma, session }, info) {
             const adminId = getSessionUserId(session)
-            if (! await prisma.query.user({where: {id: adminId}}, '{ isAdmin }')) { return {error: 'Needs admin permission for this task'}}
-            if (! await prisma.exists.User({id})) return {error: 'Mutation: confirmGroupRequest | Error: user not found'}
+            if (!session.userId && !session.isAdmin) { return {error: 'Authentication and admin privileges required'}} // (! await prisma.query.user({where: {id: adminId}}, '{ isAdmin }')) { return {error: 'Needs admin permission for this task'}}
+            const user = await getUserById(id)
+            if (!user) return {error: 'Mutation: confirmGroupRequest | Error: user not found'}// (! await prisma.exists.User({id})) return {error: 'Mutation: confirmGroupRequest | Error: user not found'}
             try {
-              const { group, groupRequest } = await prisma.query.user({where: {id}}, '{ group groupRequest }')
+              const { group, groupRequest } = user
               if (!groupRequest) { return {error:'@confirmGroupRequest: no request found...'}}
               if (confirm && groupRequest) {
                 const res = await prisma.mutation.updateUser({where: {id}, data:{group: groupRequest, groupRequest: null}}, '{id email name lastname}' )
-                // UPDATE USERS CACHE
+                await cacheUsers()
                 sendConfirmGroup(res.email, res.name, groupRequest)
                 return {token: res.id}
               }
               else {
                 const res = await prisma.mutation.updateUser({where: {id}, data:{groupRequest: null}}, '{id, email, name}' )
-                // UPDATE USERS CACHE
+                await cacheUsers()
                 sendRejectGroup(res.email, res.name, groupRequest)
                 return {token: res.id}
               }
             } catch(error) { return {error: `@confirmGroupRequest: ${error}`}}
         },
         async setAdmin(parent, {id}, { prisma, session }, info) {
-            const adminId = getSessionUserId(session)
-            if (!adminId) { return {error: 'Authentication required'} }
-            if (! await prisma.query.user({where: {id: adminId}}, '{ isAdmin }')) { return {error: 'Needs admin permission for this task'}}
-            if (! await prisma.exists.User({id})) return {error: 'setAdmin: user not found'}
+            if (!session.userId || !session.isAdmin) { return {error: 'Authentication and admin privileges required'} }
+            // if (!adminId) { return {error: 'Authentication required'} }
+            // if (! await prisma.query.user({where: {id: adminId}}, '{ isAdmin }')) { return {error: 'Needs admin permission for this task'}}
+            if (! await getUserById(id) ) return {error: 'setAdmin: user not found'}
             try {
               const res = await prisma.mutation.updateUser({where: {id}, data:{isAdmin:true}}, '{id}')
-              // UPDATE USERS CACHE
+              await cacheUsers()
               return {token: res.id}
             } catch(error) { return {error: `@setAdmin: ${error.message}`}}
         },
         async unsetAdmin(parent, {id}, { prisma, session }, info) {
-            const adminId = getSessionUserId(session)
-            if (!adminId) { return {error: 'Authentication required'} }
-            if (! await prisma.query.user({where: {id: adminId}}, '{ isAdmin }')) { return {error: 'Needs admin permission for this task'}}
-            if (! await prisma.exists.User({id})) return {error: 'setAdmin: user not found'}
+            // const adminId = getSessionUserId(session)
+            if (!session.userId || !session.isAdmin) { return {error: 'Authentication and admin privileges required'} }// (!adminId) { return {error: 'Authentication required'} }
+            // if (! await prisma.query.user({where: {id: adminId}}, '{ isAdmin }')) { return {error: 'Needs admin permission for this task'}}
+            if (! await getUserById(id)) return {error: 'setAdmin: user not found'} // (! await prisma.exists.User({id})) return {error: 'setAdmin: user not found'}
             try {
               const res = await prisma.mutation.updateUser({where: {id}, data:{isAdmin:false}}, '{id}')
-              // UPDATE USERS CACHE
+              await cacheUsers()
               return {token: res.id}
             } catch(error) { return {error: `@unsetAdmin: ${error.message}`}}
         }

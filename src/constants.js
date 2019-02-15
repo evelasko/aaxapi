@@ -2,7 +2,7 @@ export const redisSessionPrefix = "sess:"
 export const userSessionIdPrefix = "userSids:"
 export const forgotPasswordPrefix = "forgotPassword:"
 export const usersCacheKey = 'usersCache'
-export const usersCachedProperties = `id, email, "isAdmin", "emailVerified", "groupRequest", password, name, lastname`
+export const usersCachedProperties = `id, email, "isAdmin", "emailVerified", "groupRequest", "group", password, name, lastname`
 
 // Institutional Data
 export const institutional_context = {

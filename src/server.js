@@ -9,10 +9,8 @@ import { RedisPubSub } from 'graphql-redis-subscriptions'
 
 import { typeDefs, resolvers, fragmentReplacements } from './schema'
 import prisma from './prisma'
-import initScheduleJob from './utils/scheduler'
 import { middlewareShield } from './middleware/shield'
-import { redisSessionPrefix } from './constants.js'
-import { cacheUsers } from './cache.js'
+import { redisSessionPrefix } from './constants'
 
 export const redis = new Redis(process.env.REDIS_URL)
 const pubsub = new PubSub()
@@ -51,10 +49,6 @@ server.express.use(session(
 )
 server.express.use('/images', express.static('images'))
 server.express.use('/resources', express.static('resources'))
-
-console.log('cacheUsers: ', cacheUsers)
-// cacheUsers() // update users cache at redis
-initScheduleJob() // init scheduler for outdated nodes
 
 // const engine = new ApolloEngine({ apiKey: process.env.ENGINE_API_KEY })
 // const port = parseInt(process.env.PORT, 10) || 4000
