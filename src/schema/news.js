@@ -1,9 +1,8 @@
 import moment from 'moment'
 import * as _ from 'lodash'
-import { getUserId, getSessionUserId, getUserGroup } from '../utils/getUserId'
 import { isBeforeNow, aWeekFromNow } from '../utils/time'
 import { storeUpload, processUpload, imagesPath, deleteImage } from '../utils/upload'
-import { getNewsParams } from '../utils/queryParams.js'
+import { getNewsById } from '../utils/queryCache'
 
 const or = (search) => [{title_contains: search || ''},{subtitle_contains: search || ''},{body_contains: search || ''}]
 
@@ -74,36 +73,38 @@ export const Resolvers = {
       imageURL: (parent, _, {url}) => parent.imageURL ? `${url}/images/${parent.imageURL}` : `${url}/images/default.png`
     },
     Query: {
-        aNews(parent, args, { prisma }, info) {
-            return prisma.query.news({where: {id: args.id}}, info)
+        aNews(parent, { id }, { prisma, session: { group, isAdmin, userId } }, info) {
+            return prisma.query.news({where: { id }}, info)
         },
-        async newses(parent, args, { prisma, session }, info) {
-            const params = {where:{ OR: or(args.query), AND: [{category:'NEWS'}] } }
-            const target = await getUserGroup(prisma, session)
-            if (target) params.where.AND.push({target_in: target})
+        async newses(parent, { query }, { prisma, session: { group, isAdmin, userId } }, info) {
+            const params = {where:{ OR: or(query), AND: [{category:'NEWS'}] } }
+            const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
+            if (!isAdmin) params.where.AND.push({target_in}) // Admins get no user group filters
             return prisma.query.newses(params, info)
         },
-        async alerts(parent, args, { prisma, session }, info) {
-            const params = {where:{ OR: or(args.query), AND: [{category:'ALERT'}] } }
-            const target = await getUserGroup(prisma, session)
-            if (target) params.where.AND.push({target_in: target})
+        async alerts(parent, { query }, { prisma, session: { group, isAdmin, userId } }, info) {
+            const params = {where:{ OR: or(query), AND: [{category:'ALERT'}] } }
+            const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
+            if (!isAdmin) params.where.AND.push({target_in}) // Admins get no user group filters
             return prisma.query.newses(params, info)
         },
-        async calls(parent, args, { prisma, session }, info) {
-            const params = {where:{ OR: or(args.query), AND: [{category:'CALL'}] } }
-            const target = await getUserGroup(prisma, session)
-            if (target) params.where.AND.push({target_in: target})
+        async calls(parent, { query }, { prisma, session: { group, isAdmin, userId } }, info) {
+            const params = {where:{ OR: or(query), AND: [{category:'CALL'}] } }
+            const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
+            if (!isAdmin) params.where.AND.push({target_in}) // Admins get no user group filters
             return prisma.query.newses(params, info)
         },
-        async allNews(parent, args, { prisma, session }, info) {
-            const target = await getUserGroup(prisma, session)
+        async allNews(parent, args, { prisma, session: { group, isAdmin, userId } }, info) {
+            const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
             const params = {where: { OR: or(args.query) } }
-            if (target) params.where.AND = [{target_in: target}]
+            if (!isAdmin) params.where.AND = [{target_in}]
             return prisma.query.newses(params, info)
         }
     },
     Mutation: {
-        async createNews(parent, { data }, { prisma, session }, info) {
+        async createNews(parent, { data }, { prisma, session: { userId, isAdmin } }, info) {
+            if (!userId) throw new Error('Authentication required')
+            if (!isAdmin) throw new Error('Admin privileges required')
             if (!isBeforeNow(data.expiration)) throw new Error('Expiration cannot be before now...')
             let imageURL = 'default.png'
             if (data.image) {imageURL = await processUpload(data.image)}
@@ -119,21 +120,25 @@ export const Resolvers = {
                     featured: data.featured,
                     expiration: data.expiration || aWeekFromNow(),
                     deleteUpon: data.deleteUpon || false,
-                    author: { connect: { id : getSessionUserId(session) } }
+                    author: { connect: { id : userId } }
                 }
             }, info)
         },
-        async deleteNews(parent, args, { prisma, session }, info) {
-            if (!await prisma.exists.News({ id: args.id, author: {id: getSessionUserId(session)} }) ) throw new Error('News not found...')
-            const original = await prisma.query.news({where: {id: args.id}}, '{ imageURL }')
+        async deleteNews(parent, { id }, { prisma, session: { userId } }, info) {
+            if (!userId) throw new Error('Authentication required')
+            const original = getNewsById(id)
+            if (!original) throw new Error('News not found...')
+            if (original.author != userId) throw new Error('News not owned by you')
             deleteImage(original.imageURL)
-            return prisma.mutation.deleteNews({ where: { id: args.id }}, info)
+            return prisma.mutation.deleteNews({ where: { id }}, info)
         },
-        async updateNews(parent, {id, data}, { prisma, session }, info) {
-            if ( !await prisma.exists.News({ id, author: {id: getSessionUserId(session)} }) ) throw new Error('News not found')
+        async updateNews(parent, {id, data}, { prisma, session: { userId } }, info) {
+            if (!userId) throw new Error('Authentication required')
+            const original = getNewsById(id)
+            if (!original) throw new Error('News not found...')
+            if (original.author != userId) throw new Error('News not owned by you')
             if ( data.expiration && !isBeforeNow(data.expiration) ) throw new Error('Expiration cannot be before now...')
             if (data.image) {
-              const original = await prisma.query.news({where: {id}}, '{ imageURL }')
               deleteImage(original.imageURL)
               data.imageURL = await processUpload(data.image)
               data = _.omit(data, 'image')

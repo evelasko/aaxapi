@@ -1,8 +1,8 @@
 import moment from 'moment'
 import * as _ from 'lodash'
-import {getSessionUserId, getUserGroup } from '../utils/getUserId'
 import { storeUpload, processUpload, deleteImage } from '../utils/upload'
 import { isBeforeNow, aWeekFromNow } from '../utils/time'
+import { getEventById } from '../utils/queryCache'
 
 
 // ---------------------------------------------------
@@ -67,18 +67,20 @@ export const Resolvers = {
       imageURL: (parent, _, {url}) => parent.imageURL ? `${url}/images/${parent.imageURL}` : `${url}/images/default.png`
     },
     Query: {
-        async events(parent, args, { prisma, session }, info) {
-          const target = await getUserGroup(prisma, session)
+        async events(parent, {query}, { prisma, session: { userId, isAdmin } }, info) {
           const params = {where: { OR: [{
-                                          title_contains: args.query},{
-                                          subtitle_contains: args.query},{
-                                          body_contains: args.query }] } }
-          if (target) params.where.AND = [{target_in: target}]
+                                          title_contains: query},{
+                                          subtitle_contains: query},{
+                                          body_contains: query }] } }
+          const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
+          if (!isAdmin) params.where.AND = [{target_in}] // Admins get no user group filters
           return prisma.query.events(params, info)
         }
     },
     Mutation: {
-        async createEvent(parent, { data }, { prisma, session }, info) {
+        async createEvent(parent, { data }, { prisma, session: { userId, isAdmin } }, info) {
+            if (!userId) throw new Error('Authentication required')
+            if (!isAdmin) throw new Error('Admin privileges required')
             let imageURL = 'default.png'
             if (data.image) {imageURL = await processUpload(data.image)}
             return prisma.mutation.createEvent({
@@ -92,22 +94,26 @@ export const Resolvers = {
                     target: data.target || "PUBLIC",
                     deleteUpon: data.deleteUpon || false,
                     venue: { connect: { id: data.venue } },
-                    author: { connect: { id : getSessionUserId(session) } }
+                    author: { connect: { id : userId } }
                 }
             }, info)
         },
-        async deleteEvent(parent, {id}, { prisma, session }, info) {
-            if (!await prisma.exists.Event({ id , author: {id: getSessionUserId(session)} }) ) throw new Error('Event not found in database...')
-            const original = await prisma.query.event({where: {id}}, '{ imageURL }')
+        async deleteEvent(parent, { id }, { prisma, session: { userId } }, info) {
+            if (!userId) throw new Error('Authentication required')
+            const original = getEventById(id)
+            if (!original) throw new Error('Event not found...')
+            if (original.author != userId) throw new Error('Event not owned by you')
             deleteImage(original.imageURL)
             return prisma.mutation.deleteEvent({ where: {id}}, info)
         },
-        async updateEvent(parent, {id, data}, { prisma, session }, info) {
-            if ( !await prisma.exists.Event({ id, author: {id: getSessionUserId(session)} }) ) throw new Error('Event not found in database...')
+        async updateEvent(parent, {id, data}, { prisma, session: { userId } }, info) {
+            if (!userId) throw new Error('Authentication required')
+            const original = getEventById(id)
+            if (!original) throw new Error('Event not found...')
+            if (original.author != userId) throw new Error('Event not owned by you')
             if ( data.date && !isBeforeNow(data.date) ) throw new Error('Event date cannot be before now...')
             if (data.image) {
-              const { imageURL } = await prisma.query.event({where: {id}}, '{ imageURL }')
-              deleteImage(imageURL)
+              deleteImage(original.imageURL)
               data.imageURL = await processUpload(data.image)
               data = _.omit(data, 'image')
             }

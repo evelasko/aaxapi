@@ -3,6 +3,10 @@ export const userSessionIdPrefix = "userSids:"
 export const forgotPasswordPrefix = "forgotPassword:"
 export const usersCacheKey = 'usersCache'
 export const usersCachedProperties = `id, email, "isAdmin", "emailVerified", "groupRequest", "group", password, name, lastname`
+export const eventsCacheKey = 'eventsCache'
+export const eventsCachedProperties = `"Event".id, "Event"."imageURL", "Event"."date", "Event"."target", "Event"."deleteUpon", "Event".published, "_EventToUser"."B" AS author`
+export const newsesCacheKey = 'newsesCache'
+export const newsesCachedProperties = `"News"."id", "News"."imageURL", "News"."expiration", "News"."target", "News"."deleteUpon", "News".published, "News"."category", "_NewsToUser"."B" AS author`
 
 // Institutional Data
 export const institutional_context = {

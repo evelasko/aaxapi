@@ -2,13 +2,12 @@ import schedule from 'node-schedule'
 import moment from 'moment'
 import { deleteImage } from './upload.js'
 import prisma from '../prisma'
+import { getEventById, getNewsById } from './queryCache'
+import { cacheEvents, cacheNews } from '../cache'
 
 const processNews = async () => {
-    const newses = await prisma.query.newses({where: {
-                                                  published: true,
-                                                  expiration_lte: moment().format()
-                                                }}, '{ id title expiration deleteUpon imageURL }')
-                                     .catch(e => console.log(e))
+    let newses = await getNewsById()
+    newses = newses.filter(n => moment(n.expiration).isBefore() && n.published)
     if (!newses.length) return 0
     newses.forEach(async news => {
       if (news.deleteUpon) {
@@ -19,15 +18,13 @@ const processNews = async () => {
       else await prisma.mutation.updateNews({where: { id: news.id }, data: { published: false } }, '{id}')
                                 .catch(e => console.log(e))
     })
+    await cacheNews()
     return newses.length
 }
 
 const processEvent = async () => {
-    const events = await prisma.query.events({ where: {
-                                                  published: true,
-                                                  date_lte: moment().format()
-                                                }}, '{ id title date deleteUpon imageURL}')
-                                     .catch(e => console.log(e))
+    let events = await getEventById()
+    events = events.filter(e => moment(e.date).isBefore() && e.published )
     if (!events.length) return 0
     events.forEach(async event => {
       if (event.deleteUpon) {
@@ -38,6 +35,7 @@ const processEvent = async () => {
       else await prisma.mutation.updateEvent({where: { id: event.id }, data: { published: false } }, '{id}')
                                 .catch(e => console.log(e))
     })
+    await cacheEvents()
     return events.length
 }
 
@@ -55,6 +53,7 @@ const job = () => {
 }
 
 const initScheduleJob = () => {
+  job()
   var rule = new schedule.RecurrenceRule()
   rule.dayOfWeek = [0, new schedule.Range(0, 6)]
   rule.hour = [1, new schedule.Range(7, 21)]
