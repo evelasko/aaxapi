@@ -67,11 +67,12 @@ export const Resolvers = {
       imageURL: (parent, _, {url}) => parent.imageURL ? `${url}/images/${parent.imageURL}` : `${url}/images/default.png`
     },
     Query: {
-        async events(parent, {query}, { prisma, session: { userId, isAdmin } }, info) {
-          const params = {where: { OR: [{
-                                          title_contains: query},{
-                                          subtitle_contains: query},{
-                                          body_contains: query }] } }
+        async events(parent, {query}, { prisma, session: { userId, isAdmin, group } }, info) {
+          const params = {where: { OR: [
+                                          {title_contains: query},
+                                          {subtitle_contains: query},
+                                          {body_contains: query }
+                                        ] } }
           const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
           if (!isAdmin) params.where.AND = [{target_in}] // Admins get no user group filters
           return prisma.query.events(params, info)
@@ -100,7 +101,7 @@ export const Resolvers = {
         },
         async deleteEvent(parent, { id }, { prisma, session: { userId } }, info) {
             if (!userId) throw new Error('Authentication required')
-            const original = getEventById(id)
+            const original = await getEventById(id)
             if (!original) throw new Error('Event not found...')
             if (original.author != userId) throw new Error('Event not owned by you')
             deleteImage(original.imageURL)
@@ -108,7 +109,7 @@ export const Resolvers = {
         },
         async updateEvent(parent, {id, data}, { prisma, session: { userId } }, info) {
             if (!userId) throw new Error('Authentication required')
-            const original = getEventById(id)
+            const original = await getEventById(id)
             if (!original) throw new Error('Event not found...')
             if (original.author != userId) throw new Error('Event not owned by you')
             if ( data.date && !isBeforeNow(data.date) ) throw new Error('Event date cannot be before now...')

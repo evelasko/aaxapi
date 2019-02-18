@@ -126,15 +126,15 @@ export const Resolvers = {
         },
         async deleteNews(parent, { id }, { prisma, session: { userId } }, info) {
             if (!userId) throw new Error('Authentication required')
-            const original = getNewsById(id)
-            if (!original) throw new Error('News not found...')
+            const original = await getNewsById(id)
+            console.log(original)
             if (original.author != userId) throw new Error('News not owned by you')
             deleteImage(original.imageURL)
             return prisma.mutation.deleteNews({ where: { id }}, info)
         },
         async updateNews(parent, {id, data}, { prisma, session: { userId } }, info) {
             if (!userId) throw new Error('Authentication required')
-            const original = getNewsById(id)
+            const original = await getNewsById(id)
             if (!original) throw new Error('News not found...')
             if (original.author != userId) throw new Error('News not owned by you')
             if ( data.expiration && !isBeforeNow(data.expiration) ) throw new Error('Expiration cannot be before now...')

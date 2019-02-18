@@ -2,7 +2,7 @@ import '@babel/polyfill/noConflict'
 import server from './server'
 import initScheduleJob from './utils/scheduler'
 import { initFullCache } from './cache'
-import { getGroupRequests, getUserByEmail } from './utils/queryCache'
+import { getGroupRequests, getUserByEmail, getNewsById } from './utils/queryCache'
 
 const port = parseInt(process.env.PORT, 10) || 4000
 const options = {
