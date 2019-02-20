@@ -1,4 +1,4 @@
-import '@babel/polyfill/noConflict';
+// import '@babel/polyfill/noConflict';
 import { initFullCache } from './cache';
 import server from './server';
 import initScheduleJob from './utils/scheduler';
