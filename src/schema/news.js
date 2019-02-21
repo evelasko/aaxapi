@@ -1,8 +1,8 @@
-import moment from 'moment'
-import * as _ from 'lodash'
-import { isBeforeNow, aWeekFromNow } from '../utils/time'
-import { storeUpload, processUpload, imagesPath, deleteImage } from '../utils/upload'
-import { getNewsById } from '../utils/queryCache'
+import * as _ from 'lodash';
+import { cacheNews } from '../cache';
+import { getNewsById } from '../utils/queryCache';
+import { aWeekFromNow, isBeforeNow } from '../utils/time';
+import { deleteImage, processUpload } from '../utils/upload';
 
 const or = (search) => [{title_contains: search || ''},{subtitle_contains: search || ''},{body_contains: search || ''}]
 
@@ -108,7 +108,7 @@ export const Resolvers = {
             if (!isBeforeNow(data.expiration)) throw new Error('Expiration cannot be before now...')
             let imageURL = 'default.png'
             if (data.image) {imageURL = await processUpload(data.image)}
-            return prisma.mutation.createNews({
+            const res = await prisma.mutation.createNews({
                 data: {
                     title: data.title,
                     subtitle: data.subtitle,
@@ -123,6 +123,8 @@ export const Resolvers = {
                     author: { connect: { id : userId } }
                 }
             }, info)
+            await cacheNews()
+            return res
         },
         async deleteNews(parent, { id }, { prisma, session: { userId } }, info) {
             if (!userId) throw new Error('Authentication required')
@@ -130,7 +132,9 @@ export const Resolvers = {
             console.log(original)
             if (original.author != userId) throw new Error('News not owned by you')
             deleteImage(original.imageURL)
-            return prisma.mutation.deleteNews({ where: { id }}, info)
+            const res = await prisma.mutation.deleteNews({ where: { id }}, info)
+            await cacheNews()
+            return res
         },
         async updateNews(parent, {id, data}, { prisma, session: { userId } }, info) {
             if (!userId) throw new Error('Authentication required')
@@ -143,7 +147,9 @@ export const Resolvers = {
               data.imageURL = await processUpload(data.image)
               data = _.omit(data, 'image')
             }
-            return prisma.mutation.updateNews({ where: { id }, data }, info)
+            const res = await prisma.mutation.updateNews({ where: { id }, data }, info)
+            await cacheNews()
+            return res
         }
     }
 }
