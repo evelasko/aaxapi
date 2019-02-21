@@ -1,8 +1,7 @@
-import moment from 'moment'
-import * as _ from 'lodash'
-import { isBeforeNow, aWeekFromNow } from '../utils/time'
-import { storeUpload, processUpload, imagesPath, deleteImage } from '../utils/upload'
-import { getNewsById } from '../utils/queryCache'
+import * as _ from 'lodash';
+import { getNewsById } from '../utils/queryCache';
+import { aWeekFromNow, isBeforeNow } from '../utils/time';
+import { deleteImage, getSecureImage, processUpload } from '../utils/upload';
 
 const or = (search) => [{title_contains: search || ''},{subtitle_contains: search || ''},{body_contains: search || ''}]
 
@@ -70,7 +69,7 @@ export const typeDef = `
 
 export const Resolvers = {
     News: {
-      imageURL: (parent, _, {url}) => parent.imageURL ? `${url}/images/${parent.imageURL}` : `${url}/images/default.png`
+      imageURL: ({imageURL}, _, {url}) => imageURL ? getSecureImage(imageURL) : `${url}/images/default.png`
     },
     Query: {
         aNews(parent, { id }, { prisma, session: { group, isAdmin, userId } }, info) {

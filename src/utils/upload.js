@@ -1,28 +1,33 @@
-import shortid from 'shortid'
-import { createWriteStream, createReadStream, unlinkSync } from 'fs'
+import cloudinary from 'cloudinary';
 
-export const imagesPath = 'images/'
+cloudinary.config(process.env.CLOUDINARY_URL)
 
-export const storeUpload = async ({ stream, filename }) => {
-  const id = shortid.generate()
-  const path = `${imagesPath}${id}-${filename}`
-
-  return new Promise((resolve, reject) =>
-    stream
-      .pipe(createWriteStream(path))
-      .on('finish', () => resolve({ id, path, filename }))
-      .on('error', reject),
-  )
+const cloudinaryUpload = async ({stream}) => {
+    try {
+        return new Promise((resolve, reject) => {
+            const streamLoad = cloudinary.v2.uploader.upload_stream( 
+              {folder: 'aaxapi_images'}, 
+              (error, result) => { if (result) { resolve(result.public_id) } else { reject(error) } }
+            )
+            stream.pipe(streamLoad)
+        })
+    }
+    catch (err) { throw new Error(`Failed to upload to cloudinary! Err: ${err.message}`) }
 }
 
 export const processUpload = async upload => {
   const { stream, filename } = await upload
-  const f = await storeUpload({ stream, filename })
-  return `${f.id}-${f.filename}`
+  const public_id = await cloudinaryUpload({stream})
+  return public_id
+}
+
+export const getSecureImage = async public_id => {
+  const { secure_url } = await cloudinary.v2.api.resource(public_id)
+  return secure_url || null
 }
 
 export const deleteImage = imageURL => {
-  if (imageURL === 'default.png') { return null }
-  try { unlinkSync(`${imagesPath}${imageURL}`) } //file removed
-  catch(err) { console.error(err) }
+  try { cloudinary.v2.api.delete_resources([imageURL]) } 
+  catch(err) { throw new Error(`Unable to delete! Err: ${err}`) }
+  return imageURL
 }
