@@ -1,8 +1,8 @@
-import moment from 'moment'
-import * as _ from 'lodash'
-import { storeUpload, processUpload, deleteImage } from '../utils/upload'
-import { isBeforeNow, aWeekFromNow } from '../utils/time'
-import { getEventById } from '../utils/queryCache'
+import * as _ from 'lodash';
+import { cacheEvents } from '../cache';
+import { getEventById } from '../utils/queryCache';
+import { isBeforeNow } from '../utils/time';
+import { deleteImage, processUpload } from '../utils/upload';
 
 
 // ---------------------------------------------------
@@ -84,7 +84,7 @@ export const Resolvers = {
             if (!isAdmin) throw new Error('Admin privileges required')
             let imageURL = 'default.png'
             if (data.image) {imageURL = await processUpload(data.image)}
-            return prisma.mutation.createEvent({
+            const res = await prisma.mutation.createEvent({
                 data: {
                     title: data.title,
                     subtitle: data.subtitle,
@@ -98,6 +98,8 @@ export const Resolvers = {
                     author: { connect: { id : userId } }
                 }
             }, info)
+            await cacheEvents()
+            return res
         },
         async deleteEvent(parent, { id }, { prisma, session: { userId } }, info) {
             if (!userId) throw new Error('Authentication required')
@@ -105,7 +107,9 @@ export const Resolvers = {
             if (!original) throw new Error('Event not found...')
             if (original.author != userId) throw new Error('Event not owned by you')
             deleteImage(original.imageURL)
-            return prisma.mutation.deleteEvent({ where: {id}}, info)
+            const res = await prisma.mutation.deleteEvent({ where: {id}}, info)
+            await cacheEvents()
+            return res
         },
         async updateEvent(parent, {id, data}, { prisma, session: { userId } }, info) {
             if (!userId) throw new Error('Authentication required')
@@ -120,8 +124,9 @@ export const Resolvers = {
             }
             if (data.venue) { data.venue = {connect: { id: data.venue}} }
             try {
-              const token = prisma.mutation.updateEvent({ where: { id }, data }, '{id}')
-              return { token: token.id }
+              const {id} = await prisma.mutation.updateEvent({ where: { id }, data }, '{id}')
+              await cacheEvents()
+              return { token: id }
             } catch(error) { return {error: error.message} }
         }
     }
