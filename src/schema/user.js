@@ -1,12 +1,12 @@
-import bcrypt from 'bcryptjs'
-import isEmail from 'validator/lib/isEmail'
-import jwt from 'jsonwebtoken'
-import { generateToken, generateResetToken } from '../utils/generateToken'
-import hashPassword from '../utils/hashPassword'
-import { sendEmail, sendConfirmationEmail, sendResetPassword, sendConfirmGroup, sendRejectGroup } from '../utils/emailService'
-import { userSessionIdPrefix } from '../constants'
-import { cacheUsers } from '../cache'
-import { getUserByEmail, getUserById } from '../utils/queryCache'
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import isEmail from 'validator/lib/isEmail';
+import { cacheUsers } from '../cache';
+import { userSessionIdPrefix } from '../constants';
+import { sendConfirmationEmail, sendConfirmGroup, sendEmail, sendRejectGroup, sendResetPassword } from '../utils/emailService';
+import { generateResetToken } from '../utils/generateToken';
+import hashPassword from '../utils/hashPassword';
+import { getUserByEmail, getUserById } from '../utils/queryCache';
 
 // ---------------------------------------------------
 //      TYPE DEFS
@@ -140,12 +140,16 @@ export const Resolvers = {
             return { error: `@confirmEmail: oops... something went wrong while confirming your email` }
         },
         async sendForgotPasswordEmail(parent, {email}, { prisma }, info) {
-            const user = getUserByEmail(email)
-            if (!user) return {error: 'Mutation: sendForgotPasswordEmail | Error: email not found'}
-            const token = generateResetToken({id: user.id})
-            const link = `${process.env.FRONT_END_HOST}change-password/${token}`
-            const res = await sendResetPassword(email, link, user.name)
-            return { token }
+            const {id} = getUserByEmail(email)
+            if (!id) return {error: 'Mutation: sendForgotPasswordEmail | Error: email not found'}
+            try {
+              await prisma.mutation.updateUser({ where: { id }, data: { password: '' } }, '{ id }')
+              const token = generateResetToken({id: user.id})
+              const link = `${process.env.FRONT_END_HOST}change-password/${token}`
+              await sendResetPassword(email, link, user.name)
+              return { token }
+            } catch(err) { return {error: `error @sendForgotPasswordEmail: ${err.message}`} }
+            
         },
         async changePassword(parent, {key, newPassword}, { prisma, session }, info) {
             try {

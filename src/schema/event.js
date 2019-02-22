@@ -54,6 +54,7 @@ export const typeDef = `
         createEvent(data: CreateEventInput! ): Event!
         deleteEvent(id: ID!): Event!
         updateEvent(id: ID!, data:UpdateEventInput!): AuthPayload!
+        publishEvent(id: ID!): AuthPayload!
     }
 `
 
@@ -124,9 +125,21 @@ export const Resolvers = {
             }
             if (data.venue) { data.venue = {connect: { id: data.venue}} }
             try {
-              const {id} = await prisma.mutation.updateEvent({ where: { id }, data }, '{id}')
+              const res = await prisma.mutation.updateEvent({ where: { id }, data }, '{id}')
               await cacheEvents()
-              return { token: id }
+              return { token: res.id }
+            } catch(error) { return {error: error.message} }
+        },
+        async publishEvent(parent, {id}, { prisma, session: { userId } }, info) {
+            if (!userId) throw new Error('Authentication required')
+            const original = await getEventById(id)
+            if (!original) throw new Error('Event not found...')
+            if (original.author != userId) throw new Error('Event not owned by you')
+            if ( original.date && !isBeforeNow(original.date) ) throw new Error('Event date cannot be before now...')
+            try {
+              const res = await prisma.mutation.updateEvent({ where: { id }, data:{published: true} }, '{id}')
+              await cacheEvents()
+              return { token: res.id }
             } catch(error) { return {error: error.message} }
         }
     }

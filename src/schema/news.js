@@ -61,6 +61,7 @@ export const typeDef = `
         createNews(data: CreateNewsInput! ): News!
         deleteNews(id: ID!): News!
         updateNews(id: ID!, data:UpdateNewsInput!): News!
+        publishNews(id: ID!): AuthPayload!
     }
 `
 
@@ -150,6 +151,19 @@ export const Resolvers = {
             const res = await prisma.mutation.updateNews({ where: { id }, data }, info)
             await cacheNews()
             return res
+        },
+        async publishNews(parent, {id}, { prisma, session: { userId } }, info) {
+            if (!userId) throw new Error('Authentication required')
+            const original = await getNewsById(id)
+            if (!original) throw new Error('News not found...')
+            if (original.author != userId) throw new Error('News not owned by you')
+            if ( original.expiration && !isBeforeNow(original.expiration) ) throw new Error('Expiration cannot be before now...')
+            try{
+                const res = await prisma.mutation.updateNews({ where: { id }, data:{published: true} }, '{id}')
+                await cacheNews()
+                return {token: res.id}
+            } catch(error) { return {error: `Error @publishNews: ${error.message}`} }
+            
         }
     }
 }
