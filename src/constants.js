@@ -6,10 +6,10 @@ export const usersCachedProperties = `id, email, "isAdmin", "emailVerified", "gr
 export const eventsCacheKey = 'eventsCache'
 export const eventsCachedProperties = `"Event".id, "Event"."imageURL", "Event"."date", "Event"."target", "Event"."deleteUpon", "Event".published, "_EventToUser"."B" AS author`
 export const newsesCacheKey = 'newsesCache'
-export const newsesCachedProperties = `"News"."id", "News"."title", "News"."body", "News"."subtitle", "News"."imageURL", "News"."expiration", "News"."target", "News"."deleteUpon", "News".published, "News"."category", "_NewsToUser"."B" AS author`
+export const newsesCachedProperties = `"News"."id", "News"."title", "News"."featured", "News"."body", "News"."subtitle", "News"."imageURL", "News"."expiration", "News"."target", "News"."deleteUpon", "News".published, "News"."category", "_NewsToUser"."B" AS author`
 
 // Subscription Channels
-export const PUBSUB_NEW_ALERT = 'PUBSUB_NEW_ALERT'
+export const PUBSUB_NEW_NEWS = 'PUBSUB_NEW_NEWS'
 
 // Institutional Data
 export const institutional_context = {

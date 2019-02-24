@@ -1,4 +1,4 @@
-import { PUBSUB_NEW_ALERT } from '../constants'
+import { PUBSUB_NEW_NEWS } from '../constants';
 
 // ---------------------------------------------------
 //      TYPE DEFS
@@ -6,7 +6,7 @@ import { PUBSUB_NEW_ALERT } from '../constants'
 
 export const typeDef = `
 type Subscription {
-    newAlert: News!
+    newNews: News!
 }
 `
 
@@ -16,9 +16,9 @@ type Subscription {
 
 export const Resolvers = {
   Subscription: {
-    newAlert: {
+    newNews: {
       subscribe (_, __, {pubsub}) {
-        return pubsub.asyncIterator(PUBSUB_NEW_ALERT)
+        return pubsub.asyncIterator(PUBSUB_NEW_NEWS)
       }
     }
   }

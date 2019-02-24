@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { cacheNews } from '../cache';
-import { PUBSUB_NEW_ALERT } from '../constants';
+import { PUBSUB_NEW_NEWS } from '../constants';
 import { getNewsById } from '../utils/queryCache';
 import { aWeekFromNow, isBeforeNow } from '../utils/time';
 import { deleteImage, getSecureImage, processUpload } from '../utils/upload';
@@ -126,10 +126,10 @@ export const Resolvers = {
                 }
             }, info)
             await cacheNews()
-            if (data.category === 'ALERT') {
-                const newAlert = await getNewsById(res.id)
-                pubsub.publish(PUBSUB_NEW_ALERT, { newAlert })
-            }
+
+            const newNews = await getNewsById(res.id)
+            pubsub.publish(PUBSUB_NEW_NEWS, { newNews })
+
             return res
         },
         async deleteNews(parent, { id }, { prisma, session: { userId } }, info) {
