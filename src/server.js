@@ -1,19 +1,17 @@
-import { GraphQLServer, PubSub } from 'graphql-yoga'
-import express from 'express'
-import session from 'express-session'
-import connectRedis from 'connect-redis'
+import connectRedis from 'connect-redis';
+import express from 'express';
+import session from 'express-session';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { GraphQLServer } from 'graphql-yoga';
 // const RedisStore = require('connect-redis')(session)
-import Redis from 'ioredis'
-import { RedisPubSub } from 'graphql-redis-subscriptions'
+import Redis from 'ioredis';
+import { redisSessionPrefix } from './constants';
+import prisma from './prisma';
 // import { ApolloEngine } from 'apollo-engine'
-
-import { typeDefs, resolvers, fragmentReplacements } from './schema'
-import prisma from './prisma'
-import { middlewareShield } from './middleware/shield'
-import { redisSessionPrefix } from './constants'
+import { fragmentReplacements, resolvers, typeDefs } from './schema';
 
 export const redis = new Redis(process.env.REDIS_URL)
-const pubsub = new PubSub()
+const pubsub = new RedisPubSub() // PubSub()
 
 const server = new GraphQLServer({
     typeDefs,
@@ -55,4 +53,5 @@ server.express.use('/resources', express.static('resources'))
 // engine.listen({ port, graphqlPaths: ['/'], expressApp: server.express, launcherOptions: { startupTimeout: 3000 }, },
 //               () => { console.log('Apollo Engine Listening!') })
 
-export { server as default }
+export { server as default };
+

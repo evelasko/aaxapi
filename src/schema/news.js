@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { cacheNews } from '../cache';
+import { PUBSUB_NEW_ALERT } from '../constants';
 import { getNewsById } from '../utils/queryCache';
 import { aWeekFromNow, isBeforeNow } from '../utils/time';
 import { deleteImage, getSecureImage, processUpload } from '../utils/upload';
@@ -71,7 +72,7 @@ export const typeDef = `
 
 export const Resolvers = {
     News: {
-      imageURL: ({imageURL}, _, {url}) => imageURL ? getSecureImage(imageURL) : `${url}/images/default.png`
+      imageURL: ({imageURL}, _, {url}) => imageURL && imageURL != 'default.png' ? getSecureImage(imageURL) : `${url}/images/default.png`
     },
     Query: {
         aNews(parent, { id }, { prisma, session: { group, isAdmin, userId } }, info) {
@@ -87,7 +88,7 @@ export const Resolvers = {
             const params = {where:{ OR: or(query), AND: [{category:'ALERT'}] } }
             const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
             if (!isAdmin) params.where.AND.push({target_in}) // Admins get no user group filters
-            return prisma.query.newses(params, info)
+            return await prisma.query.newses(params, info)
         },
         async calls(parent, { query }, { prisma, session: { group, isAdmin, userId } }, info) {
             const params = {where:{ OR: or(query), AND: [{category:'CALL'}] } }
@@ -103,7 +104,7 @@ export const Resolvers = {
         }
     },
     Mutation: {
-        async createNews(parent, { data }, { prisma, session: { userId, isAdmin } }, info) {
+        async createNews(parent, { data }, { prisma, pubsub, session: { userId, isAdmin } }, info) {
             if (!userId) throw new Error('Authentication required')
             if (!isAdmin) throw new Error('Admin privileges required')
             if (!isBeforeNow(data.expiration)) throw new Error('Expiration cannot be before now...')
@@ -125,6 +126,11 @@ export const Resolvers = {
                 }
             }, info)
             await cacheNews()
+            if (data.category === 'ALERT') {
+                pubsub.publish(PUBSUB_NEW_ALERT, {
+                    newAlert: getNewsById(res.id)
+                })
+            }
             return res
         },
         async deleteNews(parent, { id }, { prisma, session: { userId } }, info) {
