@@ -127,9 +127,8 @@ export const Resolvers = {
             }, info)
             await cacheNews()
             if (data.category === 'ALERT') {
-                pubsub.publish(PUBSUB_NEW_ALERT, {
-                    newAlert: getNewsById(res.id)
-                })
+                const newAlert = await getNewsById(res.id)
+                pubsub.publish(PUBSUB_NEW_ALERT, { newAlert })
             }
             return res
         },

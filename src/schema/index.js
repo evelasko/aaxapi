@@ -1,10 +1,11 @@
-import { extractFragmentReplacements } from 'prisma-binding'
-import _ from 'lodash'
+import _ from 'lodash';
+import { extractFragmentReplacements } from 'prisma-binding';
+import { Resolvers as eventResolvers, typeDef as event } from './event';
+import { Resolvers as newsResolvers, typeDef as news } from './news';
+import { Resolvers as subsResolvers, typeDef as subscriptions } from './subscriptions';
+import { Resolvers as userResolvers, typeDef as user } from './user';
+import { Resolvers as venueResolvers, typeDef as venue } from './venue';
 
-import { typeDef as user, Resolvers as userResolvers } from './user'
-import { typeDef as news, Resolvers as newsResolvers } from './news'
-import { typeDef as event, Resolvers as eventResolvers } from './event'
-import { typeDef as venue, Resolvers as venueResolvers } from './venue'
 
 const commonTypeDef = `
     scalar DateTime
@@ -45,12 +46,13 @@ const commonTypeDef = `
     }
 `
 
-export const typeDefs = [ commonTypeDef, user, news, event, venue ]
+export const typeDefs = [ commonTypeDef, user, news, event, venue, subscriptions ]
 const resolversObject = {}
 export const resolvers = _.merge(
     resolversObject,
     userResolvers,
     newsResolvers,
     eventResolvers,
-    venueResolvers)
+    venueResolvers,
+    subsResolvers)
 export const fragmentReplacements = extractFragmentReplacements(resolvers)

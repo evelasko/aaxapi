@@ -11,7 +11,18 @@ import prisma from './prisma';
 import { fragmentReplacements, resolvers, typeDefs } from './schema';
 
 export const redis = new Redis(process.env.REDIS_URL)
-const pubsub = new RedisPubSub() // PubSub()
+// const pubsub = new PubSub()
+const options = {
+  retry_strategy: options => {
+    // reconnect after
+    return Math.max(options.attempt * 100, 3000);
+  }
+}
+const pubsub = new RedisPubSub({
+  publisher: new Redis(options),
+  subscriber: new Redis(options)
+})
+
 
 const server = new GraphQLServer({
     typeDefs,
