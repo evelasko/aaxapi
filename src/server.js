@@ -12,15 +12,15 @@ import { fragmentReplacements, resolvers, typeDefs } from './schema';
 
 export const redis = new Redis(process.env.REDIS_URL)
 // const pubsub = new PubSub()
-const options = {
-  retry_strategy: options => {
-    // reconnect after
-    return Math.max(options.attempt * 100, 3000);
-  }
-}
+// const options = {
+//   retry_strategy: options => {
+//     // reconnect after
+//     return Math.max(options.attempt * 100, 3000);
+//   }
+// }
 const pubsub = new RedisPubSub({
-  publisher: new Redis(options),
-  subscriber: new Redis(options)
+  publisher: redis, // new Redis(),
+  subscriber: redis // new Redis()
 })
 
 
