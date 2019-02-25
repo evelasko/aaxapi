@@ -19,8 +19,8 @@ export const redis = new Redis(process.env.REDIS_URL)
 //   }
 // }
 const pubsub = new RedisPubSub({
-  publisher: redis, // new Redis(),
-  subscriber: redis // new Redis()
+  publisher: new Redis(),
+  subscriber: new Redis()
 })
 
 
