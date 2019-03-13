@@ -7,8 +7,14 @@ const port = parseInt(process.env.PORT, 10) || 4000
 const options = {
   port,
   cors: {
-    origin: '*',
-    credentials: false,
+    origin: [
+          'http://localhost:3000', 'http://localhost:3001',
+          'http://localhost', 
+          'http://localhost:4000', 
+          'https://aaxadmin.netlify.com', 
+          'https://admin.alicialonso.org'
+        ],
+    credentials: true,
     optionsSuccessStatus: 200
   }
 }
@@ -20,13 +26,4 @@ initFullCache().then(res => {
 })
 server.start(options, () => { console.log('Server up and running at port: ', port || 4000) })
 
-// cors: {
-//   origin: [
-//     'http://localhost:3000', 'http://localhost:3001', 'http://localhost:8080',
-//     'http://localhost', 
-//     'http://localhost:4000', 
-//     'https://aaxadmin.netlify.com', 
-//     'https://admin.alicialonso.org'],
-//   credentials: true,
-//   optionsSuccessStatus: 200
-// }
+// 'http://localhost:8080', 
