@@ -31,3 +31,7 @@ export const deleteImage = imageURL => {
   catch(err) { throw new Error(`Unable to delete! Err: ${err}`) }
   return imageURL
 }
+
+export const checkUnusedImages = (imagesIdArray, folder) => {
+  console.log('DIFF: ', imagesIdArray)
+}

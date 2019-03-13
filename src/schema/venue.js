@@ -1,5 +1,4 @@
-import { getPlaceDetails } from '../utils/google.js'
-
+import { getPlaceDetails } from '../utils/google';
 // ---------------------------------------------------
 //      TYPE DEFS
 // ---------------------------------------------------
@@ -10,6 +9,8 @@ export const typeDef = `
         name: String!
         address: String
         placeID: String
+        latitude: Float
+        longitude: Float
     }
     input VenueInput {
         name: String!
@@ -26,7 +27,7 @@ export const typeDef = `
     }
     extend type Mutation {
         createVenue(data: VenueInput! ): Venue!
-        deleteVenue(id: ID!): Venue!
+        deleteVenue(id: ID!): AuthPayload!
         updateVenue(id: ID!, data: UpdateVenueInput!): AuthPayload!
     }
 `
@@ -36,25 +37,30 @@ export const typeDef = `
 // ---------------------------------------------------
 
 export const Resolvers = {
-    Venue: {},
     Query: {
         venues(parent, args, { prisma }, info) {
             return prisma.query.venues({where: {name_contains: args.query} }, info)
         }
     },
     Mutation: {
-        async createVenue(parent, args, { prisma, request }, info) {
+        async createVenue(parent, {data}, { prisma }, info) {
+            if (data.placeID) {
+                try {
+                    const { geometry: { location: { lat, lng}}} = await getPlaceDetails(data.placeID)
+                    data.latitude = lat
+                    data.longitude = lng
+                } catch(err) { throw new Error(err.message) }
+            }
             return prisma.mutation.createVenue({
-                data: {
-                    name: args.data.name,
-                    address: args.data.address,
-                    placeID: args.data.placeID
-                }
+                data: { ...data }
             }, info)
         },
-        async deleteVenue(parent, args, { prisma, request }, info) {
-            if (!await prisma.exists.Venue({ id: args.id }) ) throw new Error('Venue not found in database...')
-            return prisma.mutation.deleteVenue({ where: { id: args.id }}, info)
+        async deleteVenue(parent, {id}, { prisma, request }, info) {
+            try {
+
+                const res = await prisma.mutation.deleteVenue({ where: { id }}, '{id}')
+                return { token: res.id }
+            } catch(err) { throw new Error(err.message)}
         },
         async updateVenue(parent, {id, data}, { prisma, request }, info) {
             if ( !await prisma.exists.Venue({ id }) ) throw new Error('Venue not found in database...')

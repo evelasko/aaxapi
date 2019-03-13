@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { cacheNews } from '../cache';
 import { PUBSUB_NEW_NEWS } from '../constants';
-import { getNewsById } from '../utils/queryCache';
+import { getNewsById, getUserById } from '../utils/queryCache';
 import { aWeekFromNow, isBeforeNow } from '../utils/time';
 import { deleteImage, getSecureImage, processUpload } from '../utils/upload';
 
@@ -25,6 +25,8 @@ export const typeDef = `
         featured: Boolean
         deleteUpon: Boolean
         published: Boolean
+        createdAt: DateTime!
+        updatedAt: DateTime!
     }
     input CreateNewsInput {
         title: String!
@@ -56,7 +58,7 @@ export const typeDef = `
         newses(query: String): [News]!
         alerts(query: String): [News]!
         calls(query: String): [News]!
-        allNews(query: String): [News]!
+        allNews(per: String, query: String): [News]!
     }
     extend type Mutation {
         createNews(data: CreateNewsInput! ): News!
@@ -96,9 +98,20 @@ export const Resolvers = {
             if (!isAdmin) params.where.AND.push({target_in}) // Admins get no user group filters
             return prisma.query.newses(params, info)
         },
-        async allNews(parent, args, { prisma, session: { group, isAdmin, userId } }, info) {
-            const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
-            const params = {where: { OR: or(args.query) } }
+        async allNews(parent, {per, query}, { prisma, session }, info) {
+            let userId = undefined, group = undefined, isAdmin = undefined
+            if (session.userId) { 
+                userId = session.userId 
+                group = session.group
+                isAdmin = session.isAdmin
+            } else if (per) {
+                userId = per 
+                const user = await getUserById(userId)
+                group = user.group
+                isAdmin = user.isAdmin
+            }
+            const target_in = group ? [group, 'PUBLIC'] : ['PUBLIC']
+            const params = {where: { OR: or(query) } }
             if (!isAdmin) params.where.AND = [{target_in}]
             return prisma.query.newses(params, info)
         }

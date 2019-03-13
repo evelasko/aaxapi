@@ -1,5 +1,5 @@
 # source: http://localhost:4466/aaxapi/dev
-# timestamp: Fri Feb 08 2019 11:01:23 GMT+0100 (Central European Standard Time)
+# timestamp: Wed Mar 13 2019 10:01:51 GMT+0100 (Central European Standard Time)
 
 type Address implements Node {
   id: ID!
@@ -8,7 +8,8 @@ type Address implements Node {
   city: String!
   state: String!
   country: String!
-  location: Location!
+  latitude: Float
+  longitude: Float
   user: User!
 }
 
@@ -28,7 +29,8 @@ input AddressCreateInput {
   city: String!
   state: String!
   country: String!
-  location: LocationCreateOneInput!
+  latitude: Float
+  longitude: Float
   user: UserCreateOneWithoutAddressInput!
 }
 
@@ -43,7 +45,8 @@ input AddressCreateWithoutUserInput {
   city: String!
   state: String!
   country: String!
-  location: LocationCreateOneInput!
+  latitude: Float
+  longitude: Float
 }
 
 """An edge in a connection."""
@@ -68,6 +71,10 @@ enum AddressOrderByInput {
   state_DESC
   country_ASC
   country_DESC
+  latitude_ASC
+  latitude_DESC
+  longitude_ASC
+  longitude_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -81,6 +88,8 @@ type AddressPreviousValues {
   city: String!
   state: String!
   country: String!
+  latitude: Float
+  longitude: Float
 }
 
 type AddressSubscriptionPayload {
@@ -128,7 +137,8 @@ input AddressUpdateInput {
   city: String
   state: String
   country: String
-  location: LocationUpdateOneRequiredInput
+  latitude: Float
+  longitude: Float
   user: UserUpdateOneRequiredWithoutAddressInput
 }
 
@@ -138,6 +148,8 @@ input AddressUpdateManyMutationInput {
   city: String
   state: String
   country: String
+  latitude: Float
+  longitude: Float
 }
 
 input AddressUpdateOneWithoutUserInput {
@@ -155,7 +167,8 @@ input AddressUpdateWithoutUserDataInput {
   city: String
   state: String
   country: String
-  location: LocationUpdateOneRequiredInput
+  latitude: Float
+  longitude: Float
 }
 
 input AddressUpsertWithoutUserInput {
@@ -412,7 +425,50 @@ input AddressWhereInput {
 
   """All values not ending with the given string."""
   country_not_ends_with: String
-  location: LocationWhereInput
+  latitude: Float
+
+  """All values that are not equal to given value."""
+  latitude_not: Float
+
+  """All values that are contained in given list."""
+  latitude_in: [Float!]
+
+  """All values that are not contained in given list."""
+  latitude_not_in: [Float!]
+
+  """All values less than the given value."""
+  latitude_lt: Float
+
+  """All values less than or equal the given value."""
+  latitude_lte: Float
+
+  """All values greater than the given value."""
+  latitude_gt: Float
+
+  """All values greater than or equal the given value."""
+  latitude_gte: Float
+  longitude: Float
+
+  """All values that are not equal to given value."""
+  longitude_not: Float
+
+  """All values that are contained in given list."""
+  longitude_in: [Float!]
+
+  """All values that are not contained in given list."""
+  longitude_not_in: [Float!]
+
+  """All values less than the given value."""
+  longitude_lt: Float
+
+  """All values less than or equal the given value."""
+  longitude_lte: Float
+
+  """All values greater than the given value."""
+  longitude_gt: Float
+
+  """All values greater than or equal the given value."""
+  longitude_gte: Float
   user: UserWhereInput
 }
 
@@ -1223,10 +1279,6 @@ type AggregateEvent {
   count: Int!
 }
 
-type AggregateLocation {
-  count: Int!
-}
-
 type AggregateNews {
   count: Int!
 }
@@ -1865,6 +1917,8 @@ type Event implements Node {
   deleteUpon: Boolean
   published: Boolean!
   venue: Venue!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """A connection to a list of items."""
@@ -1967,10 +2021,10 @@ enum EventOrderByInput {
   deleteUpon_DESC
   published_ASC
   published_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type EventPreviousValues {
@@ -1986,6 +2040,8 @@ type EventPreviousValues {
   target: UserGroup!
   deleteUpon: Boolean
   published: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input EventScalarWhereInput {
@@ -2357,6 +2413,50 @@ input EventScalarWhereInput {
 
   """All values that are not equal to given value."""
   published_not: Boolean
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type EventSubscriptionPayload {
@@ -2890,6 +2990,50 @@ input EventWhereInput {
 
   """All values that are not equal to given value."""
   published_not: Boolean
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
   author: UserWhereInput
   venue: VenueWhereInput
 }
@@ -2900,172 +3044,6 @@ input EventWhereUniqueInput {
 
 """Raw JSON value"""
 scalar Json
-
-type Location {
-  latitude: Float!
-  longitude: Float!
-}
-
-"""A connection to a list of items."""
-type LocationConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [LocationEdge]!
-  aggregate: AggregateLocation!
-}
-
-input LocationCreateInput {
-  latitude: Float!
-  longitude: Float!
-}
-
-input LocationCreateOneInput {
-  create: LocationCreateInput
-}
-
-"""An edge in a connection."""
-type LocationEdge {
-  """The item at the end of the edge."""
-  node: Location!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-enum LocationOrderByInput {
-  latitude_ASC
-  latitude_DESC
-  longitude_ASC
-  longitude_DESC
-  id_ASC
-  id_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
-}
-
-type LocationPreviousValues {
-  latitude: Float!
-  longitude: Float!
-}
-
-type LocationSubscriptionPayload {
-  mutation: MutationType!
-  node: Location
-  updatedFields: [String!]
-  previousValues: LocationPreviousValues
-}
-
-input LocationSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [LocationSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [LocationSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [LocationSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: LocationWhereInput
-}
-
-input LocationUpdateDataInput {
-  latitude: Float
-  longitude: Float
-}
-
-input LocationUpdateManyMutationInput {
-  latitude: Float
-  longitude: Float
-}
-
-input LocationUpdateOneRequiredInput {
-  create: LocationCreateInput
-  update: LocationUpdateDataInput
-  upsert: LocationUpsertNestedInput
-}
-
-input LocationUpsertNestedInput {
-  update: LocationUpdateDataInput!
-  create: LocationCreateInput!
-}
-
-input LocationWhereInput {
-  """Logical AND on all given filters."""
-  AND: [LocationWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [LocationWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [LocationWhereInput!]
-  latitude: Float
-
-  """All values that are not equal to given value."""
-  latitude_not: Float
-
-  """All values that are contained in given list."""
-  latitude_in: [Float!]
-
-  """All values that are not contained in given list."""
-  latitude_not_in: [Float!]
-
-  """All values less than the given value."""
-  latitude_lt: Float
-
-  """All values less than or equal the given value."""
-  latitude_lte: Float
-
-  """All values greater than the given value."""
-  latitude_gt: Float
-
-  """All values greater than or equal the given value."""
-  latitude_gte: Float
-  longitude: Float
-
-  """All values that are not equal to given value."""
-  longitude_not: Float
-
-  """All values that are contained in given list."""
-  longitude_in: [Float!]
-
-  """All values that are not contained in given list."""
-  longitude_not_in: [Float!]
-
-  """All values less than the given value."""
-  longitude_lt: Float
-
-  """All values less than or equal the given value."""
-  longitude_lte: Float
-
-  """All values greater than the given value."""
-  longitude_gt: Float
-
-  """All values greater than or equal the given value."""
-  longitude_gte: Float
-}
 
 """
 The `Long` scalar type represents non-fractional signed whole numeric values.
@@ -3085,7 +3063,6 @@ type Mutation {
   createBranch(data: BranchCreateInput!): Branch!
   createAdminRole(data: AdminRoleCreateInput!): AdminRole!
   createAdminCompetence(data: AdminCompetenceCreateInput!): AdminCompetence!
-  createLocation(data: LocationCreateInput!): Location!
   updateAddress(data: AddressUpdateInput!, where: AddressWhereUniqueInput!): Address
   updatePhoneNumber(data: PhoneNumberUpdateInput!, where: PhoneNumberWhereUniqueInput!): PhoneNumber
   updatenID(data: nIDUpdateInput!, where: nIDWhereUniqueInput!): nID
@@ -3130,7 +3107,6 @@ type Mutation {
   updateManyBranches(data: BranchUpdateManyMutationInput!, where: BranchWhereInput): BatchPayload!
   updateManyAdminRoles(data: AdminRoleUpdateManyMutationInput!, where: AdminRoleWhereInput): BatchPayload!
   updateManyAdminCompetences(data: AdminCompetenceUpdateManyMutationInput!, where: AdminCompetenceWhereInput): BatchPayload!
-  updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   deleteManyAddresses(where: AddressWhereInput): BatchPayload!
   deleteManyPhoneNumbers(where: PhoneNumberWhereInput): BatchPayload!
   deleteManyNIDs(where: nIDWhereInput): BatchPayload!
@@ -3142,7 +3118,6 @@ type Mutation {
   deleteManyBranches(where: BranchWhereInput): BatchPayload!
   deleteManyAdminRoles(where: AdminRoleWhereInput): BatchPayload!
   deleteManyAdminCompetences(where: AdminCompetenceWhereInput): BatchPayload!
-  deleteManyLocations(where: LocationWhereInput): BatchPayload!
   executeRaw(database: PrismaDatabase, query: String!): Json!
 }
 
@@ -3165,6 +3140,8 @@ type News implements Node {
   target: UserGroup!
   deleteUpon: Boolean
   published: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """A connection to a list of items."""
@@ -3241,10 +3218,10 @@ enum NewsOrderByInput {
   deleteUpon_DESC
   published_ASC
   published_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type NewsPreviousValues {
@@ -3259,6 +3236,8 @@ type NewsPreviousValues {
   target: UserGroup!
   deleteUpon: Boolean
   published: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input NewsScalarWhereInput {
@@ -3554,6 +3533,50 @@ input NewsScalarWhereInput {
 
   """All values that are not equal to given value."""
   published_not: Boolean
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type NewsSubscriptionPayload {
@@ -3968,6 +3991,50 @@ input NewsWhereInput {
 
   """All values that are not equal to given value."""
   published_not: Boolean
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
   author: UserWhereInput
 }
 
@@ -4687,7 +4754,6 @@ type Query {
   branches(where: BranchWhereInput, orderBy: BranchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Branch]!
   adminRoles(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminRole]!
   adminCompetences(where: AdminCompetenceWhereInput, orderBy: AdminCompetenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminCompetence]!
-  locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   address(where: AddressWhereUniqueInput!): Address
   phoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
   nID(where: nIDWhereUniqueInput!): nID
@@ -4710,7 +4776,6 @@ type Query {
   branchesConnection(where: BranchWhereInput, orderBy: BranchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BranchConnection!
   adminRolesConnection(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminRoleConnection!
   adminCompetencesConnection(where: AdminCompetenceWhereInput, orderBy: AdminCompetenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminCompetenceConnection!
-  locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -4731,7 +4796,6 @@ type Subscription {
   branch(where: BranchSubscriptionWhereInput): BranchSubscriptionPayload
   adminRole(where: AdminRoleSubscriptionWhereInput): AdminRoleSubscriptionPayload
   adminCompetence(where: AdminCompetenceSubscriptionWhereInput): AdminCompetenceSubscriptionPayload
-  location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
 }
 
 type User implements Node {
@@ -4741,20 +4805,26 @@ type User implements Node {
   email: String!
   emailVerified: Boolean!
   password: String!
+  address: Address
+  phone: PhoneNumber
   nID: nID
   updatedAt: DateTime!
   createdAt: DateTime!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup!
   groupRequest: UserGroup
-  address: Address
-  phone: PhoneNumber
-  isAdmin: Boolean!
-  newses(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [News!]
-  events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event!]
   branch: Branch
   department: Branch
   academicYear: Int
+  isAdmin: Boolean!
   adminRole: AdminRole
+  newses(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [News!]
+  events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event!]
 }
 
 """A connection to a list of items."""
@@ -4773,18 +4843,24 @@ input UserCreateInput {
   email: String!
   emailVerified: Boolean
   password: String!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDCreateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
-  newses: NewsCreateManyWithoutAuthorInput
-  events: EventCreateManyWithoutAuthorInput
+  nID: nIDCreateOneWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
 }
 
 input UserCreateManyWithoutAdminRoleInput {
@@ -4833,17 +4909,23 @@ input UserCreateWithoutAddressInput {
   email: String!
   emailVerified: Boolean
   password: String!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDCreateOneWithoutUserInput
+  isAdmin: Boolean
   phone: PhoneNumberCreateOneWithoutUserInput
-  newses: NewsCreateManyWithoutAuthorInput
-  events: EventCreateManyWithoutAuthorInput
+  nID: nIDCreateOneWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
 }
 
 input UserCreateWithoutAdminRoleInput {
@@ -4852,17 +4934,23 @@ input UserCreateWithoutAdminRoleInput {
   email: String!
   emailVerified: Boolean
   password: String!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDCreateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
-  newses: NewsCreateManyWithoutAuthorInput
-  events: EventCreateManyWithoutAuthorInput
+  nID: nIDCreateOneWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
 }
 
 input UserCreateWithoutBranchInput {
@@ -4871,17 +4959,23 @@ input UserCreateWithoutBranchInput {
   email: String!
   emailVerified: Boolean
   password: String!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDCreateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
-  newses: NewsCreateManyWithoutAuthorInput
-  events: EventCreateManyWithoutAuthorInput
+  nID: nIDCreateOneWithoutUserInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
 }
 
 input UserCreateWithoutDepartmentInput {
@@ -4890,17 +4984,23 @@ input UserCreateWithoutDepartmentInput {
   email: String!
   emailVerified: Boolean
   password: String!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDCreateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
-  newses: NewsCreateManyWithoutAuthorInput
-  events: EventCreateManyWithoutAuthorInput
+  nID: nIDCreateOneWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
 }
 
 input UserCreateWithoutEventsInput {
@@ -4909,17 +5009,23 @@ input UserCreateWithoutEventsInput {
   email: String!
   emailVerified: Boolean
   password: String!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDCreateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
-  newses: NewsCreateManyWithoutAuthorInput
+  nID: nIDCreateOneWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
+  newses: NewsCreateManyWithoutAuthorInput
 }
 
 input UserCreateWithoutNewsesInput {
@@ -4928,17 +5034,23 @@ input UserCreateWithoutNewsesInput {
   email: String!
   emailVerified: Boolean
   password: String!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDCreateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
-  events: EventCreateManyWithoutAuthorInput
+  nID: nIDCreateOneWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
+  events: EventCreateManyWithoutAuthorInput
 }
 
 input UserCreateWithoutNIDInput {
@@ -4947,17 +5059,23 @@ input UserCreateWithoutNIDInput {
   email: String!
   emailVerified: Boolean
   password: String!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
+  isAdmin: Boolean
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
-  newses: NewsCreateManyWithoutAuthorInput
-  events: EventCreateManyWithoutAuthorInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
 }
 
 input UserCreateWithoutPhoneInput {
@@ -4966,17 +5084,23 @@ input UserCreateWithoutPhoneInput {
   email: String!
   emailVerified: Boolean
   password: String!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDCreateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressCreateOneWithoutUserInput
-  newses: NewsCreateManyWithoutAuthorInput
-  events: EventCreateManyWithoutAuthorInput
+  nID: nIDCreateOneWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
 }
 
 """An edge in a connection."""
@@ -5011,14 +5135,26 @@ enum UserOrderByInput {
   updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  notificationsDevice_ASC
+  notificationsDevice_DESC
+  notificationsPermission_ASC
+  notificationsPermission_DESC
+  notificationsPrefEmail_ASC
+  notificationsPrefEmail_DESC
+  notificationsPrefPush_ASC
+  notificationsPrefPush_DESC
+  notificationsPrefReminderEmail_ASC
+  notificationsPrefReminderEmail_DESC
+  notificationsPrefReminderPush_ASC
+  notificationsPrefReminderPush_DESC
   group_ASC
   group_DESC
   groupRequest_ASC
   groupRequest_DESC
-  isAdmin_ASC
-  isAdmin_DESC
   academicYear_ASC
   academicYear_DESC
+  isAdmin_ASC
+  isAdmin_DESC
 }
 
 type UserPreviousValues {
@@ -5030,10 +5166,16 @@ type UserPreviousValues {
   password: String!
   updatedAt: DateTime!
   createdAt: DateTime!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup!
   groupRequest: UserGroup
-  isAdmin: Boolean!
   academicYear: Int
+  isAdmin: Boolean!
 }
 
 input UserScalarWhereInput {
@@ -5293,6 +5435,66 @@ input UserScalarWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  notificationsDevice: String
+
+  """All values that are not equal to given value."""
+  notificationsDevice_not: String
+
+  """All values that are contained in given list."""
+  notificationsDevice_in: [String!]
+
+  """All values that are not contained in given list."""
+  notificationsDevice_not_in: [String!]
+
+  """All values less than the given value."""
+  notificationsDevice_lt: String
+
+  """All values less than or equal the given value."""
+  notificationsDevice_lte: String
+
+  """All values greater than the given value."""
+  notificationsDevice_gt: String
+
+  """All values greater than or equal the given value."""
+  notificationsDevice_gte: String
+
+  """All values containing the given string."""
+  notificationsDevice_contains: String
+
+  """All values not containing the given string."""
+  notificationsDevice_not_contains: String
+
+  """All values starting with the given string."""
+  notificationsDevice_starts_with: String
+
+  """All values not starting with the given string."""
+  notificationsDevice_not_starts_with: String
+
+  """All values ending with the given string."""
+  notificationsDevice_ends_with: String
+
+  """All values not ending with the given string."""
+  notificationsDevice_not_ends_with: String
+  notificationsPermission: Boolean
+
+  """All values that are not equal to given value."""
+  notificationsPermission_not: Boolean
+  notificationsPrefEmail: Boolean
+
+  """All values that are not equal to given value."""
+  notificationsPrefEmail_not: Boolean
+  notificationsPrefPush: Boolean
+
+  """All values that are not equal to given value."""
+  notificationsPrefPush_not: Boolean
+  notificationsPrefReminderEmail: Boolean
+
+  """All values that are not equal to given value."""
+  notificationsPrefReminderEmail_not: Boolean
+  notificationsPrefReminderPush: Boolean
+
+  """All values that are not equal to given value."""
+  notificationsPrefReminderPush_not: Boolean
   group: UserGroup
 
   """All values that are not equal to given value."""
@@ -5313,10 +5515,6 @@ input UserScalarWhereInput {
 
   """All values that are not contained in given list."""
   groupRequest_not_in: [UserGroup!]
-  isAdmin: Boolean
-
-  """All values that are not equal to given value."""
-  isAdmin_not: Boolean
   academicYear: Int
 
   """All values that are not equal to given value."""
@@ -5339,6 +5537,10 @@ input UserScalarWhereInput {
 
   """All values greater than or equal the given value."""
   academicYear_gte: Int
+  isAdmin: Boolean
+
+  """All values that are not equal to given value."""
+  isAdmin_not: Boolean
 }
 
 type UserSubscriptionPayload {
@@ -5386,18 +5588,24 @@ input UserUpdateInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDUpdateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
-  newses: NewsUpdateManyWithoutAuthorInput
-  events: EventUpdateManyWithoutAuthorInput
+  nID: nIDUpdateOneWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateManyDataInput {
@@ -5406,10 +5614,16 @@ input UserUpdateManyDataInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
+  isAdmin: Boolean
 }
 
 input UserUpdateManyMutationInput {
@@ -5418,10 +5632,16 @@ input UserUpdateManyMutationInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
+  isAdmin: Boolean
 }
 
 input UserUpdateManyWithoutAdminRoleInput {
@@ -5503,17 +5723,23 @@ input UserUpdateWithoutAddressDataInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDUpdateOneWithoutUserInput
+  isAdmin: Boolean
   phone: PhoneNumberUpdateOneWithoutUserInput
-  newses: NewsUpdateManyWithoutAuthorInput
-  events: EventUpdateManyWithoutAuthorInput
+  nID: nIDUpdateOneWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateWithoutAdminRoleDataInput {
@@ -5522,17 +5748,23 @@ input UserUpdateWithoutAdminRoleDataInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDUpdateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
-  newses: NewsUpdateManyWithoutAuthorInput
-  events: EventUpdateManyWithoutAuthorInput
+  nID: nIDUpdateOneWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateWithoutBranchDataInput {
@@ -5541,17 +5773,23 @@ input UserUpdateWithoutBranchDataInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDUpdateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
-  newses: NewsUpdateManyWithoutAuthorInput
-  events: EventUpdateManyWithoutAuthorInput
+  nID: nIDUpdateOneWithoutUserInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateWithoutDepartmentDataInput {
@@ -5560,17 +5798,23 @@ input UserUpdateWithoutDepartmentDataInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDUpdateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
-  newses: NewsUpdateManyWithoutAuthorInput
-  events: EventUpdateManyWithoutAuthorInput
+  nID: nIDUpdateOneWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateWithoutEventsDataInput {
@@ -5579,17 +5823,23 @@ input UserUpdateWithoutEventsDataInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDUpdateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
-  newses: NewsUpdateManyWithoutAuthorInput
+  nID: nIDUpdateOneWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  newses: NewsUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateWithoutNewsesDataInput {
@@ -5598,17 +5848,23 @@ input UserUpdateWithoutNewsesDataInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDUpdateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
-  events: EventUpdateManyWithoutAuthorInput
+  nID: nIDUpdateOneWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  events: EventUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateWithoutNIDDataInput {
@@ -5617,17 +5873,23 @@ input UserUpdateWithoutNIDDataInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
+  isAdmin: Boolean
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
-  newses: NewsUpdateManyWithoutAuthorInput
-  events: EventUpdateManyWithoutAuthorInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateWithoutPhoneDataInput {
@@ -5636,17 +5898,23 @@ input UserUpdateWithoutPhoneDataInput {
   email: String
   emailVerified: Boolean
   password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
   group: UserGroup
   groupRequest: UserGroup
-  isAdmin: Boolean
   academicYear: Int
-  nID: nIDUpdateOneWithoutUserInput
+  isAdmin: Boolean
   address: AddressUpdateOneWithoutUserInput
-  newses: NewsUpdateManyWithoutAuthorInput
-  events: EventUpdateManyWithoutAuthorInput
+  nID: nIDUpdateOneWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateWithWhereUniqueWithoutAdminRoleInput {
@@ -5964,6 +6232,66 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  notificationsDevice: String
+
+  """All values that are not equal to given value."""
+  notificationsDevice_not: String
+
+  """All values that are contained in given list."""
+  notificationsDevice_in: [String!]
+
+  """All values that are not contained in given list."""
+  notificationsDevice_not_in: [String!]
+
+  """All values less than the given value."""
+  notificationsDevice_lt: String
+
+  """All values less than or equal the given value."""
+  notificationsDevice_lte: String
+
+  """All values greater than the given value."""
+  notificationsDevice_gt: String
+
+  """All values greater than or equal the given value."""
+  notificationsDevice_gte: String
+
+  """All values containing the given string."""
+  notificationsDevice_contains: String
+
+  """All values not containing the given string."""
+  notificationsDevice_not_contains: String
+
+  """All values starting with the given string."""
+  notificationsDevice_starts_with: String
+
+  """All values not starting with the given string."""
+  notificationsDevice_not_starts_with: String
+
+  """All values ending with the given string."""
+  notificationsDevice_ends_with: String
+
+  """All values not ending with the given string."""
+  notificationsDevice_not_ends_with: String
+  notificationsPermission: Boolean
+
+  """All values that are not equal to given value."""
+  notificationsPermission_not: Boolean
+  notificationsPrefEmail: Boolean
+
+  """All values that are not equal to given value."""
+  notificationsPrefEmail_not: Boolean
+  notificationsPrefPush: Boolean
+
+  """All values that are not equal to given value."""
+  notificationsPrefPush_not: Boolean
+  notificationsPrefReminderEmail: Boolean
+
+  """All values that are not equal to given value."""
+  notificationsPrefReminderEmail_not: Boolean
+  notificationsPrefReminderPush: Boolean
+
+  """All values that are not equal to given value."""
+  notificationsPrefReminderPush_not: Boolean
   group: UserGroup
 
   """All values that are not equal to given value."""
@@ -5984,10 +6312,6 @@ input UserWhereInput {
 
   """All values that are not contained in given list."""
   groupRequest_not_in: [UserGroup!]
-  isAdmin: Boolean
-
-  """All values that are not equal to given value."""
-  isAdmin_not: Boolean
   academicYear: Int
 
   """All values that are not equal to given value."""
@@ -6010,18 +6334,22 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   academicYear_gte: Int
-  nID: nIDWhereInput
+  isAdmin: Boolean
+
+  """All values that are not equal to given value."""
+  isAdmin_not: Boolean
   address: AddressWhereInput
   phone: PhoneNumberWhereInput
+  nID: nIDWhereInput
+  branch: BranchWhereInput
+  department: BranchWhereInput
+  adminRole: AdminRoleWhereInput
   newses_every: NewsWhereInput
   newses_some: NewsWhereInput
   newses_none: NewsWhereInput
   events_every: EventWhereInput
   events_some: EventWhereInput
   events_none: EventWhereInput
-  branch: BranchWhereInput
-  department: BranchWhereInput
-  adminRole: AdminRoleWhereInput
 }
 
 input UserWhereUniqueInput {
@@ -6034,6 +6362,8 @@ type Venue implements Node {
   name: String!
   address: String!
   placeID: String
+  latitude: Float
+  longitude: Float
   events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event!]
 }
 
@@ -6051,6 +6381,8 @@ input VenueCreateInput {
   name: String!
   address: String!
   placeID: String
+  latitude: Float
+  longitude: Float
   events: EventCreateManyWithoutVenueInput
 }
 
@@ -6063,6 +6395,8 @@ input VenueCreateWithoutEventsInput {
   name: String!
   address: String!
   placeID: String
+  latitude: Float
+  longitude: Float
 }
 
 """An edge in a connection."""
@@ -6083,6 +6417,10 @@ enum VenueOrderByInput {
   address_DESC
   placeID_ASC
   placeID_DESC
+  latitude_ASC
+  latitude_DESC
+  longitude_ASC
+  longitude_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -6094,6 +6432,8 @@ type VenuePreviousValues {
   name: String!
   address: String!
   placeID: String
+  latitude: Float
+  longitude: Float
 }
 
 type VenueSubscriptionPayload {
@@ -6139,6 +6479,8 @@ input VenueUpdateInput {
   name: String
   address: String
   placeID: String
+  latitude: Float
+  longitude: Float
   events: EventUpdateManyWithoutVenueInput
 }
 
@@ -6146,6 +6488,8 @@ input VenueUpdateManyMutationInput {
   name: String
   address: String
   placeID: String
+  latitude: Float
+  longitude: Float
 }
 
 input VenueUpdateOneRequiredWithoutEventsInput {
@@ -6159,6 +6503,8 @@ input VenueUpdateWithoutEventsDataInput {
   name: String
   address: String
   placeID: String
+  latitude: Float
+  longitude: Float
 }
 
 input VenueUpsertWithoutEventsInput {
@@ -6335,6 +6681,50 @@ input VenueWhereInput {
 
   """All values not ending with the given string."""
   placeID_not_ends_with: String
+  latitude: Float
+
+  """All values that are not equal to given value."""
+  latitude_not: Float
+
+  """All values that are contained in given list."""
+  latitude_in: [Float!]
+
+  """All values that are not contained in given list."""
+  latitude_not_in: [Float!]
+
+  """All values less than the given value."""
+  latitude_lt: Float
+
+  """All values less than or equal the given value."""
+  latitude_lte: Float
+
+  """All values greater than the given value."""
+  latitude_gt: Float
+
+  """All values greater than or equal the given value."""
+  latitude_gte: Float
+  longitude: Float
+
+  """All values that are not equal to given value."""
+  longitude_not: Float
+
+  """All values that are contained in given list."""
+  longitude_in: [Float!]
+
+  """All values that are not contained in given list."""
+  longitude_not_in: [Float!]
+
+  """All values less than the given value."""
+  longitude_lt: Float
+
+  """All values less than or equal the given value."""
+  longitude_lte: Float
+
+  """All values greater than the given value."""
+  longitude_gt: Float
+
+  """All values greater than or equal the given value."""
+  longitude_gte: Float
   events_every: EventWhereInput
   events_some: EventWhereInput
   events_none: EventWhereInput

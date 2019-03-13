@@ -52,7 +52,7 @@ server.express.use(session(
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 900000
+      maxAge: 7200000
     }
   })
 )

@@ -16,7 +16,8 @@ type Address {
   city: String!
   state: String!
   country: String!
-  location: Location!
+  latitude: Float
+  longitude: Float
   user: User! @relation(name: "UserToAddress", onDelete: SET_NULL )
 }
 type PhoneNumber {
@@ -25,10 +26,6 @@ type PhoneNumber {
   phone: Int! @unique
   verified: Boolean! @default(value: "false")
   user: User! @relation(name: "UserToPhone", onDelete: SET_NULL )
-}
-type Location {
-  latitude: Float!
-  longitude: Float!
 }
 type nID {
   nID: String!@unique

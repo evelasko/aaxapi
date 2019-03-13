@@ -2,6 +2,12 @@ import { eventsCacheKey, newsesCacheKey, usersCacheKey } from './constants';
 import { getEventsData, getNewsData, getUsersData } from './pg';
 import { redis } from './server';
 
+// -------------------------- READ CACHE
+export const getCachedData = async (key) => {
+  const response = await redis.lrange(key, 0, -1) || []
+  return response.map(item => JSON.parse(item))
+}
+
 // -------------------------- CACHE USERS
 export const cacheUsers = async () => {
   await redis.del(usersCacheKey) // CLEAR CACHE
@@ -14,16 +20,19 @@ export const cacheUsers = async () => {
 
 // -------------------------- CACHE EVENTS
 export const cacheEvents = async () => {
+  const oldData = await getCachedData(eventsCacheKey) // GET OLD DATA
   await redis.del(eventsCacheKey) // CLEAR CACHE
   const data =  await getEventsData() // FILL CACHE
   if (!data.length) return null
   const res = await redis.lpush(eventsCacheKey, ...data)
+  if (oldData.lenght) {  }
   console.log('Response from cacheEvents: ', res)
   return data
 }
 
 // -------------------------- CACHE NEWSES
 export const cacheNews = async () => {
+  const oldData = await getCachedData(newsesCacheKey) // GET OLD DATA
   await redis.del(newsesCacheKey) // CLEAR CACHE
   const data =  await getNewsData() // FILL CACHE
   if (!data.length) return null 
@@ -40,8 +49,3 @@ export const initFullCache = async () => {
   return {cachedUsers, cachedEvents, cachedNews}
 }
 
-// -------------------------- READ CACHE
-export const getCachedData = async (key) => {
-  const response = await redis.lrange(key, 0, -1) || []
-  return response.map(item => JSON.parse(item))
-}

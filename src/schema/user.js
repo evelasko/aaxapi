@@ -25,8 +25,16 @@ type User {
     address: Address
     phone: PhoneNumber
     isAdmin: Boolean
+
     newses: [News!]!
     events: [Event!]!
+
+    notificationsDevice: String
+    notificationsPermission: Boolean
+    notificationsPrefEmail: Boolean
+    notificationsPrefPush: Boolean
+    notificationsPrefReminderEmail: Boolean
+    notificationsPrefReminderPush: Boolean
 }
 type UserPayload {
   user: User
@@ -39,6 +47,12 @@ type AuthPayload {
 input LoginUserInput {
     email: String!
     password: String!
+}
+input LoginUserMobileInput {
+  email: String!
+  password: String!
+  deviceToken: String
+  devicePermission: Boolean
 }
 input CreateUserInput {
     email: String!
@@ -57,12 +71,13 @@ input UpdateUserInput {
 }
 extend type Query {
     users(query: String, group: UserGroup): [User!]!
-    me: UserPayload
+    me(per: String): UserPayload
     userGroupRequest: [User!]!
 }
 extend type Mutation {
     signUpUser(data: CreateUserInput!): AuthPayload!
     loginUser(data: LoginUserInput!): AuthPayload!
+    loginUserMobile(data: LoginUserMobileInput!): AuthPayload!
     deleteUser: UserPayload!
     logoutUser: AuthPayload!
     confirmGroupRequest(id: String!, confirm: Boolean!): AuthPayload!
@@ -97,8 +112,10 @@ export const Resolvers = {
             if (group) q.where.AND = [{group}]
             return prisma.query.users(q, info)
         },
-        async me(parent, args, { session }, info) {
-            const id = session.userId
+        async me(parent, {per}, { session }, info) {
+            let id = undefined
+            if (per) { id = per }
+            else if (session.userId) { id = session.userId }
             if (!id) return {error: 'Query: Me | Error: No user authenticated...'}
             const user = getUserById(id)
             return { user }
@@ -167,7 +184,7 @@ export const Resolvers = {
 
         },
         async loginUser(parent, {data}, { session, request, redis }, info) {
-            if (!isEmail(data.email)) return { error: '@signUpUser: email not valid' }
+            if (!isEmail(data.email)) return { error: '@logInUser: email not valid' }
             const user = await getUserByEmail(data.email)
             if ( !user  ) return {error: `@loginUser: User not found`}
             const match = await bcrypt.compare(data.password, user.password)
@@ -182,6 +199,25 @@ export const Resolvers = {
             session.isAdmin = user.isAdmin
             session.group = user.group
             if (request.sessionID) { await redis.lpush(`${userSessionIdPrefix}${user.id}`, request.sessionID) }
+            return { token: user.id }
+        },
+        async loginUserMobile(parent, {data}, { prisma }, info) {
+            if (!isEmail(data.email)) return { error: '@logInUser: email not valid' }
+            const user = await getUserByEmail(data.email)
+            if ( !user  ) return {error: `@loginUser: User not found`}
+            const match = await bcrypt.compare(data.password, user.password)
+            if ( !match ) return {error: `@loginUser: Invalid password`}
+            if (!user.emailVerified) {
+              const token = generateResetToken({id: user.id})
+              const link = `${process.env.FRONT_END_HOST}confirm-email/${token}`
+              const res = await sendConfirmationEmail(data.email, link)
+              return {error: '@loginUser: eMail not verified'}
+            }
+            const notif = await prisma.mutation.updateUser({ 
+              where: { id: user.id }, 
+              data: { notificationsDevice: data.deviceToken, notificationsPermission: data.devicePermission } },
+              '{id}'
+            )
             return { token: user.id }
         },
         async deleteUser(parent, args, { prisma, session }, info) {

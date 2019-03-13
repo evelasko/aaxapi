@@ -5,18 +5,29 @@ type User {
   email: String! @unique
   emailVerified: Boolean! @default(value: "false")
   password: String!
-  nID: nID @relation(name: "UserToNationalID", onDelete: CASCADE)
-  updatedAt: DateTime!
-  createdAt: DateTime!
-  group: UserGroup! @default(value: "PUBLIC")
-  groupRequest: UserGroup @default(value: "PUBLIC")
   address: Address @relation(name: "UserToAddress", onDelete: CASCADE)
   phone: PhoneNumber @relation(name: "UserToPhone", onDelete: CASCADE)
-  isAdmin: Boolean! @default(value: "false")
-  newses: [News!]! @relation(name: "NewsToUser", onDelete: CASCADE)
-  events: [Event!]! @relation(name: "EventToUser", onDelete: CASCADE)
+  nID: nID @relation(name: "UserToNationalID", onDelete: CASCADE)
+
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean @default(value: "true")
+  notificationsPrefPush: Boolean @default(value: "true")
+  notificationsPrefReminderEmail: Boolean @default(value: "true")
+  notificationsPrefReminderPush: Boolean @default(value: "true")
+
+  group: UserGroup! @default(value: "PUBLIC")
+  groupRequest: UserGroup @default(value: "PUBLIC")
   branch: Branch @relation(name: "BranchToStudent")
   department: Branch @relation(name: "BranchToStaff")
   academicYear: Int @default(value: 0)
+
+  isAdmin: Boolean! @default(value: "false")
   adminRole: AdminRole @relation(name: "UserToRoles")
+
+  newses: [News!]! @relation(name: "NewsToUser", onDelete: CASCADE)
+  events: [Event!]! @relation(name: "EventToUser", onDelete: CASCADE)
 }

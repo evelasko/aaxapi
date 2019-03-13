@@ -22,6 +22,7 @@
   "author": "Enrique Velasco",
   "license": "MIT",
   "dependencies": {
+    "@google/maps": "^0.5.5",
     "adm-zip": ">=0.4.11",
     "apollo-boost": "^0.1.28",
     "apollo-engine": "^1.1.2",
@@ -62,6 +63,7 @@
     "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.1",
     "@babel/register": "^7.0.0",
+    "graphql": "^14.1.1",
     "jest": "^24.1.0",
     "kexec": "^3.0.0",
     "nodemon": "^1.18.9"

@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { cacheEvents } from '../cache';
-import { getEventById } from '../utils/queryCache';
+import { getEventById, getUserById } from '../utils/queryCache';
 import { isBeforeNow } from '../utils/time';
-import { deleteImage, processUpload } from '../utils/upload';
+import { deleteImage, getSecureImage, processUpload } from '../utils/upload';
 
 
 // ---------------------------------------------------
@@ -48,7 +48,7 @@ export const typeDef = `
         venue: ID
     }
     extend type Query {
-        events(query: String): [Event]!
+        events(per: String, query: String): [Event]!
     }
     extend type Mutation {
         createEvent(data: CreateEventInput! ): Event!
@@ -65,18 +65,29 @@ export const typeDef = `
 export const Resolvers = {
 
     Event: {
-      imageURL: (parent, _, {url}) => parent.imageURL ? `${url}/images/${parent.imageURL}` : `${url}/images/default.png`
+        imageURL: ({imageURL}, _, {url}) => imageURL && imageURL != 'default.png' ? getSecureImage(imageURL) : `${url}/images/default.png`
     },
     Query: {
-        async events(parent, {query}, { prisma, session: { userId, isAdmin, group } }, info) {
-          const params = {where: { OR: [
+        async events(parent, {per, query}, { prisma, session }, info) {
+            const params = {where: { OR: [
                                           {title_contains: query},
                                           {subtitle_contains: query},
                                           {body_contains: query }
-                                        ] } }
-          const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
-          if (!isAdmin) params.where.AND = [{target_in}] // Admins get no user group filters
-          return prisma.query.events(params, info)
+                                        ] }, orderBy: 'date_ASC' }
+            let userId = undefined, group = undefined, isAdmin = undefined
+            if (session.userId) { 
+                userId = session.userId 
+                group = session.group
+                isAdmin = session.isAdmin
+            } else if (per) {
+                userId = per 
+                const user = await getUserById(userId)
+                group = user.group
+                isAdmin = user.isAdmin
+            }
+            const target_in = group ? [group, 'PUBLIC'] : ['PUBLIC']
+            if (!isAdmin) params.where.AND = [{target_in}]
+            return prisma.query.events(params, info)
         }
     },
     Mutation: {

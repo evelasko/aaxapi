@@ -11,6 +11,8 @@ type News {
   target: UserGroup!
   deleteUpon: Boolean @default(value: "false")
   published: Boolean! @default(value: "false")
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 type Event {
   id: ID! @unique
@@ -27,11 +29,15 @@ type Event {
   deleteUpon: Boolean @default(value: "false")
   published: Boolean! @default(value: "false")
   venue: Venue! @relation(name: "EventToVenue", onDelete: SET_NULL)
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 type Venue {
   id: ID! @unique
   name: String!
   address: String!
   placeID: String
+  latitude: Float
+  longitude: Float
   events: [Event!]! @relation(name: "EventToVenue", onDelete: CASCADE )
 }
