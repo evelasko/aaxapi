@@ -1,25 +1,25 @@
-import { PUBSUB_NEW_NEWS } from '../constants';
+// import { PUBSUB_NEW_NEWS } from '../constants';
 
-// ---------------------------------------------------
-//      TYPE DEFS
-// ---------------------------------------------------
+// // ---------------------------------------------------
+// //      TYPE DEFS
+// // ---------------------------------------------------
 
-export const typeDef = `
-type Subscription {
-    newNews: News!
-}
-`
+// export const typeDef = `
+// type Subscription {
+//     newNews: News!
+// }
+// `
 
-// ---------------------------------------------------
-//      SUBSCRIPTION
-// ---------------------------------------------------
+// // ---------------------------------------------------
+// //      SUBSCRIPTION
+// // ---------------------------------------------------
 
-export const Resolvers = {
-  Subscription: {
-    newNews: {
-      subscribe (_, __, {pubsub}) {
-        return pubsub.asyncIterator(PUBSUB_NEW_NEWS)
-      }
-    }
-  }
-}
+// export const Resolvers = {
+//   Subscription: {
+//     newNews: {
+//       subscribe (_, __, {pubsub}) {
+//         return pubsub.asyncIterator(PUBSUB_NEW_NEWS)
+//       }
+//     }
+//   }
+// }

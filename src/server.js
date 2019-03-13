@@ -2,7 +2,6 @@ import connectRedis from 'connect-redis';
 import express from 'express';
 import session from 'express-session';
 import { GraphQLServer, PubSub } from 'graphql-yoga';
-// const RedisStore = require('connect-redis')(session)
 import Redis from 'ioredis';
 import { redisSessionPrefix } from './constants';
 import prisma from './prisma';
@@ -27,7 +26,7 @@ const server = new GraphQLServer({
     // middlewares: middlewareShield,
     context:({request, response}) => ({
         redis,
-        pubsub,
+        // pubsub,
         prisma,
         request,
         response,

@@ -22,8 +22,7 @@ const options = {
 
 initFullCache().then(res => {
   initScheduleJob() // init scheduler for outdated nodes
-  
 })
 server.start(options, () => { console.log('Server up and running at port: ', port || 4000) })
 
-// 'http://localhost:8080', 
+//, 'http://localhost:8080'
