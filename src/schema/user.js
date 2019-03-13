@@ -112,13 +112,12 @@ export const Resolvers = {
             if (group) q.where.AND = [{group}]
             return prisma.query.users(q, info)
         },
-        async me(parent, {per}, { session }, info) {
+        async me(parent, {per}, { prisma, session }, info) {
             let id = undefined
             if (per) { id = per }
             else if (session.userId) { id = session.userId }
             if (!id) return {error: 'Query: Me | Error: No user authenticated...'}
-            const user = getUserById(id)
-            return { user }
+            return await prisma.query.user({where: { id }}, info)
         },
         async userGroupRequest(parent, args, { prisma, session }, info) {
             const id = session.userId
@@ -198,6 +197,7 @@ export const Resolvers = {
             session.userId = user.id
             session.isAdmin = user.isAdmin
             session.group = user.group
+            console.log('SESSION: ', session)
             if (request.sessionID) { await redis.lpush(`${userSessionIdPrefix}${user.id}`, request.sessionID) }
             return { token: user.id }
         },
