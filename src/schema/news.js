@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import moment from 'moment';
 import { cacheNews } from '../cache';
 // import { PUBSUB_NEW_NEWS } from '../constants';
 import { getNewsById, getUserById } from '../utils/queryCache';
@@ -108,9 +109,13 @@ export const Resolvers = {
         async allNewsMobile(parent, { per }, { prisma } , info) {
             const user = await getUserById(per)
             const params = { 
-                orderBy: 'createdAt_ASC',
-                where: user && user.isAdmin ? {} : { 
-                    target_in: user && user.group ? [ user.group, 'PUBLIC'] : ['PUBLIC'] 
+                orderBy: 'createdAt_DESC',
+                where: { AND : [
+                        user && user.isAdmin ? {} : { 
+                            target_in: user && user.group ? [ user.group, 'PUBLIC'] : ['PUBLIC']     
+                        },
+                        { expiration_gte: moment() }
+                    ]
                 }
             }
             return prisma.query.newses(params, info)

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import moment from 'moment';
 import { cacheEvents } from '../cache';
 import { getEventById, getUserById } from '../utils/queryCache';
 import { isBeforeNow } from '../utils/time';
@@ -83,8 +84,13 @@ export const Resolvers = {
             const user = await getUserById(per)
             const params = { 
                 orderBy: 'date_ASC',
-                where: user && user.isAdmin ? {} : { 
-                    target_in: user && user.group ? [ user.group, 'PUBLIC'] : ['PUBLIC'] 
+                where: { 
+                    AND : [
+                        user && user.isAdmin ? {} : { 
+                            target_in: user && user.group ? [ user.group, 'PUBLIC'] : ['PUBLIC']     
+                        },
+                        { date_gte: moment() }
+                    ]
                 }
             }
             return prisma.query.events(params, info)
