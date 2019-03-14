@@ -58,7 +58,8 @@ export const typeDef = `
         newses(query: String): [News]!
         alerts(query: String): [News]!
         calls(query: String): [News]!
-        allNews(per: String, query: String): [News]!
+        allNews(query: String): [News]!
+        allNewsMobile(per: String): [News]!
     }
     extend type Mutation {
         createNews(data: CreateNewsInput! ): News!
@@ -83,36 +84,35 @@ export const Resolvers = {
         async newses(parent, { query }, { prisma, session: { group, isAdmin, userId } }, info) {
             const params = {where:{ OR: or(query), AND: [{category:'NEWS'}] } }
             const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
-            if (!isAdmin) params.where.AND.push({target_in}) // Admins get no user group filters
+            if (!isAdmin) params.where.AND.push({target_in})
             return prisma.query.newses(params, info)
         },
         async alerts(parent, { query }, { prisma, session: { group, isAdmin, userId } }, info) {
             const params = {where:{ OR: or(query), AND: [{category:'ALERT'}] } }
             const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
-            if (!isAdmin) params.where.AND.push({target_in}) // Admins get no user group filters
+            if (!isAdmin) params.where.AND.push({target_in})
             return await prisma.query.newses(params, info)
         },
         async calls(parent, { query }, { prisma, session: { group, isAdmin, userId } }, info) {
             const params = {where:{ OR: or(query), AND: [{category:'CALL'}] } }
             const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
-            if (!isAdmin) params.where.AND.push({target_in}) // Admins get no user group filters
+            if (!isAdmin) params.where.AND.push({target_in})
             return prisma.query.newses(params, info)
         },
-        async allNews(parent, {per, query}, { prisma, session }, info) {
-            let userId = undefined, group = undefined, isAdmin = undefined
-            if (session.userId) { 
-                userId = session.userId 
-                group = session.group
-                isAdmin = session.isAdmin
-            } else if (per) {
-                userId = per 
-                const user = await getUserById(userId)
-                group = user.group
-                isAdmin = user.isAdmin
-            }
+        async allNews(parent, { query }, { prisma, session: { group, isAdmin, userId } }, info) {
             const target_in = group ? [group, 'PUBLIC'] : ['PUBLIC']
             const params = {where: { OR: or(query) } }
             if (!isAdmin) params.where.AND = [{target_in}]
+            return prisma.query.newses(params, info)
+        },
+        async allNewsMobile(parent, { per }, { prisma } , info) {
+            const user = await getUserById(per)
+            const params = { 
+                orderBy: 'createdAt_ASC',
+                where: user && user.isAdmin ? {} : { 
+                    target_in: user && user.group ? [ user.group, 'PUBLIC'] : ['PUBLIC'] 
+                }
+            }
             return prisma.query.newses(params, info)
         }
     },

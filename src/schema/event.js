@@ -48,7 +48,8 @@ export const typeDef = `
         venue: ID
     }
     extend type Query {
-        events(per: String, query: String): [Event]!
+        events(query: String): [Event]!
+        eventsMobile(per: String): [Event]!
     }
     extend type Mutation {
         createEvent(data: CreateEventInput! ): Event!
@@ -68,25 +69,24 @@ export const Resolvers = {
         imageURL: ({imageURL}, _, {url}) => imageURL && imageURL != 'default.png' ? getSecureImage(imageURL) : `${url}/images/default.png`
     },
     Query: {
-        async events(parent, {per, query}, { prisma, session }, info) {
+        async events(parent, {query}, { prisma, session: { userId, isAdmin, group } }, info) {
             const params = {where: { OR: [
                                           {title_contains: query},
                                           {subtitle_contains: query},
                                           {body_contains: query }
-                                        ] }, orderBy: 'date_ASC' }
-            let userId = undefined, group = undefined, isAdmin = undefined
-            if (session.userId) { 
-                userId = session.userId 
-                group = session.group
-                isAdmin = session.isAdmin
-            } else if (per) {
-                userId = per 
-                const user = await getUserById(userId)
-                group = user.group
-                isAdmin = user.isAdmin
-            }
-            const target_in = group ? [group, 'PUBLIC'] : ['PUBLIC']
+                                        ]}, orderBy: 'date_ASC'}
+            const target_in = userId ? [group, 'PUBLIC'] : ['PUBLIC']
             if (!isAdmin) params.where.AND = [{target_in}]
+            return prisma.query.events(params, info)
+        },
+        async eventsMobile(parent, { per}, { prisma }, info) {
+            const user = await getUserById(per)
+            const params = { 
+                orderBy: 'date_ASC',
+                where: user && user.isAdmin ? {} : { 
+                    target_in: user && user.group ? [ user.group, 'PUBLIC'] : ['PUBLIC'] 
+                }
+            }
             return prisma.query.events(params, info)
         }
     },

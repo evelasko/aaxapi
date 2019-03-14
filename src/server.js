@@ -2,6 +2,7 @@ import connectRedis from 'connect-redis';
 import express from 'express';
 import session from 'express-session';
 import { GraphQLServer, PubSub } from 'graphql-yoga';
+import proxy from 'http-proxy-middleware';
 import Redis from 'ioredis';
 import { redisSessionPrefix } from './constants';
 import prisma from './prisma';
@@ -54,6 +55,11 @@ server.express.use(session(
 )
 server.express.use('/images', express.static('images'))
 server.express.use('/resources', express.static('resources'))
+server.express.use('/mobile', proxy({ 
+                                target: process.env.HOST, 
+                                changeOrigin: true,
+                                pathRewrite: { '/mobile' : '' }
+                              }))
 
 export { server as default };
 
