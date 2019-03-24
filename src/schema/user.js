@@ -71,6 +71,7 @@ input UpdateUserInput {
 }
 extend type Query {
     users(query: String, group: UserGroup): [User!]!
+    user(id:String!): User! 
     me: UserPayload
     userGroupRequest: [User!]!
 }
@@ -80,6 +81,7 @@ extend type Mutation {
     loginUserMobile(data: LoginUserMobileInput!): AuthPayload!
     deleteUser: UserPayload!
     logoutUser: AuthPayload!
+    logoutUserMobile(per: String!): AuthPayload!
     confirmGroupRequest(id: String!, confirm: Boolean!): AuthPayload!
     setAdmin(id: String!): AuthPayload!
     unsetAdmin(id: String!): AuthPayload!
@@ -112,6 +114,9 @@ export const Resolvers = {
             if (group) q.where.AND = [{group}]
             return prisma.query.users(q, info)
         },
+        user(parent, {id}, {prisma}, info) {
+          return prisma.query.user({where: {id}}, info)
+        },
         async me(parent, args, { prisma, session }, info) {
             const id = session.userId
             if (!id) { return {error: 'Query: Me | Error: No user authenticated...'} }
@@ -128,8 +133,8 @@ export const Resolvers = {
     Mutation: {
         async signUpUser(parent, {data}, { prisma }, info) {
           try {
-            if (!isEmail(data.email)) return { error: '@signUpUser: email not valid' }
-            if (!getUserByEmail(data.email)) return { error: '@signUpUser: email already registered' }
+            if (!isEmail(data.email)) { throw new Error('la dirección de email introducida no es válida...') }
+            if (await getUserByEmail(data.email)) throw new Error('la dirección de email introducida ya está en uso...') // return { error: '@signUpUser: email already registered' }
             const password = await hashPassword(data.password)
             if (data.groupRequest && data.groupRequest != 'PUBLIC') {
               await sendEmail('enrique.prez.velasco@gmail.com', 'aaXadmin: User Group Request', `User ${data.name} ${data.lastname} has requested to join ${data.groupRequest} group. Please review this case to confirm the join.`)
@@ -142,7 +147,7 @@ export const Resolvers = {
             const res = await sendConfirmationEmail(data.email, link)
             return { token: user.id }
           }
-          catch(error) { return { error: `@signUpUser: ${error.message}`} }
+          catch(error) { throw new Error(error.message) }// return { error: `@signUpUser: ${error.message}`} }
         },
         async confirmEmail(parent, {key}, { prisma }, info) {
             const { id } = jwt.verify(key, process.env.JWT_SECRET)
@@ -212,11 +217,16 @@ export const Resolvers = {
               const res = await sendConfirmationEmail(data.email, link)
               return {error: '@loginUser: eMail not verified'}
             }
-            const notif = await prisma.mutation.updateUser({ 
-              where: { id: user.id }, 
-              data: { notificationsDevice: data.deviceToken, notificationsPermission: data.devicePermission } },
-              '{id}'
-            )
+            try {
+              if (data.deviceToken && data.devicePermission) {
+                const notif = await prisma.mutation.updateUser({ 
+                where: { id: user.id }, 
+                data: { notificationsDevice: data.deviceToken, notificationsPermission: data.devicePermission } },
+                '{id}'
+                )
+                await cacheUsers()
+              }
+            } catch(err) { throw new Error('Failed to register push notifications @login')}
             return { token: user.id }
         },
         async deleteUser(parent, args, { prisma, session }, info) {
@@ -237,6 +247,15 @@ export const Resolvers = {
             return { token: id }
           }
           return { error: '@logoutUser: no user authenticated...'}
+        },
+        async logoutUserMobile(parent, { per }, { prisma }, info) {
+          try {
+            const res = await prisma.mutation.updateUser({ 
+              where: { id: per }, 
+              data: { notificationsDevice: '', notificationsPermission: false } }, '{id}'
+            )
+          } catch(err) { return { error: `Error while loggin off: ${JSON.stringify(err)}`} }
+          return { token: res.id }
         },
         async updateUser(parent, args, { prisma, session }, info) {
             const id = session.userId
@@ -288,7 +307,6 @@ export const Resolvers = {
               await cacheUsers()
               return {token: res.id}
             } catch(error) { return {error: `@unsetAdmin: ${error.message}`}}
-        }
-
+        },
     }
 }

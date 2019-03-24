@@ -1,9 +1,9 @@
-import nodemailer from 'nodemailer'
-import mailgunTransport from 'nodemailer-mailgun-transport'
-import smtpTransport from 'nodemailer-smtp-transport'
-import hanldebars from 'handlebars'
+import nodemailer from 'nodemailer';
+import mailgunTransport from 'nodemailer-mailgun-transport';
+import smtpTransport from 'nodemailer-smtp-transport';
+import { institutional_context, UserGroups } from '../constants.js';
 
-import { institutional_context, UserGroups } from '../constants.js'
+
 const auth = { auth: { api_key: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN } }
 const nodemailerMailgun = nodemailer.createTransport(mailgunTransport(auth))
 

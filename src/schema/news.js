@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import moment from 'moment';
 import { cacheNews } from '../cache';
+import { sendNotification } from '../utils/notifications';
 // import { PUBSUB_NEW_NEWS } from '../constants';
 import { getNewsById, getUserById } from '../utils/queryCache';
 import { aWeekFromNow, isBeforeNow } from '../utils/time';
@@ -128,27 +129,40 @@ export const Resolvers = {
             if (!isBeforeNow(data.expiration)) throw new Error('Expiration cannot be before now...')
             let imageURL = 'default.png'
             if (data.image) {imageURL = await processUpload(data.image)}
-            const res = await prisma.mutation.createNews({
-                data: {
-                    title: data.title,
-                    subtitle: data.subtitle,
-                    imageURL,
-                    body: data.body,
-                    published: data.published || false,
-                    target: data.target || "PUBLIC",
-                    category: data.category,
-                    featured: data.featured,
-                    expiration: data.expiration || aWeekFromNow(),
-                    deleteUpon: data.deleteUpon || false,
-                    author: { connect: { id : userId } }
+            try {
+                const res = await prisma.mutation.createNews({
+                    data: {
+                        title: data.title,
+                        subtitle: data.subtitle,
+                        imageURL,
+                        body: data.body,
+                        published: data.published || false,
+                        target: data.target || "PUBLIC",
+                        category: data.category,
+                        featured: data.featured,
+                        expiration: data.expiration || aWeekFromNow(),
+                        deleteUpon: data.deleteUpon || false,
+                        author: { connect: { id : userId } }
+                    }
+                }, info)
+                await cacheNews()
+                if ( res.id ) {
+                    const newsToSend = await getNewsById(res.id)
+                    console.log('NEWS TO SEND: ', newsToSend)
+                    const recipients = await prisma.query.users({
+                        where: { AND: [
+                            {notificationsDevice_not: null},
+                            {group_in: newsToSend.target != 'PUBLIC' ? [newsToSend.target] : ['PUBLIC', 'STAFF', 'STUDENT'] },
+                            {notificationsPermission: true}
+                        ]}
+                    },'{ notificationsDevice }')
+                    console.log('RECIPIENTS: ', recipients)
+                    await sendNotification(recipients, data.title, {id: res.id})
                 }
-            }, info)
-            await cacheNews()
-
-            const newNews = await getNewsById(res.id)
+                return res
+            } catch(err) { throw new Error(err.message) }
+            // const newNews = await getNewsById(res.id)
             // pubsub.publish(PUBSUB_NEW_NEWS, { newNews })
-
-            return res
         },
         async deleteNews(parent, { id }, { prisma, session: { userId } }, info) {
             if (!userId) throw new Error('Authentication required')

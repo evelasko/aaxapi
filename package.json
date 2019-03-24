@@ -33,6 +33,7 @@
     "cors": "^2.8.5",
     "cross-fetch": "^3.0.0",
     "env-cmd": "^8.0.2",
+    "expo-server-sdk": "^3.2.0",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "graphql-redis-subscriptions": "^2.0.0",
