@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
 import moment from 'moment';
 import { cacheNews } from '../cache';
-import { sendNotification } from '../utils/notifications';
 // import { PUBSUB_NEW_NEWS } from '../constants';
+import { Categories } from '../constants';
+import { sendNotification } from '../utils/notifications';
 import { getNewsById, getUserById } from '../utils/queryCache';
 import { aWeekFromNow, isBeforeNow } from '../utils/time';
 import { deleteImage, getSecureImage, processUpload } from '../utils/upload';
@@ -145,19 +146,19 @@ export const Resolvers = {
                         author: { connect: { id : userId } }
                     }
                 }, info)
-                await cacheNews()
+                // if the news was created then notify users
                 if ( res.id ) {
+                    await cacheNews()
                     const newsToSend = await getNewsById(res.id)
-                    console.log('NEWS TO SEND: ', newsToSend)
+                    if (!newsToSend) { throw new Error('Unable to send notification... news not found on cache')}
                     const recipients = await prisma.query.users({
                         where: { AND: [
-                            {notificationsDevice_not: null},
-                            {group_in: newsToSend.target != 'PUBLIC' ? [newsToSend.target] : ['PUBLIC', 'STAFF', 'STUDENT'] },
-                            {notificationsPermission: true}
-                        ]}
+                            { notificationsDevice_not: null},
+                            { group_in: newsToSend.target == 'PUBLIC' ? ['PUBLIC', 'STAFF', 'STUDENT'] : ['PUBLIC', newsToSend.target] },
+                            { notificationsPermission: true}
+                        ] }
                     },'{ notificationsDevice }')
-                    console.log('RECIPIENTS: ', recipients)
-                    await sendNotification(recipients, data.title, {id: res.id})
+                    await sendNotification(recipients, `Nueva ${Categories[data.category]}`, data.title, {id: res.id})
                 }
                 return res
             } catch(err) { throw new Error(err.message) }

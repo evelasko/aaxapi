@@ -1,12 +1,12 @@
 import Expo from 'expo-server-sdk';
 let expo = new Expo();
 
-export const sendNotification = async (PushTokens, body, data) => {
+export const sendNotification = async (PushTokens, title, body, data) => {
     // Create the messages that you want to send to clients
     let messages = [];
     for (let pushToken of PushTokens) {
         if (Expo.isExpoPushToken(pushToken.notificationsDevice)) {  
-            messages.push({ to: pushToken.notificationsDevice, sound: 'default', body, data })
+            messages.push({ to: pushToken.notificationsDevice, sound: 'default', title, body, data })
         }
         else { console.error(`Push token ${pushToken} is not a valid Expo push token`) }
     }

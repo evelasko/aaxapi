@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import isEmail from 'validator/lib/isEmail';
 import { cacheUsers } from '../cache';
 import { userSessionIdPrefix } from '../constants';
-import { sendConfirmationEmail, sendConfirmGroup, sendEmail, sendRejectGroup, sendResetPassword } from '../utils/emailService';
+import { sendBetaWelcome, sendConfirmationEmail, sendConfirmGroup, sendEmail, sendRejectGroup, sendResetPassword } from '../utils/emailService';
 import { generateResetToken } from '../utils/generateToken';
 import hashPassword from '../utils/hashPassword';
 import { getUserByEmail, getUserById } from '../utils/queryCache';
@@ -89,6 +89,8 @@ extend type Mutation {
     sendForgotPasswordEmail(email: String!): AuthPayload!
     changePassword(key: String, newPassword: String!): AuthPayload!
     confirmEmail(key: String!): AuthPayload!
+    unsubscribeEmail(email: String!): AuthPayload!
+    inviteToBeta(emails: [String!]!): AuthPayload!
 }
 `
 
@@ -308,5 +310,15 @@ export const Resolvers = {
               return {token: res.id}
             } catch(error) { return {error: `@unsetAdmin: ${error.message}`}}
         },
+        async unsubscribeEmail(parent, {email}, {prisma}, info) {
+          await sendEmail("fundacion@alicialonso.org", "Rejected Email", `The recipient of address: ${email} does not want to receive further communications`)
+          return {token: email}
+        },
+        async inviteToBeta(parent, {emails}, ctx, info) {
+          emails.forEach(async (email) => {
+            await sendBetaWelcome(email)
+          })
+          return {token: 'Ok'}
+        }
     }
 }

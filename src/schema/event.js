@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import moment from 'moment';
 import { cacheEvents } from '../cache';
+import { sendNotification } from '../utils/notifications';
 import { getEventById, getUserById } from '../utils/queryCache';
 import { isBeforeNow } from '../utils/time';
 import { deleteImage, getSecureImage, processUpload } from '../utils/upload';
@@ -116,7 +117,19 @@ export const Resolvers = {
                     author: { connect: { id : userId } }
                 }
             }, info)
-            await cacheEvents()
+            if ( res.id ) {
+                await cacheEvents()
+                const eventToSend = await getEventById(res.id)
+                if (!eventToSend) { throw new Error('Unable to send notification... event not found on cache')}
+                const recipients = await prisma.query.users({
+                    where: { AND: [
+                        { notificationsDevice_not: null},
+                        { group_in: eventToSend.target == 'PUBLIC' ? ['PUBLIC', 'STAFF', 'STUDENT'] : ['PUBLIC', eventToSend.target] },
+                        { notificationsPermission: true}
+                    ] }
+                },'{ notificationsDevice }')
+                await sendNotification(recipients, 'Nuevo Evento', data.title, {id: res.id})
+            }
             return res
         },
         async deleteEvent(parent, { id }, { prisma, session: { userId } }, info) {

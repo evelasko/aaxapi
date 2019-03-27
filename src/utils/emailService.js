@@ -1,19 +1,19 @@
 import nodemailer from 'nodemailer';
 import mailgunTransport from 'nodemailer-mailgun-transport';
-import smtpTransport from 'nodemailer-smtp-transport';
 import { institutional_context, UserGroups } from '../constants.js';
 
 
 const auth = { auth: { api_key: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN } }
 const nodemailerMailgun = nodemailer.createTransport(mailgunTransport(auth))
 
-const testTransport = process.env.DEBUGMAIL_LOGIN ?
-  nodemailer.createTransport(smtpTransport({
-    host: 'debugmail.io',
-    port: 25,
-    auth: { user: process.env.DEBUGMAIL_LOGIN, pass: process.env.DEBUGMAIL_PASSWORD }
-  }))
-  : null
+const testTransport = null
+// const testTransport = process.env.DEBUGMAIL_LOGIN ?
+//   nodemailer.createTransport(smtpTransport({
+//     host: 'debugmail.io',
+//     port: 25,
+//     auth: { user: process.env.DEBUGMAIL_LOGIN, pass: process.env.DEBUGMAIL_PASSWORD }
+//   }))
+//   : null
 
 export const sendEmail = async (to, subject, text, name, context) => {
   const from = 'Fundación Alicia Alonso <fundacion@alicialonso.org>'
@@ -68,5 +68,24 @@ export const sendRejectGroup = async (to, name, groupRequest) => {
       `Lamentablemente hemos rechazado tu solicitud de incorporación al grupo ${groupRequest}. Por favor responde a este email si quisieras aportar alguna información adicional para efectuar una segunda verificación.`,
       `templates/rejectGroupRequest.hbs`,
       { link: process.env.APP_HOST, name, groupRequest }
+  )
+}
+
+export const sendBetaWelcome = async (to) => {
+  const res = await sendEmail(
+      to,
+      'Bienvenido a la fase de prueba aaXapp de la Fundación Alicia Alonso',
+      `¡Alicia Alonso se vuelve digital!
+
+      Hemos comenzado nuestra andadura hacia la transformación digital de la organización y nos gustaría que formaras parte de ella; por lo que te damos la bienvenida a la fase de prueba abierta de nuestra nueva aplicación para dispositivos móviles aaXapp, diseñada para convertirse en la vía oficial de comunicación de nuestra organización a través de la cual podrás disfrutar de contenido relevante para tu experiencia en la misma.
+      Agradecemos tu participación activa en esta fase para alcanzar un lanzamiento exitoso lo antes posible y comenzar a disfrutar de los beneficios que propone, para ello tan solo debes seguir los vínculos a continuación según el dispositivo que poseas y una vez que tengas la aplicación instalada deberás registrar tu nueva cuenta en la sección Perfil. A partir de entonces esta será tu cuenta oficial en alicialonso.org y a través de ella podrás comenzar a disfrutar de todos los servicios digitales que ofreceremos!
+      
+      iOS: https://testflight.apple.com/join/l6QED8GJ
+      android: https://play.google.com/apps/testing/com.evel.aaxapp
+      
+
+      Si no desea recibir más notificaciones de alicialonso.org por favor responda a este mismo email.`,
+      `templates/betatestwelcome.hbs`,
+      { link: process.env.APP_HOST, email:to }
   )
 }
