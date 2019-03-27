@@ -56,7 +56,7 @@ export const sendConfirmGroup = async (to, name, groupRequest) => {
       `Bienvenido al colectivo ${groupRequest} @alicialonso.org`,
       `Por favor usa el siguiente vínculo: ${process.env.APP_HOST} para iniciar sesión en tu cuenta y acceder al nuevo contenido.`,
       `templates/confirmGroupRequest.hbs`,
-      { link: process.env.APP_HOST, name, groupRequest }
+      { link: 'https://admin.alicialonso.org/login', name, groupRequest }
   )
 }
 
