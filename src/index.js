@@ -10,7 +10,6 @@ const options = {
     origin: [
           'http://localhost:3000', 'http://localhost:3001',
           'http://localhost', 
-//          'http://localhost:4000', 
           'https://aaxadmin.netlify.com', 
           'https://admin.alicialonso.org', 'https://alicialonso.org'
         ],
