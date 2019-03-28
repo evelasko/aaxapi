@@ -12,7 +12,7 @@ const options = {
           'http://localhost', 
 //          'http://localhost:4000', 
           'https://aaxadmin.netlify.com', 
-          'https://admin.alicialonso.org'
+          'https://admin.alicialonso.org', 'https://alicialonso.org'
         ],
     credentials: true,
     optionsSuccessStatus: 200
