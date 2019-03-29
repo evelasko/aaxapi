@@ -272,7 +272,7 @@ export const Resolvers = {
         },
         async confirmGroupRequest(parent, { id, confirm }, { prisma, session }, info) {
             const adminId = session.userId
-            if (!session.userId && !session.isAdmin) { return {error: 'Authentication and admin privileges required'}}
+            if (!session.userId && !session.isAdmin) { return {error: 'Authentication and admin privileges are required'}}
             const user = await getUserById(id)
             if (!user) return {error: 'Mutation: confirmGroupRequest | Error: user not found'}
             try {
