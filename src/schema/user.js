@@ -274,6 +274,7 @@ export const Resolvers = {
             const adminId = session.userId
             if (!session.userId && !session.isAdmin) { return {error: 'Authentication and admin privileges are required'}}
             const user = await getUserById(id)
+            console.log('USER% ', user)
             if (!user) return {error: 'Mutation: confirmGroupRequest | Error: user not found'}
             try {
               const { group, groupRequest } = user
