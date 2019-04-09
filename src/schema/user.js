@@ -208,16 +208,16 @@ export const Resolvers = {
             return { token: user.id }
         },
         async loginUserMobile(parent, {data}, { prisma }, info) {
-            if (!isEmail(data.email)) return { error: '@logInUser: email not valid' }
+            // if (!isEmail(data.email)) return { error: '@logInUser: email not valid' }
             const user = await getUserByEmail(data.email)
-            if ( !user  ) return {error: `@loginUser: User not found`}
+            if ( !user  ) { throw new Error('El email no coincide con ningún usuario') }
             const match = await bcrypt.compare(data.password, user.password)
-            if ( !match ) return {error: `@loginUser: Invalid password`}
+            if ( !match ) { throw new Error('La contraseña no coincide') }
             if (!user.emailVerified) {
               const token = generateResetToken({id: user.id})
               const link = `${process.env.FRONT_END_HOST}confirm-email/${token}`
               const res = await sendConfirmationEmail(data.email, link)
-              return {error: '@loginUser: eMail not verified'}
+              throw new Error('No ha verificado su email aún. Le hemos enviado un nuevo email de verificación a su dirección. Si el problema persiste por favor comuníquelo escribiendo a info@alicialonso.org')
             }
             try {
               if (data.deviceToken && data.devicePermission) {
@@ -228,7 +228,7 @@ export const Resolvers = {
                 )
                 await cacheUsers()
               }
-            } catch(err) { throw new Error('Failed to register push notifications @login')}
+            } catch(err) { throw new Error('Ha ocurrido un error al registrar su dispositivo para notificaciones...')}
             return { token: user.id }
         },
         async deleteUser(parent, args, { prisma, session }, info) {
