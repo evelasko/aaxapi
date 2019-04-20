@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { extractFragmentReplacements } from 'prisma-binding';
+import { Resolvers as adminResolvers, typeDef as admin } from './admin';
 import { Resolvers as eventResolvers, typeDef as event } from './event';
 import { Resolvers as newsResolvers, typeDef as news } from './news';
 // import { Resolvers as subsResolvers, typeDef as subscriptions } from './subscriptions';
@@ -46,14 +47,14 @@ const commonTypeDef = `
     }
 `
 
-export const typeDefs = [ commonTypeDef, user, news, event, venue ] // , subscriptions
+export const typeDefs = [ commonTypeDef, user, news, event, venue, admin ] // , subscriptions
 const resolversObject = {}
 export const resolvers = _.merge(
     resolversObject,
     userResolvers,
     newsResolvers,
     eventResolvers,
-    venueResolvers,
+    venueResolvers, adminResolvers
     // subsResolvers
     )
 export const fragmentReplacements = extractFragmentReplacements(resolvers)

@@ -89,3 +89,10 @@ export const sendBetaWelcome = async (to) => {
       { link: process.env.APP_HOST, email:to }
   )
 }
+
+export const sendInstitutionalMessage = async ({to, subject, presentation, message, farewell, name, charge}) => {
+  const res = await sendEmail(
+    to, subject, message, 'templates/institutionalMessage.hbs',
+    { presentation, message, farewell, name, charge }
+  )
+}
