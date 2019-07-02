@@ -1,5 +1,5 @@
 # source: http://localhost:4466/aaxapi/dev
-# timestamp: Wed Mar 13 2019 10:01:51 GMT+0100 (Central European Standard Time)
+# timestamp: Sun Jun 23 2019 10:15:42 GMT+0200 (Central European Summer Time)
 
 type Address implements Node {
   id: ID!
@@ -1275,7 +1275,31 @@ type AggregateBranch {
   count: Int!
 }
 
+type AggregateCommitteBoardUser {
+  count: Int!
+}
+
+type AggregateCongressEdition {
+  count: Int!
+}
+
+type AggregateCongressProduct {
+  count: Int!
+}
+
+type AggregateCustomerOrder {
+  count: Int!
+}
+
+type AggregateCustomerOrderItems {
+  count: Int!
+}
+
 type AggregateEvent {
+  count: Int!
+}
+
+type AggregateInvoice {
   count: Int!
 }
 
@@ -1287,11 +1311,43 @@ type AggregatenID {
   count: Int!
 }
 
+type AggregateParticipant {
+  count: Int!
+}
+
 type AggregatePhoneNumber {
   count: Int!
 }
 
+type AggregateProduct {
+  count: Int!
+}
+
+type AggregateProductCategory {
+  count: Int!
+}
+
+type AggregateProductImage {
+  count: Int!
+}
+
 type AggregateProgram {
+  count: Int!
+}
+
+type AggregateProposal {
+  count: Int!
+}
+
+type AggregateProposalReview {
+  count: Int!
+}
+
+type AggregateSocialLink {
+  count: Int!
+}
+
+type AggregateSocialNetwork {
   count: Int!
 }
 
@@ -1898,6 +1954,1395 @@ input BranchWhereInput {
 input BranchWhereUniqueInput {
   id: ID
   name: String
+}
+
+type CommitteBoardUser implements Node {
+  id: ID!
+  congress: CongressEdition!
+  user: User!
+  reviews(where: ProposalReviewWhereInput, orderBy: ProposalReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProposalReview!]
+}
+
+"""A connection to a list of items."""
+type CommitteBoardUserConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CommitteBoardUserEdge]!
+  aggregate: AggregateCommitteBoardUser!
+}
+
+input CommitteBoardUserCreateInput {
+  congress: CongressEditionCreateOneWithoutCommitteeInput!
+  user: UserCreateOneInput!
+  reviews: ProposalReviewCreateManyWithoutCommitteUserInput
+}
+
+input CommitteBoardUserCreateManyWithoutCongressInput {
+  create: [CommitteBoardUserCreateWithoutCongressInput!]
+  connect: [CommitteBoardUserWhereUniqueInput!]
+}
+
+input CommitteBoardUserCreateOneWithoutReviewsInput {
+  create: CommitteBoardUserCreateWithoutReviewsInput
+  connect: CommitteBoardUserWhereUniqueInput
+}
+
+input CommitteBoardUserCreateWithoutCongressInput {
+  user: UserCreateOneInput!
+  reviews: ProposalReviewCreateManyWithoutCommitteUserInput
+}
+
+input CommitteBoardUserCreateWithoutReviewsInput {
+  congress: CongressEditionCreateOneWithoutCommitteeInput!
+  user: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type CommitteBoardUserEdge {
+  """The item at the end of the edge."""
+  node: CommitteBoardUser!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CommitteBoardUserOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type CommitteBoardUserPreviousValues {
+  id: ID!
+}
+
+input CommitteBoardUserScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CommitteBoardUserScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CommitteBoardUserScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CommitteBoardUserScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+}
+
+type CommitteBoardUserSubscriptionPayload {
+  mutation: MutationType!
+  node: CommitteBoardUser
+  updatedFields: [String!]
+  previousValues: CommitteBoardUserPreviousValues
+}
+
+input CommitteBoardUserSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CommitteBoardUserSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CommitteBoardUserSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CommitteBoardUserSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CommitteBoardUserWhereInput
+}
+
+input CommitteBoardUserUpdateInput {
+  congress: CongressEditionUpdateOneRequiredWithoutCommitteeInput
+  user: UserUpdateOneRequiredInput
+  reviews: ProposalReviewUpdateManyWithoutCommitteUserInput
+}
+
+input CommitteBoardUserUpdateManyWithoutCongressInput {
+  create: [CommitteBoardUserCreateWithoutCongressInput!]
+  connect: [CommitteBoardUserWhereUniqueInput!]
+  disconnect: [CommitteBoardUserWhereUniqueInput!]
+  delete: [CommitteBoardUserWhereUniqueInput!]
+  update: [CommitteBoardUserUpdateWithWhereUniqueWithoutCongressInput!]
+  deleteMany: [CommitteBoardUserScalarWhereInput!]
+  upsert: [CommitteBoardUserUpsertWithWhereUniqueWithoutCongressInput!]
+}
+
+input CommitteBoardUserUpdateOneRequiredWithoutReviewsInput {
+  create: CommitteBoardUserCreateWithoutReviewsInput
+  connect: CommitteBoardUserWhereUniqueInput
+  update: CommitteBoardUserUpdateWithoutReviewsDataInput
+  upsert: CommitteBoardUserUpsertWithoutReviewsInput
+}
+
+input CommitteBoardUserUpdateWithoutCongressDataInput {
+  user: UserUpdateOneRequiredInput
+  reviews: ProposalReviewUpdateManyWithoutCommitteUserInput
+}
+
+input CommitteBoardUserUpdateWithoutReviewsDataInput {
+  congress: CongressEditionUpdateOneRequiredWithoutCommitteeInput
+  user: UserUpdateOneRequiredInput
+}
+
+input CommitteBoardUserUpdateWithWhereUniqueWithoutCongressInput {
+  where: CommitteBoardUserWhereUniqueInput!
+  data: CommitteBoardUserUpdateWithoutCongressDataInput!
+}
+
+input CommitteBoardUserUpsertWithoutReviewsInput {
+  update: CommitteBoardUserUpdateWithoutReviewsDataInput!
+  create: CommitteBoardUserCreateWithoutReviewsInput!
+}
+
+input CommitteBoardUserUpsertWithWhereUniqueWithoutCongressInput {
+  where: CommitteBoardUserWhereUniqueInput!
+  update: CommitteBoardUserUpdateWithoutCongressDataInput!
+  create: CommitteBoardUserCreateWithoutCongressInput!
+}
+
+input CommitteBoardUserWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CommitteBoardUserWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CommitteBoardUserWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CommitteBoardUserWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  congress: CongressEditionWhereInput
+  user: UserWhereInput
+  reviews_every: ProposalReviewWhereInput
+  reviews_some: ProposalReviewWhereInput
+  reviews_none: ProposalReviewWhereInput
+}
+
+input CommitteBoardUserWhereUniqueInput {
+  id: ID
+}
+
+type CongressEdition implements Node {
+  id: ID!
+  year: Int!
+  participants(where: ParticipantWhereInput, orderBy: ParticipantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Participant!]
+  startDate: DateTime
+  endDate: DateTime
+  products(where: CongressProductWhereInput, orderBy: CongressProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CongressProduct!]
+  committee(where: CommitteBoardUserWhereInput, orderBy: CommitteBoardUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CommitteBoardUser!]
+}
+
+"""A connection to a list of items."""
+type CongressEditionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CongressEditionEdge]!
+  aggregate: AggregateCongressEdition!
+}
+
+input CongressEditionCreateInput {
+  year: Int!
+  startDate: DateTime
+  endDate: DateTime
+  participants: ParticipantCreateManyWithoutCongressInput
+  products: CongressProductCreateManyWithoutCongressInput
+  committee: CommitteBoardUserCreateManyWithoutCongressInput
+}
+
+input CongressEditionCreateOneWithoutCommitteeInput {
+  create: CongressEditionCreateWithoutCommitteeInput
+  connect: CongressEditionWhereUniqueInput
+}
+
+input CongressEditionCreateOneWithoutParticipantsInput {
+  create: CongressEditionCreateWithoutParticipantsInput
+  connect: CongressEditionWhereUniqueInput
+}
+
+input CongressEditionCreateOneWithoutProductsInput {
+  create: CongressEditionCreateWithoutProductsInput
+  connect: CongressEditionWhereUniqueInput
+}
+
+input CongressEditionCreateWithoutCommitteeInput {
+  year: Int!
+  startDate: DateTime
+  endDate: DateTime
+  participants: ParticipantCreateManyWithoutCongressInput
+  products: CongressProductCreateManyWithoutCongressInput
+}
+
+input CongressEditionCreateWithoutParticipantsInput {
+  year: Int!
+  startDate: DateTime
+  endDate: DateTime
+  products: CongressProductCreateManyWithoutCongressInput
+  committee: CommitteBoardUserCreateManyWithoutCongressInput
+}
+
+input CongressEditionCreateWithoutProductsInput {
+  year: Int!
+  startDate: DateTime
+  endDate: DateTime
+  participants: ParticipantCreateManyWithoutCongressInput
+  committee: CommitteBoardUserCreateManyWithoutCongressInput
+}
+
+"""An edge in a connection."""
+type CongressEditionEdge {
+  """The item at the end of the edge."""
+  node: CongressEdition!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CongressEditionOrderByInput {
+  id_ASC
+  id_DESC
+  year_ASC
+  year_DESC
+  startDate_ASC
+  startDate_DESC
+  endDate_ASC
+  endDate_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type CongressEditionPreviousValues {
+  id: ID!
+  year: Int!
+  startDate: DateTime
+  endDate: DateTime
+}
+
+type CongressEditionSubscriptionPayload {
+  mutation: MutationType!
+  node: CongressEdition
+  updatedFields: [String!]
+  previousValues: CongressEditionPreviousValues
+}
+
+input CongressEditionSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CongressEditionSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CongressEditionSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CongressEditionSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CongressEditionWhereInput
+}
+
+input CongressEditionUpdateInput {
+  year: Int
+  startDate: DateTime
+  endDate: DateTime
+  participants: ParticipantUpdateManyWithoutCongressInput
+  products: CongressProductUpdateManyWithoutCongressInput
+  committee: CommitteBoardUserUpdateManyWithoutCongressInput
+}
+
+input CongressEditionUpdateManyMutationInput {
+  year: Int
+  startDate: DateTime
+  endDate: DateTime
+}
+
+input CongressEditionUpdateOneRequiredWithoutCommitteeInput {
+  create: CongressEditionCreateWithoutCommitteeInput
+  connect: CongressEditionWhereUniqueInput
+  update: CongressEditionUpdateWithoutCommitteeDataInput
+  upsert: CongressEditionUpsertWithoutCommitteeInput
+}
+
+input CongressEditionUpdateOneRequiredWithoutParticipantsInput {
+  create: CongressEditionCreateWithoutParticipantsInput
+  connect: CongressEditionWhereUniqueInput
+  update: CongressEditionUpdateWithoutParticipantsDataInput
+  upsert: CongressEditionUpsertWithoutParticipantsInput
+}
+
+input CongressEditionUpdateOneRequiredWithoutProductsInput {
+  create: CongressEditionCreateWithoutProductsInput
+  connect: CongressEditionWhereUniqueInput
+  update: CongressEditionUpdateWithoutProductsDataInput
+  upsert: CongressEditionUpsertWithoutProductsInput
+}
+
+input CongressEditionUpdateWithoutCommitteeDataInput {
+  year: Int
+  startDate: DateTime
+  endDate: DateTime
+  participants: ParticipantUpdateManyWithoutCongressInput
+  products: CongressProductUpdateManyWithoutCongressInput
+}
+
+input CongressEditionUpdateWithoutParticipantsDataInput {
+  year: Int
+  startDate: DateTime
+  endDate: DateTime
+  products: CongressProductUpdateManyWithoutCongressInput
+  committee: CommitteBoardUserUpdateManyWithoutCongressInput
+}
+
+input CongressEditionUpdateWithoutProductsDataInput {
+  year: Int
+  startDate: DateTime
+  endDate: DateTime
+  participants: ParticipantUpdateManyWithoutCongressInput
+  committee: CommitteBoardUserUpdateManyWithoutCongressInput
+}
+
+input CongressEditionUpsertWithoutCommitteeInput {
+  update: CongressEditionUpdateWithoutCommitteeDataInput!
+  create: CongressEditionCreateWithoutCommitteeInput!
+}
+
+input CongressEditionUpsertWithoutParticipantsInput {
+  update: CongressEditionUpdateWithoutParticipantsDataInput!
+  create: CongressEditionCreateWithoutParticipantsInput!
+}
+
+input CongressEditionUpsertWithoutProductsInput {
+  update: CongressEditionUpdateWithoutProductsDataInput!
+  create: CongressEditionCreateWithoutProductsInput!
+}
+
+input CongressEditionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CongressEditionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CongressEditionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CongressEditionWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  year: Int
+
+  """All values that are not equal to given value."""
+  year_not: Int
+
+  """All values that are contained in given list."""
+  year_in: [Int!]
+
+  """All values that are not contained in given list."""
+  year_not_in: [Int!]
+
+  """All values less than the given value."""
+  year_lt: Int
+
+  """All values less than or equal the given value."""
+  year_lte: Int
+
+  """All values greater than the given value."""
+  year_gt: Int
+
+  """All values greater than or equal the given value."""
+  year_gte: Int
+  startDate: DateTime
+
+  """All values that are not equal to given value."""
+  startDate_not: DateTime
+
+  """All values that are contained in given list."""
+  startDate_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  startDate_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  startDate_lt: DateTime
+
+  """All values less than or equal the given value."""
+  startDate_lte: DateTime
+
+  """All values greater than the given value."""
+  startDate_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  startDate_gte: DateTime
+  endDate: DateTime
+
+  """All values that are not equal to given value."""
+  endDate_not: DateTime
+
+  """All values that are contained in given list."""
+  endDate_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  endDate_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  endDate_lt: DateTime
+
+  """All values less than or equal the given value."""
+  endDate_lte: DateTime
+
+  """All values greater than the given value."""
+  endDate_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  endDate_gte: DateTime
+  participants_every: ParticipantWhereInput
+  participants_some: ParticipantWhereInput
+  participants_none: ParticipantWhereInput
+  products_every: CongressProductWhereInput
+  products_some: CongressProductWhereInput
+  products_none: CongressProductWhereInput
+  committee_every: CommitteBoardUserWhereInput
+  committee_some: CommitteBoardUserWhereInput
+  committee_none: CommitteBoardUserWhereInput
+}
+
+input CongressEditionWhereUniqueInput {
+  id: ID
+}
+
+type CongressProduct implements Node {
+  id: ID!
+  congress: CongressEdition!
+  product: Product!
+}
+
+"""A connection to a list of items."""
+type CongressProductConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CongressProductEdge]!
+  aggregate: AggregateCongressProduct!
+}
+
+input CongressProductCreateInput {
+  congress: CongressEditionCreateOneWithoutProductsInput!
+  product: ProductCreateOneInput!
+}
+
+input CongressProductCreateManyWithoutCongressInput {
+  create: [CongressProductCreateWithoutCongressInput!]
+  connect: [CongressProductWhereUniqueInput!]
+}
+
+input CongressProductCreateWithoutCongressInput {
+  product: ProductCreateOneInput!
+}
+
+"""An edge in a connection."""
+type CongressProductEdge {
+  """The item at the end of the edge."""
+  node: CongressProduct!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CongressProductOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type CongressProductPreviousValues {
+  id: ID!
+}
+
+input CongressProductScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CongressProductScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CongressProductScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CongressProductScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+}
+
+type CongressProductSubscriptionPayload {
+  mutation: MutationType!
+  node: CongressProduct
+  updatedFields: [String!]
+  previousValues: CongressProductPreviousValues
+}
+
+input CongressProductSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CongressProductSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CongressProductSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CongressProductSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CongressProductWhereInput
+}
+
+input CongressProductUpdateInput {
+  congress: CongressEditionUpdateOneRequiredWithoutProductsInput
+  product: ProductUpdateOneRequiredInput
+}
+
+input CongressProductUpdateManyWithoutCongressInput {
+  create: [CongressProductCreateWithoutCongressInput!]
+  connect: [CongressProductWhereUniqueInput!]
+  disconnect: [CongressProductWhereUniqueInput!]
+  delete: [CongressProductWhereUniqueInput!]
+  update: [CongressProductUpdateWithWhereUniqueWithoutCongressInput!]
+  deleteMany: [CongressProductScalarWhereInput!]
+  upsert: [CongressProductUpsertWithWhereUniqueWithoutCongressInput!]
+}
+
+input CongressProductUpdateWithoutCongressDataInput {
+  product: ProductUpdateOneRequiredInput
+}
+
+input CongressProductUpdateWithWhereUniqueWithoutCongressInput {
+  where: CongressProductWhereUniqueInput!
+  data: CongressProductUpdateWithoutCongressDataInput!
+}
+
+input CongressProductUpsertWithWhereUniqueWithoutCongressInput {
+  where: CongressProductWhereUniqueInput!
+  update: CongressProductUpdateWithoutCongressDataInput!
+  create: CongressProductCreateWithoutCongressInput!
+}
+
+input CongressProductWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CongressProductWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CongressProductWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CongressProductWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  congress: CongressEditionWhereInput
+  product: ProductWhereInput
+}
+
+input CongressProductWhereUniqueInput {
+  id: ID
+}
+
+type CustomerOrder implements Node {
+  id: ID!
+  customer: User!
+  items(where: CustomerOrderItemsWhereInput, orderBy: CustomerOrderItemsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerOrderItems!]
+  invoice: Invoice!
+}
+
+"""A connection to a list of items."""
+type CustomerOrderConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CustomerOrderEdge]!
+  aggregate: AggregateCustomerOrder!
+}
+
+input CustomerOrderCreateInput {
+  customer: UserCreateOneInput!
+  items: CustomerOrderItemsCreateManyWithoutOrderInput
+  invoice: InvoiceCreateOneWithoutOrderInput!
+}
+
+input CustomerOrderCreateOneWithoutInvoiceInput {
+  create: CustomerOrderCreateWithoutInvoiceInput
+  connect: CustomerOrderWhereUniqueInput
+}
+
+input CustomerOrderCreateOneWithoutItemsInput {
+  create: CustomerOrderCreateWithoutItemsInput
+  connect: CustomerOrderWhereUniqueInput
+}
+
+input CustomerOrderCreateWithoutInvoiceInput {
+  customer: UserCreateOneInput!
+  items: CustomerOrderItemsCreateManyWithoutOrderInput
+}
+
+input CustomerOrderCreateWithoutItemsInput {
+  customer: UserCreateOneInput!
+  invoice: InvoiceCreateOneWithoutOrderInput!
+}
+
+"""An edge in a connection."""
+type CustomerOrderEdge {
+  """The item at the end of the edge."""
+  node: CustomerOrder!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+type CustomerOrderItems implements Node {
+  id: ID!
+  order: CustomerOrder!
+  item: Product!
+  quantity: Int!
+  orderPrice: Float!
+}
+
+"""A connection to a list of items."""
+type CustomerOrderItemsConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CustomerOrderItemsEdge]!
+  aggregate: AggregateCustomerOrderItems!
+}
+
+input CustomerOrderItemsCreateInput {
+  quantity: Int!
+  orderPrice: Float!
+  order: CustomerOrderCreateOneWithoutItemsInput!
+  item: ProductCreateOneInput!
+}
+
+input CustomerOrderItemsCreateManyWithoutOrderInput {
+  create: [CustomerOrderItemsCreateWithoutOrderInput!]
+  connect: [CustomerOrderItemsWhereUniqueInput!]
+}
+
+input CustomerOrderItemsCreateWithoutOrderInput {
+  quantity: Int!
+  orderPrice: Float!
+  item: ProductCreateOneInput!
+}
+
+"""An edge in a connection."""
+type CustomerOrderItemsEdge {
+  """The item at the end of the edge."""
+  node: CustomerOrderItems!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CustomerOrderItemsOrderByInput {
+  id_ASC
+  id_DESC
+  quantity_ASC
+  quantity_DESC
+  orderPrice_ASC
+  orderPrice_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type CustomerOrderItemsPreviousValues {
+  id: ID!
+  quantity: Int!
+  orderPrice: Float!
+}
+
+input CustomerOrderItemsScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerOrderItemsScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerOrderItemsScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerOrderItemsScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  quantity: Int
+
+  """All values that are not equal to given value."""
+  quantity_not: Int
+
+  """All values that are contained in given list."""
+  quantity_in: [Int!]
+
+  """All values that are not contained in given list."""
+  quantity_not_in: [Int!]
+
+  """All values less than the given value."""
+  quantity_lt: Int
+
+  """All values less than or equal the given value."""
+  quantity_lte: Int
+
+  """All values greater than the given value."""
+  quantity_gt: Int
+
+  """All values greater than or equal the given value."""
+  quantity_gte: Int
+  orderPrice: Float
+
+  """All values that are not equal to given value."""
+  orderPrice_not: Float
+
+  """All values that are contained in given list."""
+  orderPrice_in: [Float!]
+
+  """All values that are not contained in given list."""
+  orderPrice_not_in: [Float!]
+
+  """All values less than the given value."""
+  orderPrice_lt: Float
+
+  """All values less than or equal the given value."""
+  orderPrice_lte: Float
+
+  """All values greater than the given value."""
+  orderPrice_gt: Float
+
+  """All values greater than or equal the given value."""
+  orderPrice_gte: Float
+}
+
+type CustomerOrderItemsSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerOrderItems
+  updatedFields: [String!]
+  previousValues: CustomerOrderItemsPreviousValues
+}
+
+input CustomerOrderItemsSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerOrderItemsSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerOrderItemsSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerOrderItemsSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CustomerOrderItemsWhereInput
+}
+
+input CustomerOrderItemsUpdateInput {
+  quantity: Int
+  orderPrice: Float
+  order: CustomerOrderUpdateOneRequiredWithoutItemsInput
+  item: ProductUpdateOneRequiredInput
+}
+
+input CustomerOrderItemsUpdateManyDataInput {
+  quantity: Int
+  orderPrice: Float
+}
+
+input CustomerOrderItemsUpdateManyMutationInput {
+  quantity: Int
+  orderPrice: Float
+}
+
+input CustomerOrderItemsUpdateManyWithoutOrderInput {
+  create: [CustomerOrderItemsCreateWithoutOrderInput!]
+  connect: [CustomerOrderItemsWhereUniqueInput!]
+  disconnect: [CustomerOrderItemsWhereUniqueInput!]
+  delete: [CustomerOrderItemsWhereUniqueInput!]
+  update: [CustomerOrderItemsUpdateWithWhereUniqueWithoutOrderInput!]
+  updateMany: [CustomerOrderItemsUpdateManyWithWhereNestedInput!]
+  deleteMany: [CustomerOrderItemsScalarWhereInput!]
+  upsert: [CustomerOrderItemsUpsertWithWhereUniqueWithoutOrderInput!]
+}
+
+input CustomerOrderItemsUpdateManyWithWhereNestedInput {
+  where: CustomerOrderItemsScalarWhereInput!
+  data: CustomerOrderItemsUpdateManyDataInput!
+}
+
+input CustomerOrderItemsUpdateWithoutOrderDataInput {
+  quantity: Int
+  orderPrice: Float
+  item: ProductUpdateOneRequiredInput
+}
+
+input CustomerOrderItemsUpdateWithWhereUniqueWithoutOrderInput {
+  where: CustomerOrderItemsWhereUniqueInput!
+  data: CustomerOrderItemsUpdateWithoutOrderDataInput!
+}
+
+input CustomerOrderItemsUpsertWithWhereUniqueWithoutOrderInput {
+  where: CustomerOrderItemsWhereUniqueInput!
+  update: CustomerOrderItemsUpdateWithoutOrderDataInput!
+  create: CustomerOrderItemsCreateWithoutOrderInput!
+}
+
+input CustomerOrderItemsWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerOrderItemsWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerOrderItemsWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerOrderItemsWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  quantity: Int
+
+  """All values that are not equal to given value."""
+  quantity_not: Int
+
+  """All values that are contained in given list."""
+  quantity_in: [Int!]
+
+  """All values that are not contained in given list."""
+  quantity_not_in: [Int!]
+
+  """All values less than the given value."""
+  quantity_lt: Int
+
+  """All values less than or equal the given value."""
+  quantity_lte: Int
+
+  """All values greater than the given value."""
+  quantity_gt: Int
+
+  """All values greater than or equal the given value."""
+  quantity_gte: Int
+  orderPrice: Float
+
+  """All values that are not equal to given value."""
+  orderPrice_not: Float
+
+  """All values that are contained in given list."""
+  orderPrice_in: [Float!]
+
+  """All values that are not contained in given list."""
+  orderPrice_not_in: [Float!]
+
+  """All values less than the given value."""
+  orderPrice_lt: Float
+
+  """All values less than or equal the given value."""
+  orderPrice_lte: Float
+
+  """All values greater than the given value."""
+  orderPrice_gt: Float
+
+  """All values greater than or equal the given value."""
+  orderPrice_gte: Float
+  order: CustomerOrderWhereInput
+  item: ProductWhereInput
+}
+
+input CustomerOrderItemsWhereUniqueInput {
+  id: ID
+}
+
+enum CustomerOrderOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type CustomerOrderPreviousValues {
+  id: ID!
+}
+
+type CustomerOrderSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerOrder
+  updatedFields: [String!]
+  previousValues: CustomerOrderPreviousValues
+}
+
+input CustomerOrderSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerOrderSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerOrderSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerOrderSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CustomerOrderWhereInput
+}
+
+input CustomerOrderUpdateInput {
+  customer: UserUpdateOneRequiredInput
+  items: CustomerOrderItemsUpdateManyWithoutOrderInput
+  invoice: InvoiceUpdateOneRequiredWithoutOrderInput
+}
+
+input CustomerOrderUpdateOneRequiredWithoutInvoiceInput {
+  create: CustomerOrderCreateWithoutInvoiceInput
+  connect: CustomerOrderWhereUniqueInput
+  update: CustomerOrderUpdateWithoutInvoiceDataInput
+  upsert: CustomerOrderUpsertWithoutInvoiceInput
+}
+
+input CustomerOrderUpdateOneRequiredWithoutItemsInput {
+  create: CustomerOrderCreateWithoutItemsInput
+  connect: CustomerOrderWhereUniqueInput
+  update: CustomerOrderUpdateWithoutItemsDataInput
+  upsert: CustomerOrderUpsertWithoutItemsInput
+}
+
+input CustomerOrderUpdateWithoutInvoiceDataInput {
+  customer: UserUpdateOneRequiredInput
+  items: CustomerOrderItemsUpdateManyWithoutOrderInput
+}
+
+input CustomerOrderUpdateWithoutItemsDataInput {
+  customer: UserUpdateOneRequiredInput
+  invoice: InvoiceUpdateOneRequiredWithoutOrderInput
+}
+
+input CustomerOrderUpsertWithoutInvoiceInput {
+  update: CustomerOrderUpdateWithoutInvoiceDataInput!
+  create: CustomerOrderCreateWithoutInvoiceInput!
+}
+
+input CustomerOrderUpsertWithoutItemsInput {
+  update: CustomerOrderUpdateWithoutItemsDataInput!
+  create: CustomerOrderCreateWithoutItemsInput!
+}
+
+input CustomerOrderWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerOrderWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerOrderWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerOrderWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  customer: UserWhereInput
+  items_every: CustomerOrderItemsWhereInput
+  items_some: CustomerOrderItemsWhereInput
+  items_none: CustomerOrderItemsWhereInput
+  invoice: InvoiceWhereInput
+}
+
+input CustomerOrderWhereUniqueInput {
+  id: ID
 }
 
 scalar DateTime
@@ -3042,6 +4487,387 @@ input EventWhereUniqueInput {
   id: ID
 }
 
+type Invoice implements Node {
+  id: ID!
+  order: CustomerOrder!
+  timeDue: DateTime!
+  timePaid: DateTime
+  vatRate: Int!
+  netAmount: Float!
+  vatAmount: Float!
+  grossAmount: Float!
+}
+
+"""A connection to a list of items."""
+type InvoiceConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [InvoiceEdge]!
+  aggregate: AggregateInvoice!
+}
+
+input InvoiceCreateInput {
+  timeDue: DateTime!
+  timePaid: DateTime
+  vatRate: Int
+  netAmount: Float!
+  vatAmount: Float!
+  grossAmount: Float!
+  order: CustomerOrderCreateOneWithoutInvoiceInput!
+}
+
+input InvoiceCreateOneInput {
+  create: InvoiceCreateInput
+  connect: InvoiceWhereUniqueInput
+}
+
+input InvoiceCreateOneWithoutOrderInput {
+  create: InvoiceCreateWithoutOrderInput
+  connect: InvoiceWhereUniqueInput
+}
+
+input InvoiceCreateWithoutOrderInput {
+  timeDue: DateTime!
+  timePaid: DateTime
+  vatRate: Int
+  netAmount: Float!
+  vatAmount: Float!
+  grossAmount: Float!
+}
+
+"""An edge in a connection."""
+type InvoiceEdge {
+  """The item at the end of the edge."""
+  node: Invoice!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum InvoiceOrderByInput {
+  id_ASC
+  id_DESC
+  timeDue_ASC
+  timeDue_DESC
+  timePaid_ASC
+  timePaid_DESC
+  vatRate_ASC
+  vatRate_DESC
+  netAmount_ASC
+  netAmount_DESC
+  vatAmount_ASC
+  vatAmount_DESC
+  grossAmount_ASC
+  grossAmount_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type InvoicePreviousValues {
+  id: ID!
+  timeDue: DateTime!
+  timePaid: DateTime
+  vatRate: Int!
+  netAmount: Float!
+  vatAmount: Float!
+  grossAmount: Float!
+}
+
+type InvoiceSubscriptionPayload {
+  mutation: MutationType!
+  node: Invoice
+  updatedFields: [String!]
+  previousValues: InvoicePreviousValues
+}
+
+input InvoiceSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InvoiceSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InvoiceSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InvoiceSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: InvoiceWhereInput
+}
+
+input InvoiceUpdateDataInput {
+  timeDue: DateTime
+  timePaid: DateTime
+  vatRate: Int
+  netAmount: Float
+  vatAmount: Float
+  grossAmount: Float
+  order: CustomerOrderUpdateOneRequiredWithoutInvoiceInput
+}
+
+input InvoiceUpdateInput {
+  timeDue: DateTime
+  timePaid: DateTime
+  vatRate: Int
+  netAmount: Float
+  vatAmount: Float
+  grossAmount: Float
+  order: CustomerOrderUpdateOneRequiredWithoutInvoiceInput
+}
+
+input InvoiceUpdateManyMutationInput {
+  timeDue: DateTime
+  timePaid: DateTime
+  vatRate: Int
+  netAmount: Float
+  vatAmount: Float
+  grossAmount: Float
+}
+
+input InvoiceUpdateOneInput {
+  create: InvoiceCreateInput
+  connect: InvoiceWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: InvoiceUpdateDataInput
+  upsert: InvoiceUpsertNestedInput
+}
+
+input InvoiceUpdateOneRequiredWithoutOrderInput {
+  create: InvoiceCreateWithoutOrderInput
+  connect: InvoiceWhereUniqueInput
+  update: InvoiceUpdateWithoutOrderDataInput
+  upsert: InvoiceUpsertWithoutOrderInput
+}
+
+input InvoiceUpdateWithoutOrderDataInput {
+  timeDue: DateTime
+  timePaid: DateTime
+  vatRate: Int
+  netAmount: Float
+  vatAmount: Float
+  grossAmount: Float
+}
+
+input InvoiceUpsertNestedInput {
+  update: InvoiceUpdateDataInput!
+  create: InvoiceCreateInput!
+}
+
+input InvoiceUpsertWithoutOrderInput {
+  update: InvoiceUpdateWithoutOrderDataInput!
+  create: InvoiceCreateWithoutOrderInput!
+}
+
+input InvoiceWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InvoiceWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InvoiceWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InvoiceWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  timeDue: DateTime
+
+  """All values that are not equal to given value."""
+  timeDue_not: DateTime
+
+  """All values that are contained in given list."""
+  timeDue_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  timeDue_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  timeDue_lt: DateTime
+
+  """All values less than or equal the given value."""
+  timeDue_lte: DateTime
+
+  """All values greater than the given value."""
+  timeDue_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  timeDue_gte: DateTime
+  timePaid: DateTime
+
+  """All values that are not equal to given value."""
+  timePaid_not: DateTime
+
+  """All values that are contained in given list."""
+  timePaid_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  timePaid_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  timePaid_lt: DateTime
+
+  """All values less than or equal the given value."""
+  timePaid_lte: DateTime
+
+  """All values greater than the given value."""
+  timePaid_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  timePaid_gte: DateTime
+  vatRate: Int
+
+  """All values that are not equal to given value."""
+  vatRate_not: Int
+
+  """All values that are contained in given list."""
+  vatRate_in: [Int!]
+
+  """All values that are not contained in given list."""
+  vatRate_not_in: [Int!]
+
+  """All values less than the given value."""
+  vatRate_lt: Int
+
+  """All values less than or equal the given value."""
+  vatRate_lte: Int
+
+  """All values greater than the given value."""
+  vatRate_gt: Int
+
+  """All values greater than or equal the given value."""
+  vatRate_gte: Int
+  netAmount: Float
+
+  """All values that are not equal to given value."""
+  netAmount_not: Float
+
+  """All values that are contained in given list."""
+  netAmount_in: [Float!]
+
+  """All values that are not contained in given list."""
+  netAmount_not_in: [Float!]
+
+  """All values less than the given value."""
+  netAmount_lt: Float
+
+  """All values less than or equal the given value."""
+  netAmount_lte: Float
+
+  """All values greater than the given value."""
+  netAmount_gt: Float
+
+  """All values greater than or equal the given value."""
+  netAmount_gte: Float
+  vatAmount: Float
+
+  """All values that are not equal to given value."""
+  vatAmount_not: Float
+
+  """All values that are contained in given list."""
+  vatAmount_in: [Float!]
+
+  """All values that are not contained in given list."""
+  vatAmount_not_in: [Float!]
+
+  """All values less than the given value."""
+  vatAmount_lt: Float
+
+  """All values less than or equal the given value."""
+  vatAmount_lte: Float
+
+  """All values greater than the given value."""
+  vatAmount_gt: Float
+
+  """All values greater than or equal the given value."""
+  vatAmount_gte: Float
+  grossAmount: Float
+
+  """All values that are not equal to given value."""
+  grossAmount_not: Float
+
+  """All values that are contained in given list."""
+  grossAmount_in: [Float!]
+
+  """All values that are not contained in given list."""
+  grossAmount_not_in: [Float!]
+
+  """All values less than the given value."""
+  grossAmount_lt: Float
+
+  """All values less than or equal the given value."""
+  grossAmount_lte: Float
+
+  """All values greater than the given value."""
+  grossAmount_gt: Float
+
+  """All values greater than or equal the given value."""
+  grossAmount_gte: Float
+  order: CustomerOrderWhereInput
+}
+
+input InvoiceWhereUniqueInput {
+  id: ID
+}
+
 """Raw JSON value"""
 scalar Json
 
@@ -3055,7 +4881,8 @@ type Mutation {
   createAddress(data: AddressCreateInput!): Address!
   createPhoneNumber(data: PhoneNumberCreateInput!): PhoneNumber!
   createnID(data: nIDCreateInput!): nID!
-  createUser(data: UserCreateInput!): User!
+  createSocialLink(data: SocialLinkCreateInput!): SocialLink!
+  createSocialNetwork(data: SocialNetworkCreateInput!): SocialNetwork!
   createNews(data: NewsCreateInput!): News!
   createEvent(data: EventCreateInput!): Event!
   createVenue(data: VenueCreateInput!): Venue!
@@ -3063,10 +4890,24 @@ type Mutation {
   createBranch(data: BranchCreateInput!): Branch!
   createAdminRole(data: AdminRoleCreateInput!): AdminRole!
   createAdminCompetence(data: AdminCompetenceCreateInput!): AdminCompetence!
+  createCongressEdition(data: CongressEditionCreateInput!): CongressEdition!
+  createCongressProduct(data: CongressProductCreateInput!): CongressProduct!
+  createParticipant(data: ParticipantCreateInput!): Participant!
+  createCommitteBoardUser(data: CommitteBoardUserCreateInput!): CommitteBoardUser!
+  createProposalReview(data: ProposalReviewCreateInput!): ProposalReview!
+  createProposal(data: ProposalCreateInput!): Proposal!
+  createProductCategory(data: ProductCategoryCreateInput!): ProductCategory!
+  createProductImage(data: ProductImageCreateInput!): ProductImage!
+  createCustomerOrder(data: CustomerOrderCreateInput!): CustomerOrder!
+  createCustomerOrderItems(data: CustomerOrderItemsCreateInput!): CustomerOrderItems!
+  createProduct(data: ProductCreateInput!): Product!
+  createUser(data: UserCreateInput!): User!
+  createInvoice(data: InvoiceCreateInput!): Invoice!
   updateAddress(data: AddressUpdateInput!, where: AddressWhereUniqueInput!): Address
   updatePhoneNumber(data: PhoneNumberUpdateInput!, where: PhoneNumberWhereUniqueInput!): PhoneNumber
   updatenID(data: nIDUpdateInput!, where: nIDWhereUniqueInput!): nID
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateSocialLink(data: SocialLinkUpdateInput!, where: SocialLinkWhereUniqueInput!): SocialLink
+  updateSocialNetwork(data: SocialNetworkUpdateInput!, where: SocialNetworkWhereUniqueInput!): SocialNetwork
   updateNews(data: NewsUpdateInput!, where: NewsWhereUniqueInput!): News
   updateEvent(data: EventUpdateInput!, where: EventWhereUniqueInput!): Event
   updateVenue(data: VenueUpdateInput!, where: VenueWhereUniqueInput!): Venue
@@ -3074,10 +4915,24 @@ type Mutation {
   updateBranch(data: BranchUpdateInput!, where: BranchWhereUniqueInput!): Branch
   updateAdminRole(data: AdminRoleUpdateInput!, where: AdminRoleWhereUniqueInput!): AdminRole
   updateAdminCompetence(data: AdminCompetenceUpdateInput!, where: AdminCompetenceWhereUniqueInput!): AdminCompetence
+  updateCongressEdition(data: CongressEditionUpdateInput!, where: CongressEditionWhereUniqueInput!): CongressEdition
+  updateCongressProduct(data: CongressProductUpdateInput!, where: CongressProductWhereUniqueInput!): CongressProduct
+  updateParticipant(data: ParticipantUpdateInput!, where: ParticipantWhereUniqueInput!): Participant
+  updateCommitteBoardUser(data: CommitteBoardUserUpdateInput!, where: CommitteBoardUserWhereUniqueInput!): CommitteBoardUser
+  updateProposalReview(data: ProposalReviewUpdateInput!, where: ProposalReviewWhereUniqueInput!): ProposalReview
+  updateProposal(data: ProposalUpdateInput!, where: ProposalWhereUniqueInput!): Proposal
+  updateProductCategory(data: ProductCategoryUpdateInput!, where: ProductCategoryWhereUniqueInput!): ProductCategory
+  updateProductImage(data: ProductImageUpdateInput!, where: ProductImageWhereUniqueInput!): ProductImage
+  updateCustomerOrder(data: CustomerOrderUpdateInput!, where: CustomerOrderWhereUniqueInput!): CustomerOrder
+  updateCustomerOrderItems(data: CustomerOrderItemsUpdateInput!, where: CustomerOrderItemsWhereUniqueInput!): CustomerOrderItems
+  updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateInvoice(data: InvoiceUpdateInput!, where: InvoiceWhereUniqueInput!): Invoice
   deleteAddress(where: AddressWhereUniqueInput!): Address
   deletePhoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
   deletenID(where: nIDWhereUniqueInput!): nID
-  deleteUser(where: UserWhereUniqueInput!): User
+  deleteSocialLink(where: SocialLinkWhereUniqueInput!): SocialLink
+  deleteSocialNetwork(where: SocialNetworkWhereUniqueInput!): SocialNetwork
   deleteNews(where: NewsWhereUniqueInput!): News
   deleteEvent(where: EventWhereUniqueInput!): Event
   deleteVenue(where: VenueWhereUniqueInput!): Venue
@@ -3085,10 +4940,24 @@ type Mutation {
   deleteBranch(where: BranchWhereUniqueInput!): Branch
   deleteAdminRole(where: AdminRoleWhereUniqueInput!): AdminRole
   deleteAdminCompetence(where: AdminCompetenceWhereUniqueInput!): AdminCompetence
+  deleteCongressEdition(where: CongressEditionWhereUniqueInput!): CongressEdition
+  deleteCongressProduct(where: CongressProductWhereUniqueInput!): CongressProduct
+  deleteParticipant(where: ParticipantWhereUniqueInput!): Participant
+  deleteCommitteBoardUser(where: CommitteBoardUserWhereUniqueInput!): CommitteBoardUser
+  deleteProposalReview(where: ProposalReviewWhereUniqueInput!): ProposalReview
+  deleteProposal(where: ProposalWhereUniqueInput!): Proposal
+  deleteProductCategory(where: ProductCategoryWhereUniqueInput!): ProductCategory
+  deleteProductImage(where: ProductImageWhereUniqueInput!): ProductImage
+  deleteCustomerOrder(where: CustomerOrderWhereUniqueInput!): CustomerOrder
+  deleteCustomerOrderItems(where: CustomerOrderItemsWhereUniqueInput!): CustomerOrderItems
+  deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteInvoice(where: InvoiceWhereUniqueInput!): Invoice
   upsertAddress(where: AddressWhereUniqueInput!, create: AddressCreateInput!, update: AddressUpdateInput!): Address!
   upsertPhoneNumber(where: PhoneNumberWhereUniqueInput!, create: PhoneNumberCreateInput!, update: PhoneNumberUpdateInput!): PhoneNumber!
   upsertnID(where: nIDWhereUniqueInput!, create: nIDCreateInput!, update: nIDUpdateInput!): nID!
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertSocialLink(where: SocialLinkWhereUniqueInput!, create: SocialLinkCreateInput!, update: SocialLinkUpdateInput!): SocialLink!
+  upsertSocialNetwork(where: SocialNetworkWhereUniqueInput!, create: SocialNetworkCreateInput!, update: SocialNetworkUpdateInput!): SocialNetwork!
   upsertNews(where: NewsWhereUniqueInput!, create: NewsCreateInput!, update: NewsUpdateInput!): News!
   upsertEvent(where: EventWhereUniqueInput!, create: EventCreateInput!, update: EventUpdateInput!): Event!
   upsertVenue(where: VenueWhereUniqueInput!, create: VenueCreateInput!, update: VenueUpdateInput!): Venue!
@@ -3096,10 +4965,23 @@ type Mutation {
   upsertBranch(where: BranchWhereUniqueInput!, create: BranchCreateInput!, update: BranchUpdateInput!): Branch!
   upsertAdminRole(where: AdminRoleWhereUniqueInput!, create: AdminRoleCreateInput!, update: AdminRoleUpdateInput!): AdminRole!
   upsertAdminCompetence(where: AdminCompetenceWhereUniqueInput!, create: AdminCompetenceCreateInput!, update: AdminCompetenceUpdateInput!): AdminCompetence!
+  upsertCongressEdition(where: CongressEditionWhereUniqueInput!, create: CongressEditionCreateInput!, update: CongressEditionUpdateInput!): CongressEdition!
+  upsertCongressProduct(where: CongressProductWhereUniqueInput!, create: CongressProductCreateInput!, update: CongressProductUpdateInput!): CongressProduct!
+  upsertParticipant(where: ParticipantWhereUniqueInput!, create: ParticipantCreateInput!, update: ParticipantUpdateInput!): Participant!
+  upsertCommitteBoardUser(where: CommitteBoardUserWhereUniqueInput!, create: CommitteBoardUserCreateInput!, update: CommitteBoardUserUpdateInput!): CommitteBoardUser!
+  upsertProposalReview(where: ProposalReviewWhereUniqueInput!, create: ProposalReviewCreateInput!, update: ProposalReviewUpdateInput!): ProposalReview!
+  upsertProposal(where: ProposalWhereUniqueInput!, create: ProposalCreateInput!, update: ProposalUpdateInput!): Proposal!
+  upsertProductCategory(where: ProductCategoryWhereUniqueInput!, create: ProductCategoryCreateInput!, update: ProductCategoryUpdateInput!): ProductCategory!
+  upsertProductImage(where: ProductImageWhereUniqueInput!, create: ProductImageCreateInput!, update: ProductImageUpdateInput!): ProductImage!
+  upsertCustomerOrder(where: CustomerOrderWhereUniqueInput!, create: CustomerOrderCreateInput!, update: CustomerOrderUpdateInput!): CustomerOrder!
+  upsertCustomerOrderItems(where: CustomerOrderItemsWhereUniqueInput!, create: CustomerOrderItemsCreateInput!, update: CustomerOrderItemsUpdateInput!): CustomerOrderItems!
+  upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertInvoice(where: InvoiceWhereUniqueInput!, create: InvoiceCreateInput!, update: InvoiceUpdateInput!): Invoice!
   updateManyAddresses(data: AddressUpdateManyMutationInput!, where: AddressWhereInput): BatchPayload!
   updateManyPhoneNumbers(data: PhoneNumberUpdateManyMutationInput!, where: PhoneNumberWhereInput): BatchPayload!
   updateManyNIDs(data: nIDUpdateManyMutationInput!, where: nIDWhereInput): BatchPayload!
-  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
+  updateManySocialNetworks(data: SocialNetworkUpdateManyMutationInput!, where: SocialNetworkWhereInput): BatchPayload!
   updateManyNewses(data: NewsUpdateManyMutationInput!, where: NewsWhereInput): BatchPayload!
   updateManyEvents(data: EventUpdateManyMutationInput!, where: EventWhereInput): BatchPayload!
   updateManyVenues(data: VenueUpdateManyMutationInput!, where: VenueWhereInput): BatchPayload!
@@ -3107,10 +4989,21 @@ type Mutation {
   updateManyBranches(data: BranchUpdateManyMutationInput!, where: BranchWhereInput): BatchPayload!
   updateManyAdminRoles(data: AdminRoleUpdateManyMutationInput!, where: AdminRoleWhereInput): BatchPayload!
   updateManyAdminCompetences(data: AdminCompetenceUpdateManyMutationInput!, where: AdminCompetenceWhereInput): BatchPayload!
+  updateManyCongressEditions(data: CongressEditionUpdateManyMutationInput!, where: CongressEditionWhereInput): BatchPayload!
+  updateManyParticipants(data: ParticipantUpdateManyMutationInput!, where: ParticipantWhereInput): BatchPayload!
+  updateManyProposalReviews(data: ProposalReviewUpdateManyMutationInput!, where: ProposalReviewWhereInput): BatchPayload!
+  updateManyProposals(data: ProposalUpdateManyMutationInput!, where: ProposalWhereInput): BatchPayload!
+  updateManyProductCategories(data: ProductCategoryUpdateManyMutationInput!, where: ProductCategoryWhereInput): BatchPayload!
+  updateManyProductImages(data: ProductImageUpdateManyMutationInput!, where: ProductImageWhereInput): BatchPayload!
+  updateManyCustomerOrderItemses(data: CustomerOrderItemsUpdateManyMutationInput!, where: CustomerOrderItemsWhereInput): BatchPayload!
+  updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
+  updateManyInvoices(data: InvoiceUpdateManyMutationInput!, where: InvoiceWhereInput): BatchPayload!
   deleteManyAddresses(where: AddressWhereInput): BatchPayload!
   deleteManyPhoneNumbers(where: PhoneNumberWhereInput): BatchPayload!
   deleteManyNIDs(where: nIDWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManySocialLinks(where: SocialLinkWhereInput): BatchPayload!
+  deleteManySocialNetworks(where: SocialNetworkWhereInput): BatchPayload!
   deleteManyNewses(where: NewsWhereInput): BatchPayload!
   deleteManyEvents(where: EventWhereInput): BatchPayload!
   deleteManyVenues(where: VenueWhereInput): BatchPayload!
@@ -3118,6 +5011,19 @@ type Mutation {
   deleteManyBranches(where: BranchWhereInput): BatchPayload!
   deleteManyAdminRoles(where: AdminRoleWhereInput): BatchPayload!
   deleteManyAdminCompetences(where: AdminCompetenceWhereInput): BatchPayload!
+  deleteManyCongressEditions(where: CongressEditionWhereInput): BatchPayload!
+  deleteManyCongressProducts(where: CongressProductWhereInput): BatchPayload!
+  deleteManyParticipants(where: ParticipantWhereInput): BatchPayload!
+  deleteManyCommitteBoardUsers(where: CommitteBoardUserWhereInput): BatchPayload!
+  deleteManyProposalReviews(where: ProposalReviewWhereInput): BatchPayload!
+  deleteManyProposals(where: ProposalWhereInput): BatchPayload!
+  deleteManyProductCategories(where: ProductCategoryWhereInput): BatchPayload!
+  deleteManyProductImages(where: ProductImageWhereInput): BatchPayload!
+  deleteManyCustomerOrders(where: CustomerOrderWhereInput): BatchPayload!
+  deleteManyCustomerOrderItemses(where: CustomerOrderItemsWhereInput): BatchPayload!
+  deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyInvoices(where: InvoiceWhereInput): BatchPayload!
   executeRaw(database: PrismaDatabase, query: String!): Json!
 }
 
@@ -4277,6 +6183,405 @@ type PageInfo {
   endCursor: String
 }
 
+type Participant implements Node {
+  id: ID!
+  user: User!
+  type: ParticipationType!
+  participationStatus: ParticipationStatus!
+  congress: CongressEdition!
+  proposals(where: ProposalWhereInput, orderBy: ProposalOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Proposal!]
+  paymentSettled: Boolean!
+  authorized: Boolean!
+  invoiceID: Invoice
+}
+
+"""A connection to a list of items."""
+type ParticipantConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ParticipantEdge]!
+  aggregate: AggregateParticipant!
+}
+
+input ParticipantCreateInput {
+  type: ParticipationType!
+  participationStatus: ParticipationStatus
+  paymentSettled: Boolean
+  authorized: Boolean
+  user: UserCreateOneInput!
+  congress: CongressEditionCreateOneWithoutParticipantsInput!
+  proposals: ProposalCreateManyWithoutSpeakerApplicationInput
+  invoiceID: InvoiceCreateOneInput
+}
+
+input ParticipantCreateManyWithoutCongressInput {
+  create: [ParticipantCreateWithoutCongressInput!]
+  connect: [ParticipantWhereUniqueInput!]
+}
+
+input ParticipantCreateOneWithoutProposalsInput {
+  create: ParticipantCreateWithoutProposalsInput
+  connect: ParticipantWhereUniqueInput
+}
+
+input ParticipantCreateWithoutCongressInput {
+  type: ParticipationType!
+  participationStatus: ParticipationStatus
+  paymentSettled: Boolean
+  authorized: Boolean
+  user: UserCreateOneInput!
+  proposals: ProposalCreateManyWithoutSpeakerApplicationInput
+  invoiceID: InvoiceCreateOneInput
+}
+
+input ParticipantCreateWithoutProposalsInput {
+  type: ParticipationType!
+  participationStatus: ParticipationStatus
+  paymentSettled: Boolean
+  authorized: Boolean
+  user: UserCreateOneInput!
+  congress: CongressEditionCreateOneWithoutParticipantsInput!
+  invoiceID: InvoiceCreateOneInput
+}
+
+"""An edge in a connection."""
+type ParticipantEdge {
+  """The item at the end of the edge."""
+  node: Participant!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ParticipantOrderByInput {
+  id_ASC
+  id_DESC
+  type_ASC
+  type_DESC
+  participationStatus_ASC
+  participationStatus_DESC
+  paymentSettled_ASC
+  paymentSettled_DESC
+  authorized_ASC
+  authorized_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ParticipantPreviousValues {
+  id: ID!
+  type: ParticipationType!
+  participationStatus: ParticipationStatus!
+  paymentSettled: Boolean!
+  authorized: Boolean!
+}
+
+input ParticipantScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ParticipantScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ParticipantScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ParticipantScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  type: ParticipationType
+
+  """All values that are not equal to given value."""
+  type_not: ParticipationType
+
+  """All values that are contained in given list."""
+  type_in: [ParticipationType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [ParticipationType!]
+  participationStatus: ParticipationStatus
+
+  """All values that are not equal to given value."""
+  participationStatus_not: ParticipationStatus
+
+  """All values that are contained in given list."""
+  participationStatus_in: [ParticipationStatus!]
+
+  """All values that are not contained in given list."""
+  participationStatus_not_in: [ParticipationStatus!]
+  paymentSettled: Boolean
+
+  """All values that are not equal to given value."""
+  paymentSettled_not: Boolean
+  authorized: Boolean
+
+  """All values that are not equal to given value."""
+  authorized_not: Boolean
+}
+
+type ParticipantSubscriptionPayload {
+  mutation: MutationType!
+  node: Participant
+  updatedFields: [String!]
+  previousValues: ParticipantPreviousValues
+}
+
+input ParticipantSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ParticipantSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ParticipantSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ParticipantSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ParticipantWhereInput
+}
+
+input ParticipantUpdateInput {
+  type: ParticipationType
+  participationStatus: ParticipationStatus
+  paymentSettled: Boolean
+  authorized: Boolean
+  user: UserUpdateOneRequiredInput
+  congress: CongressEditionUpdateOneRequiredWithoutParticipantsInput
+  proposals: ProposalUpdateManyWithoutSpeakerApplicationInput
+  invoiceID: InvoiceUpdateOneInput
+}
+
+input ParticipantUpdateManyDataInput {
+  type: ParticipationType
+  participationStatus: ParticipationStatus
+  paymentSettled: Boolean
+  authorized: Boolean
+}
+
+input ParticipantUpdateManyMutationInput {
+  type: ParticipationType
+  participationStatus: ParticipationStatus
+  paymentSettled: Boolean
+  authorized: Boolean
+}
+
+input ParticipantUpdateManyWithoutCongressInput {
+  create: [ParticipantCreateWithoutCongressInput!]
+  connect: [ParticipantWhereUniqueInput!]
+  disconnect: [ParticipantWhereUniqueInput!]
+  delete: [ParticipantWhereUniqueInput!]
+  update: [ParticipantUpdateWithWhereUniqueWithoutCongressInput!]
+  updateMany: [ParticipantUpdateManyWithWhereNestedInput!]
+  deleteMany: [ParticipantScalarWhereInput!]
+  upsert: [ParticipantUpsertWithWhereUniqueWithoutCongressInput!]
+}
+
+input ParticipantUpdateManyWithWhereNestedInput {
+  where: ParticipantScalarWhereInput!
+  data: ParticipantUpdateManyDataInput!
+}
+
+input ParticipantUpdateOneRequiredWithoutProposalsInput {
+  create: ParticipantCreateWithoutProposalsInput
+  connect: ParticipantWhereUniqueInput
+  update: ParticipantUpdateWithoutProposalsDataInput
+  upsert: ParticipantUpsertWithoutProposalsInput
+}
+
+input ParticipantUpdateWithoutCongressDataInput {
+  type: ParticipationType
+  participationStatus: ParticipationStatus
+  paymentSettled: Boolean
+  authorized: Boolean
+  user: UserUpdateOneRequiredInput
+  proposals: ProposalUpdateManyWithoutSpeakerApplicationInput
+  invoiceID: InvoiceUpdateOneInput
+}
+
+input ParticipantUpdateWithoutProposalsDataInput {
+  type: ParticipationType
+  participationStatus: ParticipationStatus
+  paymentSettled: Boolean
+  authorized: Boolean
+  user: UserUpdateOneRequiredInput
+  congress: CongressEditionUpdateOneRequiredWithoutParticipantsInput
+  invoiceID: InvoiceUpdateOneInput
+}
+
+input ParticipantUpdateWithWhereUniqueWithoutCongressInput {
+  where: ParticipantWhereUniqueInput!
+  data: ParticipantUpdateWithoutCongressDataInput!
+}
+
+input ParticipantUpsertWithoutProposalsInput {
+  update: ParticipantUpdateWithoutProposalsDataInput!
+  create: ParticipantCreateWithoutProposalsInput!
+}
+
+input ParticipantUpsertWithWhereUniqueWithoutCongressInput {
+  where: ParticipantWhereUniqueInput!
+  update: ParticipantUpdateWithoutCongressDataInput!
+  create: ParticipantCreateWithoutCongressInput!
+}
+
+input ParticipantWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ParticipantWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ParticipantWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ParticipantWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  type: ParticipationType
+
+  """All values that are not equal to given value."""
+  type_not: ParticipationType
+
+  """All values that are contained in given list."""
+  type_in: [ParticipationType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [ParticipationType!]
+  participationStatus: ParticipationStatus
+
+  """All values that are not equal to given value."""
+  participationStatus_not: ParticipationStatus
+
+  """All values that are contained in given list."""
+  participationStatus_in: [ParticipationStatus!]
+
+  """All values that are not contained in given list."""
+  participationStatus_not_in: [ParticipationStatus!]
+  paymentSettled: Boolean
+
+  """All values that are not equal to given value."""
+  paymentSettled_not: Boolean
+  authorized: Boolean
+
+  """All values that are not equal to given value."""
+  authorized_not: Boolean
+  user: UserWhereInput
+  congress: CongressEditionWhereInput
+  proposals_every: ProposalWhereInput
+  proposals_some: ProposalWhereInput
+  proposals_none: ProposalWhereInput
+  invoiceID: InvoiceWhereInput
+}
+
+input ParticipantWhereUniqueInput {
+  id: ID
+}
+
+enum ParticipationStatus {
+  PREACTIVE
+  ACTIVE
+  CANCELED
+}
+
+enum ParticipationType {
+  ATTENDEE
+  SPEAKER
+}
+
 type PhoneNumber implements Node {
   id: ID!
   countryCode: Int!
@@ -4525,6 +6830,1116 @@ enum PrismaDatabase {
   default
 }
 
+type Product implements Node {
+  id: ID!
+  name: String!
+  unitPrice: Float!
+  type: ProductType!
+  category: ProductCategory!
+  images(where: ProductImageWhereInput, orderBy: ProductImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductImage!]
+}
+
+type ProductCategory implements Node {
+  id: ID!
+  name: String!
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+}
+
+"""A connection to a list of items."""
+type ProductCategoryConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProductCategoryEdge]!
+  aggregate: AggregateProductCategory!
+}
+
+input ProductCategoryCreateInput {
+  name: String!
+  products: ProductCreateManyWithoutCategoryInput
+}
+
+input ProductCategoryCreateOneWithoutProductsInput {
+  create: ProductCategoryCreateWithoutProductsInput
+  connect: ProductCategoryWhereUniqueInput
+}
+
+input ProductCategoryCreateWithoutProductsInput {
+  name: String!
+}
+
+"""An edge in a connection."""
+type ProductCategoryEdge {
+  """The item at the end of the edge."""
+  node: ProductCategory!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ProductCategoryOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ProductCategoryPreviousValues {
+  id: ID!
+  name: String!
+}
+
+type ProductCategorySubscriptionPayload {
+  mutation: MutationType!
+  node: ProductCategory
+  updatedFields: [String!]
+  previousValues: ProductCategoryPreviousValues
+}
+
+input ProductCategorySubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductCategorySubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductCategorySubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductCategorySubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProductCategoryWhereInput
+}
+
+input ProductCategoryUpdateInput {
+  name: String
+  products: ProductUpdateManyWithoutCategoryInput
+}
+
+input ProductCategoryUpdateManyMutationInput {
+  name: String
+}
+
+input ProductCategoryUpdateOneRequiredWithoutProductsInput {
+  create: ProductCategoryCreateWithoutProductsInput
+  connect: ProductCategoryWhereUniqueInput
+  update: ProductCategoryUpdateWithoutProductsDataInput
+  upsert: ProductCategoryUpsertWithoutProductsInput
+}
+
+input ProductCategoryUpdateWithoutProductsDataInput {
+  name: String
+}
+
+input ProductCategoryUpsertWithoutProductsInput {
+  update: ProductCategoryUpdateWithoutProductsDataInput!
+  create: ProductCategoryCreateWithoutProductsInput!
+}
+
+input ProductCategoryWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductCategoryWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductCategoryWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductCategoryWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
+}
+
+input ProductCategoryWhereUniqueInput {
+  id: ID
+}
+
+"""A connection to a list of items."""
+type ProductConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProductEdge]!
+  aggregate: AggregateProduct!
+}
+
+input ProductCreateInput {
+  name: String!
+  unitPrice: Float!
+  type: ProductType
+  category: ProductCategoryCreateOneWithoutProductsInput!
+  images: ProductImageCreateManyWithoutProductInput
+}
+
+input ProductCreateManyWithoutCategoryInput {
+  create: [ProductCreateWithoutCategoryInput!]
+  connect: [ProductWhereUniqueInput!]
+}
+
+input ProductCreateOneInput {
+  create: ProductCreateInput
+  connect: ProductWhereUniqueInput
+}
+
+input ProductCreateOneWithoutImagesInput {
+  create: ProductCreateWithoutImagesInput
+  connect: ProductWhereUniqueInput
+}
+
+input ProductCreateWithoutCategoryInput {
+  name: String!
+  unitPrice: Float!
+  type: ProductType
+  images: ProductImageCreateManyWithoutProductInput
+}
+
+input ProductCreateWithoutImagesInput {
+  name: String!
+  unitPrice: Float!
+  type: ProductType
+  category: ProductCategoryCreateOneWithoutProductsInput!
+}
+
+"""An edge in a connection."""
+type ProductEdge {
+  """The item at the end of the edge."""
+  node: Product!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+type ProductImage implements Node {
+  id: ID!
+  title: String!
+  product: Product!
+  imageURL: String!
+}
+
+"""A connection to a list of items."""
+type ProductImageConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProductImageEdge]!
+  aggregate: AggregateProductImage!
+}
+
+input ProductImageCreateInput {
+  title: String
+  imageURL: String!
+  product: ProductCreateOneWithoutImagesInput!
+}
+
+input ProductImageCreateManyWithoutProductInput {
+  create: [ProductImageCreateWithoutProductInput!]
+  connect: [ProductImageWhereUniqueInput!]
+}
+
+input ProductImageCreateWithoutProductInput {
+  title: String
+  imageURL: String!
+}
+
+"""An edge in a connection."""
+type ProductImageEdge {
+  """The item at the end of the edge."""
+  node: ProductImage!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ProductImageOrderByInput {
+  id_ASC
+  id_DESC
+  title_ASC
+  title_DESC
+  imageURL_ASC
+  imageURL_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ProductImagePreviousValues {
+  id: ID!
+  title: String!
+  imageURL: String!
+}
+
+input ProductImageScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductImageScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductImageScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductImageScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  imageURL: String
+
+  """All values that are not equal to given value."""
+  imageURL_not: String
+
+  """All values that are contained in given list."""
+  imageURL_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageURL_not_in: [String!]
+
+  """All values less than the given value."""
+  imageURL_lt: String
+
+  """All values less than or equal the given value."""
+  imageURL_lte: String
+
+  """All values greater than the given value."""
+  imageURL_gt: String
+
+  """All values greater than or equal the given value."""
+  imageURL_gte: String
+
+  """All values containing the given string."""
+  imageURL_contains: String
+
+  """All values not containing the given string."""
+  imageURL_not_contains: String
+
+  """All values starting with the given string."""
+  imageURL_starts_with: String
+
+  """All values not starting with the given string."""
+  imageURL_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageURL_ends_with: String
+
+  """All values not ending with the given string."""
+  imageURL_not_ends_with: String
+}
+
+type ProductImageSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductImage
+  updatedFields: [String!]
+  previousValues: ProductImagePreviousValues
+}
+
+input ProductImageSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductImageSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductImageSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductImageSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProductImageWhereInput
+}
+
+input ProductImageUpdateInput {
+  title: String
+  imageURL: String
+  product: ProductUpdateOneRequiredWithoutImagesInput
+}
+
+input ProductImageUpdateManyDataInput {
+  title: String
+  imageURL: String
+}
+
+input ProductImageUpdateManyMutationInput {
+  title: String
+  imageURL: String
+}
+
+input ProductImageUpdateManyWithoutProductInput {
+  create: [ProductImageCreateWithoutProductInput!]
+  connect: [ProductImageWhereUniqueInput!]
+  disconnect: [ProductImageWhereUniqueInput!]
+  delete: [ProductImageWhereUniqueInput!]
+  update: [ProductImageUpdateWithWhereUniqueWithoutProductInput!]
+  updateMany: [ProductImageUpdateManyWithWhereNestedInput!]
+  deleteMany: [ProductImageScalarWhereInput!]
+  upsert: [ProductImageUpsertWithWhereUniqueWithoutProductInput!]
+}
+
+input ProductImageUpdateManyWithWhereNestedInput {
+  where: ProductImageScalarWhereInput!
+  data: ProductImageUpdateManyDataInput!
+}
+
+input ProductImageUpdateWithoutProductDataInput {
+  title: String
+  imageURL: String
+}
+
+input ProductImageUpdateWithWhereUniqueWithoutProductInput {
+  where: ProductImageWhereUniqueInput!
+  data: ProductImageUpdateWithoutProductDataInput!
+}
+
+input ProductImageUpsertWithWhereUniqueWithoutProductInput {
+  where: ProductImageWhereUniqueInput!
+  update: ProductImageUpdateWithoutProductDataInput!
+  create: ProductImageCreateWithoutProductInput!
+}
+
+input ProductImageWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductImageWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductImageWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductImageWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  imageURL: String
+
+  """All values that are not equal to given value."""
+  imageURL_not: String
+
+  """All values that are contained in given list."""
+  imageURL_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageURL_not_in: [String!]
+
+  """All values less than the given value."""
+  imageURL_lt: String
+
+  """All values less than or equal the given value."""
+  imageURL_lte: String
+
+  """All values greater than the given value."""
+  imageURL_gt: String
+
+  """All values greater than or equal the given value."""
+  imageURL_gte: String
+
+  """All values containing the given string."""
+  imageURL_contains: String
+
+  """All values not containing the given string."""
+  imageURL_not_contains: String
+
+  """All values starting with the given string."""
+  imageURL_starts_with: String
+
+  """All values not starting with the given string."""
+  imageURL_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageURL_ends_with: String
+
+  """All values not ending with the given string."""
+  imageURL_not_ends_with: String
+  product: ProductWhereInput
+}
+
+input ProductImageWhereUniqueInput {
+  id: ID
+}
+
+enum ProductOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  unitPrice_ASC
+  unitPrice_DESC
+  type_ASC
+  type_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ProductPreviousValues {
+  id: ID!
+  name: String!
+  unitPrice: Float!
+  type: ProductType!
+}
+
+input ProductScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  unitPrice: Float
+
+  """All values that are not equal to given value."""
+  unitPrice_not: Float
+
+  """All values that are contained in given list."""
+  unitPrice_in: [Float!]
+
+  """All values that are not contained in given list."""
+  unitPrice_not_in: [Float!]
+
+  """All values less than the given value."""
+  unitPrice_lt: Float
+
+  """All values less than or equal the given value."""
+  unitPrice_lte: Float
+
+  """All values greater than the given value."""
+  unitPrice_gt: Float
+
+  """All values greater than or equal the given value."""
+  unitPrice_gte: Float
+  type: ProductType
+
+  """All values that are not equal to given value."""
+  type_not: ProductType
+
+  """All values that are contained in given list."""
+  type_in: [ProductType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [ProductType!]
+}
+
+type ProductSubscriptionPayload {
+  mutation: MutationType!
+  node: Product
+  updatedFields: [String!]
+  previousValues: ProductPreviousValues
+}
+
+input ProductSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProductWhereInput
+}
+
+enum ProductType {
+  PRODUCT
+  SERVICE
+}
+
+input ProductUpdateDataInput {
+  name: String
+  unitPrice: Float
+  type: ProductType
+  category: ProductCategoryUpdateOneRequiredWithoutProductsInput
+  images: ProductImageUpdateManyWithoutProductInput
+}
+
+input ProductUpdateInput {
+  name: String
+  unitPrice: Float
+  type: ProductType
+  category: ProductCategoryUpdateOneRequiredWithoutProductsInput
+  images: ProductImageUpdateManyWithoutProductInput
+}
+
+input ProductUpdateManyDataInput {
+  name: String
+  unitPrice: Float
+  type: ProductType
+}
+
+input ProductUpdateManyMutationInput {
+  name: String
+  unitPrice: Float
+  type: ProductType
+}
+
+input ProductUpdateManyWithoutCategoryInput {
+  create: [ProductCreateWithoutCategoryInput!]
+  connect: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  delete: [ProductWhereUniqueInput!]
+  update: [ProductUpdateWithWhereUniqueWithoutCategoryInput!]
+  updateMany: [ProductUpdateManyWithWhereNestedInput!]
+  deleteMany: [ProductScalarWhereInput!]
+  upsert: [ProductUpsertWithWhereUniqueWithoutCategoryInput!]
+}
+
+input ProductUpdateManyWithWhereNestedInput {
+  where: ProductScalarWhereInput!
+  data: ProductUpdateManyDataInput!
+}
+
+input ProductUpdateOneRequiredInput {
+  create: ProductCreateInput
+  connect: ProductWhereUniqueInput
+  update: ProductUpdateDataInput
+  upsert: ProductUpsertNestedInput
+}
+
+input ProductUpdateOneRequiredWithoutImagesInput {
+  create: ProductCreateWithoutImagesInput
+  connect: ProductWhereUniqueInput
+  update: ProductUpdateWithoutImagesDataInput
+  upsert: ProductUpsertWithoutImagesInput
+}
+
+input ProductUpdateWithoutCategoryDataInput {
+  name: String
+  unitPrice: Float
+  type: ProductType
+  images: ProductImageUpdateManyWithoutProductInput
+}
+
+input ProductUpdateWithoutImagesDataInput {
+  name: String
+  unitPrice: Float
+  type: ProductType
+  category: ProductCategoryUpdateOneRequiredWithoutProductsInput
+}
+
+input ProductUpdateWithWhereUniqueWithoutCategoryInput {
+  where: ProductWhereUniqueInput!
+  data: ProductUpdateWithoutCategoryDataInput!
+}
+
+input ProductUpsertNestedInput {
+  update: ProductUpdateDataInput!
+  create: ProductCreateInput!
+}
+
+input ProductUpsertWithoutImagesInput {
+  update: ProductUpdateWithoutImagesDataInput!
+  create: ProductCreateWithoutImagesInput!
+}
+
+input ProductUpsertWithWhereUniqueWithoutCategoryInput {
+  where: ProductWhereUniqueInput!
+  update: ProductUpdateWithoutCategoryDataInput!
+  create: ProductCreateWithoutCategoryInput!
+}
+
+input ProductWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  unitPrice: Float
+
+  """All values that are not equal to given value."""
+  unitPrice_not: Float
+
+  """All values that are contained in given list."""
+  unitPrice_in: [Float!]
+
+  """All values that are not contained in given list."""
+  unitPrice_not_in: [Float!]
+
+  """All values less than the given value."""
+  unitPrice_lt: Float
+
+  """All values less than or equal the given value."""
+  unitPrice_lte: Float
+
+  """All values greater than the given value."""
+  unitPrice_gt: Float
+
+  """All values greater than or equal the given value."""
+  unitPrice_gte: Float
+  type: ProductType
+
+  """All values that are not equal to given value."""
+  type_not: ProductType
+
+  """All values that are contained in given list."""
+  type_in: [ProductType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [ProductType!]
+  category: ProductCategoryWhereInput
+  images_every: ProductImageWhereInput
+  images_some: ProductImageWhereInput
+  images_none: ProductImageWhereInput
+}
+
+input ProductWhereUniqueInput {
+  id: ID
+}
+
 type Program implements Node {
   id: ID!
   name: String!
@@ -4742,11 +8157,718 @@ input ProgramWhereUniqueInput {
   id: ID
 }
 
+type Proposal implements Node {
+  id: ID!
+  speakerApplication: Participant!
+  abstract: String!
+  status: ProposalStatus!
+  reviews(where: ProposalReviewWhereInput, orderBy: ProposalReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProposalReview!]
+}
+
+"""A connection to a list of items."""
+type ProposalConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProposalEdge]!
+  aggregate: AggregateProposal!
+}
+
+input ProposalCreateInput {
+  abstract: String!
+  status: ProposalStatus
+  speakerApplication: ParticipantCreateOneWithoutProposalsInput!
+  reviews: ProposalReviewCreateManyWithoutProposalInput
+}
+
+input ProposalCreateManyWithoutSpeakerApplicationInput {
+  create: [ProposalCreateWithoutSpeakerApplicationInput!]
+  connect: [ProposalWhereUniqueInput!]
+}
+
+input ProposalCreateOneWithoutReviewsInput {
+  create: ProposalCreateWithoutReviewsInput
+  connect: ProposalWhereUniqueInput
+}
+
+input ProposalCreateWithoutReviewsInput {
+  abstract: String!
+  status: ProposalStatus
+  speakerApplication: ParticipantCreateOneWithoutProposalsInput!
+}
+
+input ProposalCreateWithoutSpeakerApplicationInput {
+  abstract: String!
+  status: ProposalStatus
+  reviews: ProposalReviewCreateManyWithoutProposalInput
+}
+
+"""An edge in a connection."""
+type ProposalEdge {
+  """The item at the end of the edge."""
+  node: Proposal!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ProposalOrderByInput {
+  id_ASC
+  id_DESC
+  abstract_ASC
+  abstract_DESC
+  status_ASC
+  status_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ProposalPreviousValues {
+  id: ID!
+  abstract: String!
+  status: ProposalStatus!
+}
+
+type ProposalReview implements Node {
+  id: ID!
+  proposal: Proposal!
+  committeUser: CommitteBoardUser!
+  status: ProposalStatus!
+}
+
+"""A connection to a list of items."""
+type ProposalReviewConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProposalReviewEdge]!
+  aggregate: AggregateProposalReview!
+}
+
+input ProposalReviewCreateInput {
+  status: ProposalStatus
+  proposal: ProposalCreateOneWithoutReviewsInput!
+  committeUser: CommitteBoardUserCreateOneWithoutReviewsInput!
+}
+
+input ProposalReviewCreateManyWithoutCommitteUserInput {
+  create: [ProposalReviewCreateWithoutCommitteUserInput!]
+  connect: [ProposalReviewWhereUniqueInput!]
+}
+
+input ProposalReviewCreateManyWithoutProposalInput {
+  create: [ProposalReviewCreateWithoutProposalInput!]
+  connect: [ProposalReviewWhereUniqueInput!]
+}
+
+input ProposalReviewCreateWithoutCommitteUserInput {
+  status: ProposalStatus
+  proposal: ProposalCreateOneWithoutReviewsInput!
+}
+
+input ProposalReviewCreateWithoutProposalInput {
+  status: ProposalStatus
+  committeUser: CommitteBoardUserCreateOneWithoutReviewsInput!
+}
+
+"""An edge in a connection."""
+type ProposalReviewEdge {
+  """The item at the end of the edge."""
+  node: ProposalReview!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ProposalReviewOrderByInput {
+  id_ASC
+  id_DESC
+  status_ASC
+  status_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ProposalReviewPreviousValues {
+  id: ID!
+  status: ProposalStatus!
+}
+
+input ProposalReviewScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProposalReviewScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProposalReviewScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProposalReviewScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  status: ProposalStatus
+
+  """All values that are not equal to given value."""
+  status_not: ProposalStatus
+
+  """All values that are contained in given list."""
+  status_in: [ProposalStatus!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [ProposalStatus!]
+}
+
+type ProposalReviewSubscriptionPayload {
+  mutation: MutationType!
+  node: ProposalReview
+  updatedFields: [String!]
+  previousValues: ProposalReviewPreviousValues
+}
+
+input ProposalReviewSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProposalReviewSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProposalReviewSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProposalReviewSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProposalReviewWhereInput
+}
+
+input ProposalReviewUpdateInput {
+  status: ProposalStatus
+  proposal: ProposalUpdateOneRequiredWithoutReviewsInput
+  committeUser: CommitteBoardUserUpdateOneRequiredWithoutReviewsInput
+}
+
+input ProposalReviewUpdateManyDataInput {
+  status: ProposalStatus
+}
+
+input ProposalReviewUpdateManyMutationInput {
+  status: ProposalStatus
+}
+
+input ProposalReviewUpdateManyWithoutCommitteUserInput {
+  create: [ProposalReviewCreateWithoutCommitteUserInput!]
+  connect: [ProposalReviewWhereUniqueInput!]
+  disconnect: [ProposalReviewWhereUniqueInput!]
+  delete: [ProposalReviewWhereUniqueInput!]
+  update: [ProposalReviewUpdateWithWhereUniqueWithoutCommitteUserInput!]
+  updateMany: [ProposalReviewUpdateManyWithWhereNestedInput!]
+  deleteMany: [ProposalReviewScalarWhereInput!]
+  upsert: [ProposalReviewUpsertWithWhereUniqueWithoutCommitteUserInput!]
+}
+
+input ProposalReviewUpdateManyWithoutProposalInput {
+  create: [ProposalReviewCreateWithoutProposalInput!]
+  connect: [ProposalReviewWhereUniqueInput!]
+  disconnect: [ProposalReviewWhereUniqueInput!]
+  delete: [ProposalReviewWhereUniqueInput!]
+  update: [ProposalReviewUpdateWithWhereUniqueWithoutProposalInput!]
+  updateMany: [ProposalReviewUpdateManyWithWhereNestedInput!]
+  deleteMany: [ProposalReviewScalarWhereInput!]
+  upsert: [ProposalReviewUpsertWithWhereUniqueWithoutProposalInput!]
+}
+
+input ProposalReviewUpdateManyWithWhereNestedInput {
+  where: ProposalReviewScalarWhereInput!
+  data: ProposalReviewUpdateManyDataInput!
+}
+
+input ProposalReviewUpdateWithoutCommitteUserDataInput {
+  status: ProposalStatus
+  proposal: ProposalUpdateOneRequiredWithoutReviewsInput
+}
+
+input ProposalReviewUpdateWithoutProposalDataInput {
+  status: ProposalStatus
+  committeUser: CommitteBoardUserUpdateOneRequiredWithoutReviewsInput
+}
+
+input ProposalReviewUpdateWithWhereUniqueWithoutCommitteUserInput {
+  where: ProposalReviewWhereUniqueInput!
+  data: ProposalReviewUpdateWithoutCommitteUserDataInput!
+}
+
+input ProposalReviewUpdateWithWhereUniqueWithoutProposalInput {
+  where: ProposalReviewWhereUniqueInput!
+  data: ProposalReviewUpdateWithoutProposalDataInput!
+}
+
+input ProposalReviewUpsertWithWhereUniqueWithoutCommitteUserInput {
+  where: ProposalReviewWhereUniqueInput!
+  update: ProposalReviewUpdateWithoutCommitteUserDataInput!
+  create: ProposalReviewCreateWithoutCommitteUserInput!
+}
+
+input ProposalReviewUpsertWithWhereUniqueWithoutProposalInput {
+  where: ProposalReviewWhereUniqueInput!
+  update: ProposalReviewUpdateWithoutProposalDataInput!
+  create: ProposalReviewCreateWithoutProposalInput!
+}
+
+input ProposalReviewWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProposalReviewWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProposalReviewWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProposalReviewWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  status: ProposalStatus
+
+  """All values that are not equal to given value."""
+  status_not: ProposalStatus
+
+  """All values that are contained in given list."""
+  status_in: [ProposalStatus!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [ProposalStatus!]
+  proposal: ProposalWhereInput
+  committeUser: CommitteBoardUserWhereInput
+}
+
+input ProposalReviewWhereUniqueInput {
+  id: ID
+}
+
+input ProposalScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProposalScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProposalScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProposalScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  abstract: String
+
+  """All values that are not equal to given value."""
+  abstract_not: String
+
+  """All values that are contained in given list."""
+  abstract_in: [String!]
+
+  """All values that are not contained in given list."""
+  abstract_not_in: [String!]
+
+  """All values less than the given value."""
+  abstract_lt: String
+
+  """All values less than or equal the given value."""
+  abstract_lte: String
+
+  """All values greater than the given value."""
+  abstract_gt: String
+
+  """All values greater than or equal the given value."""
+  abstract_gte: String
+
+  """All values containing the given string."""
+  abstract_contains: String
+
+  """All values not containing the given string."""
+  abstract_not_contains: String
+
+  """All values starting with the given string."""
+  abstract_starts_with: String
+
+  """All values not starting with the given string."""
+  abstract_not_starts_with: String
+
+  """All values ending with the given string."""
+  abstract_ends_with: String
+
+  """All values not ending with the given string."""
+  abstract_not_ends_with: String
+  status: ProposalStatus
+
+  """All values that are not equal to given value."""
+  status_not: ProposalStatus
+
+  """All values that are contained in given list."""
+  status_in: [ProposalStatus!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [ProposalStatus!]
+}
+
+enum ProposalStatus {
+  INREVIEW
+  APPROVED
+  REJECTED
+}
+
+type ProposalSubscriptionPayload {
+  mutation: MutationType!
+  node: Proposal
+  updatedFields: [String!]
+  previousValues: ProposalPreviousValues
+}
+
+input ProposalSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProposalSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProposalSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProposalSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProposalWhereInput
+}
+
+input ProposalUpdateInput {
+  abstract: String
+  status: ProposalStatus
+  speakerApplication: ParticipantUpdateOneRequiredWithoutProposalsInput
+  reviews: ProposalReviewUpdateManyWithoutProposalInput
+}
+
+input ProposalUpdateManyDataInput {
+  abstract: String
+  status: ProposalStatus
+}
+
+input ProposalUpdateManyMutationInput {
+  abstract: String
+  status: ProposalStatus
+}
+
+input ProposalUpdateManyWithoutSpeakerApplicationInput {
+  create: [ProposalCreateWithoutSpeakerApplicationInput!]
+  connect: [ProposalWhereUniqueInput!]
+  disconnect: [ProposalWhereUniqueInput!]
+  delete: [ProposalWhereUniqueInput!]
+  update: [ProposalUpdateWithWhereUniqueWithoutSpeakerApplicationInput!]
+  updateMany: [ProposalUpdateManyWithWhereNestedInput!]
+  deleteMany: [ProposalScalarWhereInput!]
+  upsert: [ProposalUpsertWithWhereUniqueWithoutSpeakerApplicationInput!]
+}
+
+input ProposalUpdateManyWithWhereNestedInput {
+  where: ProposalScalarWhereInput!
+  data: ProposalUpdateManyDataInput!
+}
+
+input ProposalUpdateOneRequiredWithoutReviewsInput {
+  create: ProposalCreateWithoutReviewsInput
+  connect: ProposalWhereUniqueInput
+  update: ProposalUpdateWithoutReviewsDataInput
+  upsert: ProposalUpsertWithoutReviewsInput
+}
+
+input ProposalUpdateWithoutReviewsDataInput {
+  abstract: String
+  status: ProposalStatus
+  speakerApplication: ParticipantUpdateOneRequiredWithoutProposalsInput
+}
+
+input ProposalUpdateWithoutSpeakerApplicationDataInput {
+  abstract: String
+  status: ProposalStatus
+  reviews: ProposalReviewUpdateManyWithoutProposalInput
+}
+
+input ProposalUpdateWithWhereUniqueWithoutSpeakerApplicationInput {
+  where: ProposalWhereUniqueInput!
+  data: ProposalUpdateWithoutSpeakerApplicationDataInput!
+}
+
+input ProposalUpsertWithoutReviewsInput {
+  update: ProposalUpdateWithoutReviewsDataInput!
+  create: ProposalCreateWithoutReviewsInput!
+}
+
+input ProposalUpsertWithWhereUniqueWithoutSpeakerApplicationInput {
+  where: ProposalWhereUniqueInput!
+  update: ProposalUpdateWithoutSpeakerApplicationDataInput!
+  create: ProposalCreateWithoutSpeakerApplicationInput!
+}
+
+input ProposalWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProposalWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProposalWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProposalWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  abstract: String
+
+  """All values that are not equal to given value."""
+  abstract_not: String
+
+  """All values that are contained in given list."""
+  abstract_in: [String!]
+
+  """All values that are not contained in given list."""
+  abstract_not_in: [String!]
+
+  """All values less than the given value."""
+  abstract_lt: String
+
+  """All values less than or equal the given value."""
+  abstract_lte: String
+
+  """All values greater than the given value."""
+  abstract_gt: String
+
+  """All values greater than or equal the given value."""
+  abstract_gte: String
+
+  """All values containing the given string."""
+  abstract_contains: String
+
+  """All values not containing the given string."""
+  abstract_not_contains: String
+
+  """All values starting with the given string."""
+  abstract_starts_with: String
+
+  """All values not starting with the given string."""
+  abstract_not_starts_with: String
+
+  """All values ending with the given string."""
+  abstract_ends_with: String
+
+  """All values not ending with the given string."""
+  abstract_not_ends_with: String
+  status: ProposalStatus
+
+  """All values that are not equal to given value."""
+  status_not: ProposalStatus
+
+  """All values that are contained in given list."""
+  status_in: [ProposalStatus!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [ProposalStatus!]
+  speakerApplication: ParticipantWhereInput
+  reviews_every: ProposalReviewWhereInput
+  reviews_some: ProposalReviewWhereInput
+  reviews_none: ProposalReviewWhereInput
+}
+
+input ProposalWhereUniqueInput {
+  id: ID
+}
+
 type Query {
   addresses(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Address]!
   phoneNumbers(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhoneNumber]!
   nIDs(where: nIDWhereInput, orderBy: nIDOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [nID]!
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  socialLinks(where: SocialLinkWhereInput, orderBy: SocialLinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SocialLink]!
+  socialNetworks(where: SocialNetworkWhereInput, orderBy: SocialNetworkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SocialNetwork]!
   newses(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [News]!
   events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event]!
   venues(where: VenueWhereInput, orderBy: VenueOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Venue]!
@@ -4754,10 +8876,24 @@ type Query {
   branches(where: BranchWhereInput, orderBy: BranchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Branch]!
   adminRoles(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminRole]!
   adminCompetences(where: AdminCompetenceWhereInput, orderBy: AdminCompetenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminCompetence]!
+  congressEditions(where: CongressEditionWhereInput, orderBy: CongressEditionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CongressEdition]!
+  congressProducts(where: CongressProductWhereInput, orderBy: CongressProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CongressProduct]!
+  participants(where: ParticipantWhereInput, orderBy: ParticipantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Participant]!
+  committeBoardUsers(where: CommitteBoardUserWhereInput, orderBy: CommitteBoardUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CommitteBoardUser]!
+  proposalReviews(where: ProposalReviewWhereInput, orderBy: ProposalReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProposalReview]!
+  proposals(where: ProposalWhereInput, orderBy: ProposalOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Proposal]!
+  productCategories(where: ProductCategoryWhereInput, orderBy: ProductCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductCategory]!
+  productImages(where: ProductImageWhereInput, orderBy: ProductImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductImage]!
+  customerOrders(where: CustomerOrderWhereInput, orderBy: CustomerOrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerOrder]!
+  customerOrderItemses(where: CustomerOrderItemsWhereInput, orderBy: CustomerOrderItemsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerOrderItems]!
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  invoices(where: InvoiceWhereInput, orderBy: InvoiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Invoice]!
   address(where: AddressWhereUniqueInput!): Address
   phoneNumber(where: PhoneNumberWhereUniqueInput!): PhoneNumber
   nID(where: nIDWhereUniqueInput!): nID
-  user(where: UserWhereUniqueInput!): User
+  socialLink(where: SocialLinkWhereUniqueInput!): SocialLink
+  socialNetwork(where: SocialNetworkWhereUniqueInput!): SocialNetwork
   news(where: NewsWhereUniqueInput!): News
   event(where: EventWhereUniqueInput!): Event
   venue(where: VenueWhereUniqueInput!): Venue
@@ -4765,10 +8901,24 @@ type Query {
   branch(where: BranchWhereUniqueInput!): Branch
   adminRole(where: AdminRoleWhereUniqueInput!): AdminRole
   adminCompetence(where: AdminCompetenceWhereUniqueInput!): AdminCompetence
+  congressEdition(where: CongressEditionWhereUniqueInput!): CongressEdition
+  congressProduct(where: CongressProductWhereUniqueInput!): CongressProduct
+  participant(where: ParticipantWhereUniqueInput!): Participant
+  committeBoardUser(where: CommitteBoardUserWhereUniqueInput!): CommitteBoardUser
+  proposalReview(where: ProposalReviewWhereUniqueInput!): ProposalReview
+  proposal(where: ProposalWhereUniqueInput!): Proposal
+  productCategory(where: ProductCategoryWhereUniqueInput!): ProductCategory
+  productImage(where: ProductImageWhereUniqueInput!): ProductImage
+  customerOrder(where: CustomerOrderWhereUniqueInput!): CustomerOrder
+  customerOrderItems(where: CustomerOrderItemsWhereUniqueInput!): CustomerOrderItems
+  product(where: ProductWhereUniqueInput!): Product
+  user(where: UserWhereUniqueInput!): User
+  invoice(where: InvoiceWhereUniqueInput!): Invoice
   addressesConnection(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AddressConnection!
   phoneNumbersConnection(where: PhoneNumberWhereInput, orderBy: PhoneNumberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhoneNumberConnection!
   nIDsConnection(where: nIDWhereInput, orderBy: nIDOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): nIDConnection!
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  socialLinksConnection(where: SocialLinkWhereInput, orderBy: SocialLinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SocialLinkConnection!
+  socialNetworksConnection(where: SocialNetworkWhereInput, orderBy: SocialNetworkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SocialNetworkConnection!
   newsesConnection(where: NewsWhereInput, orderBy: NewsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): NewsConnection!
   eventsConnection(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EventConnection!
   venuesConnection(where: VenueWhereInput, orderBy: VenueOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VenueConnection!
@@ -4776,6 +8926,19 @@ type Query {
   branchesConnection(where: BranchWhereInput, orderBy: BranchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BranchConnection!
   adminRolesConnection(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminRoleConnection!
   adminCompetencesConnection(where: AdminCompetenceWhereInput, orderBy: AdminCompetenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminCompetenceConnection!
+  congressEditionsConnection(where: CongressEditionWhereInput, orderBy: CongressEditionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CongressEditionConnection!
+  congressProductsConnection(where: CongressProductWhereInput, orderBy: CongressProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CongressProductConnection!
+  participantsConnection(where: ParticipantWhereInput, orderBy: ParticipantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ParticipantConnection!
+  committeBoardUsersConnection(where: CommitteBoardUserWhereInput, orderBy: CommitteBoardUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommitteBoardUserConnection!
+  proposalReviewsConnection(where: ProposalReviewWhereInput, orderBy: ProposalReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProposalReviewConnection!
+  proposalsConnection(where: ProposalWhereInput, orderBy: ProposalOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProposalConnection!
+  productCategoriesConnection(where: ProductCategoryWhereInput, orderBy: ProductCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductCategoryConnection!
+  productImagesConnection(where: ProductImageWhereInput, orderBy: ProductImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductImageConnection!
+  customerOrdersConnection(where: CustomerOrderWhereInput, orderBy: CustomerOrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerOrderConnection!
+  customerOrderItemsesConnection(where: CustomerOrderItemsWhereInput, orderBy: CustomerOrderItemsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerOrderItemsConnection!
+  productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  invoicesConnection(where: InvoiceWhereInput, orderBy: InvoiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InvoiceConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -4784,11 +8947,543 @@ type Query {
   ): Node
 }
 
+type SocialLink implements Node {
+  id: ID!
+  user: User!
+  network: SocialNetwork!
+}
+
+"""A connection to a list of items."""
+type SocialLinkConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [SocialLinkEdge]!
+  aggregate: AggregateSocialLink!
+}
+
+input SocialLinkCreateInput {
+  user: UserCreateOneWithoutSocialLinksInput!
+  network: SocialNetworkCreateOneWithoutLinksInput!
+}
+
+input SocialLinkCreateManyWithoutNetworkInput {
+  create: [SocialLinkCreateWithoutNetworkInput!]
+  connect: [SocialLinkWhereUniqueInput!]
+}
+
+input SocialLinkCreateManyWithoutUserInput {
+  create: [SocialLinkCreateWithoutUserInput!]
+  connect: [SocialLinkWhereUniqueInput!]
+}
+
+input SocialLinkCreateWithoutNetworkInput {
+  user: UserCreateOneWithoutSocialLinksInput!
+}
+
+input SocialLinkCreateWithoutUserInput {
+  network: SocialNetworkCreateOneWithoutLinksInput!
+}
+
+"""An edge in a connection."""
+type SocialLinkEdge {
+  """The item at the end of the edge."""
+  node: SocialLink!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum SocialLinkOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type SocialLinkPreviousValues {
+  id: ID!
+}
+
+input SocialLinkScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SocialLinkScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SocialLinkScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SocialLinkScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+}
+
+type SocialLinkSubscriptionPayload {
+  mutation: MutationType!
+  node: SocialLink
+  updatedFields: [String!]
+  previousValues: SocialLinkPreviousValues
+}
+
+input SocialLinkSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SocialLinkSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SocialLinkSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SocialLinkSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: SocialLinkWhereInput
+}
+
+input SocialLinkUpdateInput {
+  user: UserUpdateOneRequiredWithoutSocialLinksInput
+  network: SocialNetworkUpdateOneRequiredWithoutLinksInput
+}
+
+input SocialLinkUpdateManyWithoutNetworkInput {
+  create: [SocialLinkCreateWithoutNetworkInput!]
+  connect: [SocialLinkWhereUniqueInput!]
+  disconnect: [SocialLinkWhereUniqueInput!]
+  delete: [SocialLinkWhereUniqueInput!]
+  update: [SocialLinkUpdateWithWhereUniqueWithoutNetworkInput!]
+  deleteMany: [SocialLinkScalarWhereInput!]
+  upsert: [SocialLinkUpsertWithWhereUniqueWithoutNetworkInput!]
+}
+
+input SocialLinkUpdateManyWithoutUserInput {
+  create: [SocialLinkCreateWithoutUserInput!]
+  connect: [SocialLinkWhereUniqueInput!]
+  disconnect: [SocialLinkWhereUniqueInput!]
+  delete: [SocialLinkWhereUniqueInput!]
+  update: [SocialLinkUpdateWithWhereUniqueWithoutUserInput!]
+  deleteMany: [SocialLinkScalarWhereInput!]
+  upsert: [SocialLinkUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input SocialLinkUpdateWithoutNetworkDataInput {
+  user: UserUpdateOneRequiredWithoutSocialLinksInput
+}
+
+input SocialLinkUpdateWithoutUserDataInput {
+  network: SocialNetworkUpdateOneRequiredWithoutLinksInput
+}
+
+input SocialLinkUpdateWithWhereUniqueWithoutNetworkInput {
+  where: SocialLinkWhereUniqueInput!
+  data: SocialLinkUpdateWithoutNetworkDataInput!
+}
+
+input SocialLinkUpdateWithWhereUniqueWithoutUserInput {
+  where: SocialLinkWhereUniqueInput!
+  data: SocialLinkUpdateWithoutUserDataInput!
+}
+
+input SocialLinkUpsertWithWhereUniqueWithoutNetworkInput {
+  where: SocialLinkWhereUniqueInput!
+  update: SocialLinkUpdateWithoutNetworkDataInput!
+  create: SocialLinkCreateWithoutNetworkInput!
+}
+
+input SocialLinkUpsertWithWhereUniqueWithoutUserInput {
+  where: SocialLinkWhereUniqueInput!
+  update: SocialLinkUpdateWithoutUserDataInput!
+  create: SocialLinkCreateWithoutUserInput!
+}
+
+input SocialLinkWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SocialLinkWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SocialLinkWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SocialLinkWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  user: UserWhereInput
+  network: SocialNetworkWhereInput
+}
+
+input SocialLinkWhereUniqueInput {
+  id: ID
+}
+
+type SocialNetwork implements Node {
+  id: ID!
+  name: String!
+  baseURL: String!
+  links(where: SocialLinkWhereInput, orderBy: SocialLinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SocialLink!]
+}
+
+"""A connection to a list of items."""
+type SocialNetworkConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [SocialNetworkEdge]!
+  aggregate: AggregateSocialNetwork!
+}
+
+input SocialNetworkCreateInput {
+  name: String!
+  baseURL: String!
+  links: SocialLinkCreateManyWithoutNetworkInput
+}
+
+input SocialNetworkCreateOneWithoutLinksInput {
+  create: SocialNetworkCreateWithoutLinksInput
+  connect: SocialNetworkWhereUniqueInput
+}
+
+input SocialNetworkCreateWithoutLinksInput {
+  name: String!
+  baseURL: String!
+}
+
+"""An edge in a connection."""
+type SocialNetworkEdge {
+  """The item at the end of the edge."""
+  node: SocialNetwork!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum SocialNetworkOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  baseURL_ASC
+  baseURL_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type SocialNetworkPreviousValues {
+  id: ID!
+  name: String!
+  baseURL: String!
+}
+
+type SocialNetworkSubscriptionPayload {
+  mutation: MutationType!
+  node: SocialNetwork
+  updatedFields: [String!]
+  previousValues: SocialNetworkPreviousValues
+}
+
+input SocialNetworkSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SocialNetworkSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SocialNetworkSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SocialNetworkSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: SocialNetworkWhereInput
+}
+
+input SocialNetworkUpdateInput {
+  name: String
+  baseURL: String
+  links: SocialLinkUpdateManyWithoutNetworkInput
+}
+
+input SocialNetworkUpdateManyMutationInput {
+  name: String
+  baseURL: String
+}
+
+input SocialNetworkUpdateOneRequiredWithoutLinksInput {
+  create: SocialNetworkCreateWithoutLinksInput
+  connect: SocialNetworkWhereUniqueInput
+  update: SocialNetworkUpdateWithoutLinksDataInput
+  upsert: SocialNetworkUpsertWithoutLinksInput
+}
+
+input SocialNetworkUpdateWithoutLinksDataInput {
+  name: String
+  baseURL: String
+}
+
+input SocialNetworkUpsertWithoutLinksInput {
+  update: SocialNetworkUpdateWithoutLinksDataInput!
+  create: SocialNetworkCreateWithoutLinksInput!
+}
+
+input SocialNetworkWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SocialNetworkWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SocialNetworkWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SocialNetworkWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  baseURL: String
+
+  """All values that are not equal to given value."""
+  baseURL_not: String
+
+  """All values that are contained in given list."""
+  baseURL_in: [String!]
+
+  """All values that are not contained in given list."""
+  baseURL_not_in: [String!]
+
+  """All values less than the given value."""
+  baseURL_lt: String
+
+  """All values less than or equal the given value."""
+  baseURL_lte: String
+
+  """All values greater than the given value."""
+  baseURL_gt: String
+
+  """All values greater than or equal the given value."""
+  baseURL_gte: String
+
+  """All values containing the given string."""
+  baseURL_contains: String
+
+  """All values not containing the given string."""
+  baseURL_not_contains: String
+
+  """All values starting with the given string."""
+  baseURL_starts_with: String
+
+  """All values not starting with the given string."""
+  baseURL_not_starts_with: String
+
+  """All values ending with the given string."""
+  baseURL_ends_with: String
+
+  """All values not ending with the given string."""
+  baseURL_not_ends_with: String
+  links_every: SocialLinkWhereInput
+  links_some: SocialLinkWhereInput
+  links_none: SocialLinkWhereInput
+}
+
+input SocialNetworkWhereUniqueInput {
+  id: ID
+  name: String
+  baseURL: String
+}
+
 type Subscription {
   address(where: AddressSubscriptionWhereInput): AddressSubscriptionPayload
   phoneNumber(where: PhoneNumberSubscriptionWhereInput): PhoneNumberSubscriptionPayload
   nID(where: nIDSubscriptionWhereInput): nIDSubscriptionPayload
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  socialLink(where: SocialLinkSubscriptionWhereInput): SocialLinkSubscriptionPayload
+  socialNetwork(where: SocialNetworkSubscriptionWhereInput): SocialNetworkSubscriptionPayload
   news(where: NewsSubscriptionWhereInput): NewsSubscriptionPayload
   event(where: EventSubscriptionWhereInput): EventSubscriptionPayload
   venue(where: VenueSubscriptionWhereInput): VenueSubscriptionPayload
@@ -4796,6 +9491,19 @@ type Subscription {
   branch(where: BranchSubscriptionWhereInput): BranchSubscriptionPayload
   adminRole(where: AdminRoleSubscriptionWhereInput): AdminRoleSubscriptionPayload
   adminCompetence(where: AdminCompetenceSubscriptionWhereInput): AdminCompetenceSubscriptionPayload
+  congressEdition(where: CongressEditionSubscriptionWhereInput): CongressEditionSubscriptionPayload
+  congressProduct(where: CongressProductSubscriptionWhereInput): CongressProductSubscriptionPayload
+  participant(where: ParticipantSubscriptionWhereInput): ParticipantSubscriptionPayload
+  committeBoardUser(where: CommitteBoardUserSubscriptionWhereInput): CommitteBoardUserSubscriptionPayload
+  proposalReview(where: ProposalReviewSubscriptionWhereInput): ProposalReviewSubscriptionPayload
+  proposal(where: ProposalSubscriptionWhereInput): ProposalSubscriptionPayload
+  productCategory(where: ProductCategorySubscriptionWhereInput): ProductCategorySubscriptionPayload
+  productImage(where: ProductImageSubscriptionWhereInput): ProductImageSubscriptionPayload
+  customerOrder(where: CustomerOrderSubscriptionWhereInput): CustomerOrderSubscriptionPayload
+  customerOrderItems(where: CustomerOrderItemsSubscriptionWhereInput): CustomerOrderItemsSubscriptionPayload
+  product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  invoice(where: InvoiceSubscriptionWhereInput): InvoiceSubscriptionPayload
 }
 
 type User implements Node {
@@ -4810,6 +9518,7 @@ type User implements Node {
   nID: nID
   updatedAt: DateTime!
   createdAt: DateTime!
+  socialLinks(where: SocialLinkWhereInput, orderBy: SocialLinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SocialLink!]
   notificationsDevice: String
   notificationsPermission: Boolean
   notificationsPrefEmail: Boolean
@@ -4856,6 +9565,7 @@ input UserCreateInput {
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
   nID: nIDCreateOneWithoutUserInput
+  socialLinks: SocialLinkCreateManyWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
@@ -4876,6 +9586,11 @@ input UserCreateManyWithoutBranchInput {
 input UserCreateManyWithoutDepartmentInput {
   create: [UserCreateWithoutDepartmentInput!]
   connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutAddressInput {
@@ -4903,6 +9618,11 @@ input UserCreateOneWithoutPhoneInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutSocialLinksInput {
+  create: UserCreateWithoutSocialLinksInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateWithoutAddressInput {
   name: String
   lastname: String
@@ -4921,6 +9641,7 @@ input UserCreateWithoutAddressInput {
   isAdmin: Boolean
   phone: PhoneNumberCreateOneWithoutUserInput
   nID: nIDCreateOneWithoutUserInput
+  socialLinks: SocialLinkCreateManyWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
@@ -4947,6 +9668,7 @@ input UserCreateWithoutAdminRoleInput {
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
   nID: nIDCreateOneWithoutUserInput
+  socialLinks: SocialLinkCreateManyWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   newses: NewsCreateManyWithoutAuthorInput
@@ -4972,6 +9694,7 @@ input UserCreateWithoutBranchInput {
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
   nID: nIDCreateOneWithoutUserInput
+  socialLinks: SocialLinkCreateManyWithoutUserInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
   newses: NewsCreateManyWithoutAuthorInput
@@ -4997,6 +9720,7 @@ input UserCreateWithoutDepartmentInput {
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
   nID: nIDCreateOneWithoutUserInput
+  socialLinks: SocialLinkCreateManyWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
   newses: NewsCreateManyWithoutAuthorInput
@@ -5022,6 +9746,7 @@ input UserCreateWithoutEventsInput {
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
   nID: nIDCreateOneWithoutUserInput
+  socialLinks: SocialLinkCreateManyWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
@@ -5047,6 +9772,7 @@ input UserCreateWithoutNewsesInput {
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
   nID: nIDCreateOneWithoutUserInput
+  socialLinks: SocialLinkCreateManyWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
@@ -5071,6 +9797,7 @@ input UserCreateWithoutNIDInput {
   isAdmin: Boolean
   address: AddressCreateOneWithoutUserInput
   phone: PhoneNumberCreateOneWithoutUserInput
+  socialLinks: SocialLinkCreateManyWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
   adminRole: AdminRoleCreateOneWithoutAdminsInput
@@ -5095,6 +9822,33 @@ input UserCreateWithoutPhoneInput {
   academicYear: Int
   isAdmin: Boolean
   address: AddressCreateOneWithoutUserInput
+  nID: nIDCreateOneWithoutUserInput
+  socialLinks: SocialLinkCreateManyWithoutUserInput
+  branch: BranchCreateOneWithoutStudentsInput
+  department: BranchCreateOneWithoutStaffInput
+  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
+}
+
+input UserCreateWithoutSocialLinksInput {
+  name: String
+  lastname: String
+  email: String!
+  emailVerified: Boolean
+  password: String!
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
+  group: UserGroup
+  groupRequest: UserGroup
+  academicYear: Int
+  isAdmin: Boolean
+  address: AddressCreateOneWithoutUserInput
+  phone: PhoneNumberCreateOneWithoutUserInput
   nID: nIDCreateOneWithoutUserInput
   branch: BranchCreateOneWithoutStudentsInput
   department: BranchCreateOneWithoutStaffInput
@@ -5582,6 +10336,33 @@ input UserSubscriptionWhereInput {
   node: UserWhereInput
 }
 
+input UserUpdateDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
+  group: UserGroup
+  groupRequest: UserGroup
+  academicYear: Int
+  isAdmin: Boolean
+  address: AddressUpdateOneWithoutUserInput
+  phone: PhoneNumberUpdateOneWithoutUserInput
+  nID: nIDUpdateOneWithoutUserInput
+  socialLinks: SocialLinkUpdateManyWithoutUserInput
+  branch: BranchUpdateOneWithoutStudentsInput
+  department: BranchUpdateOneWithoutStaffInput
+  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
+}
+
 input UserUpdateInput {
   name: String
   lastname: String
@@ -5601,6 +10382,7 @@ input UserUpdateInput {
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
   nID: nIDUpdateOneWithoutUserInput
+  socialLinks: SocialLinkUpdateManyWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
@@ -5682,6 +10464,13 @@ input UserUpdateManyWithWhereNestedInput {
   data: UserUpdateManyDataInput!
 }
 
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+}
+
 input UserUpdateOneRequiredWithoutAddressInput {
   create: UserCreateWithoutAddressInput
   connect: UserWhereUniqueInput
@@ -5717,6 +10506,13 @@ input UserUpdateOneRequiredWithoutPhoneInput {
   upsert: UserUpsertWithoutPhoneInput
 }
 
+input UserUpdateOneRequiredWithoutSocialLinksInput {
+  create: UserCreateWithoutSocialLinksInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutSocialLinksDataInput
+  upsert: UserUpsertWithoutSocialLinksInput
+}
+
 input UserUpdateWithoutAddressDataInput {
   name: String
   lastname: String
@@ -5735,6 +10531,7 @@ input UserUpdateWithoutAddressDataInput {
   isAdmin: Boolean
   phone: PhoneNumberUpdateOneWithoutUserInput
   nID: nIDUpdateOneWithoutUserInput
+  socialLinks: SocialLinkUpdateManyWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
@@ -5761,6 +10558,7 @@ input UserUpdateWithoutAdminRoleDataInput {
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
   nID: nIDUpdateOneWithoutUserInput
+  socialLinks: SocialLinkUpdateManyWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   newses: NewsUpdateManyWithoutAuthorInput
@@ -5786,6 +10584,7 @@ input UserUpdateWithoutBranchDataInput {
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
   nID: nIDUpdateOneWithoutUserInput
+  socialLinks: SocialLinkUpdateManyWithoutUserInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
   newses: NewsUpdateManyWithoutAuthorInput
@@ -5811,6 +10610,7 @@ input UserUpdateWithoutDepartmentDataInput {
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
   nID: nIDUpdateOneWithoutUserInput
+  socialLinks: SocialLinkUpdateManyWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
   newses: NewsUpdateManyWithoutAuthorInput
@@ -5836,6 +10636,7 @@ input UserUpdateWithoutEventsDataInput {
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
   nID: nIDUpdateOneWithoutUserInput
+  socialLinks: SocialLinkUpdateManyWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
@@ -5861,6 +10662,7 @@ input UserUpdateWithoutNewsesDataInput {
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
   nID: nIDUpdateOneWithoutUserInput
+  socialLinks: SocialLinkUpdateManyWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
@@ -5885,6 +10687,7 @@ input UserUpdateWithoutNIDDataInput {
   isAdmin: Boolean
   address: AddressUpdateOneWithoutUserInput
   phone: PhoneNumberUpdateOneWithoutUserInput
+  socialLinks: SocialLinkUpdateManyWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
@@ -5910,6 +10713,33 @@ input UserUpdateWithoutPhoneDataInput {
   isAdmin: Boolean
   address: AddressUpdateOneWithoutUserInput
   nID: nIDUpdateOneWithoutUserInput
+  socialLinks: SocialLinkUpdateManyWithoutUserInput
+  branch: BranchUpdateOneWithoutStudentsInput
+  department: BranchUpdateOneWithoutStaffInput
+  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateWithoutSocialLinksDataInput {
+  name: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean
+  notificationsPrefPush: Boolean
+  notificationsPrefReminderEmail: Boolean
+  notificationsPrefReminderPush: Boolean
+  group: UserGroup
+  groupRequest: UserGroup
+  academicYear: Int
+  isAdmin: Boolean
+  address: AddressUpdateOneWithoutUserInput
+  phone: PhoneNumberUpdateOneWithoutUserInput
+  nID: nIDUpdateOneWithoutUserInput
   branch: BranchUpdateOneWithoutStudentsInput
   department: BranchUpdateOneWithoutStaffInput
   adminRole: AdminRoleUpdateOneWithoutAdminsInput
@@ -5930,6 +10760,11 @@ input UserUpdateWithWhereUniqueWithoutBranchInput {
 input UserUpdateWithWhereUniqueWithoutDepartmentInput {
   where: UserWhereUniqueInput!
   data: UserUpdateWithoutDepartmentDataInput!
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserUpsertWithoutAddressInput {
@@ -5955,6 +10790,11 @@ input UserUpsertWithoutNIDInput {
 input UserUpsertWithoutPhoneInput {
   update: UserUpdateWithoutPhoneDataInput!
   create: UserCreateWithoutPhoneInput!
+}
+
+input UserUpsertWithoutSocialLinksInput {
+  update: UserUpdateWithoutSocialLinksDataInput!
+  create: UserCreateWithoutSocialLinksInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutAdminRoleInput {
@@ -6341,6 +11181,9 @@ input UserWhereInput {
   address: AddressWhereInput
   phone: PhoneNumberWhereInput
   nID: nIDWhereInput
+  socialLinks_every: SocialLinkWhereInput
+  socialLinks_some: SocialLinkWhereInput
+  socialLinks_none: SocialLinkWhereInput
   branch: BranchWhereInput
   department: BranchWhereInput
   adminRole: AdminRoleWhereInput

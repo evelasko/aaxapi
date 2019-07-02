@@ -96,3 +96,9 @@ export const sendInstitutionalMessage = async ({to, subject, presentation, messa
     { presentation, message, farewell, name, charge }
   )
 }
+
+export const sendCongressMessage = async ( { to, replyTo = 'info@alicialonso.org', subject, message } ) => {
+  return await sendEmail(
+    to, subject, message, 'templates/institutionalMessage.hbs', {}
+  )
+}

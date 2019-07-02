@@ -1,0 +1,52 @@
+type ProductCategory {
+    id: ID! @unique
+    name: String!
+    products: [Product!]! @relation(name: "ProductToCategory", onDelete: SET_NULL)
+}
+
+enum ProductType {
+    PRODUCT
+    SERVICE
+}
+
+type Product {
+    id: ID! @unique
+    name: String!
+    unitPrice: Float!
+    type: ProductType! @default(value: "PRODUCT")
+    category: ProductCategory! @relation(name: "ProductToCategory", onDelete: SET_NULL)
+    images: [ProductImage!]! @relation(name: "ProductImages")
+}
+
+type ProductImage {
+    id: ID! @unique
+    title: String! @default(value: "untitled")
+    product: Product! @relation(name: "ProductImages")
+    imageURL: String!
+}
+
+type CustomerOrder {
+    id: ID! @unique
+    customer: User!
+    items: [CustomerOrderItems!]! @relation(name: "OrderItems")
+    invoice: Invoice! @relation(name: "OrderInvoice")
+}
+
+type CustomerOrderItems {
+    id: ID! @unique
+    order: CustomerOrder! @relation(name: "OrderItems")
+    item: Product! @relation(name: "ProductsInOrder")
+    quantity: Int!
+    orderPrice: Float!
+}
+
+type Invoice {
+    id: ID! @unique
+    order: CustomerOrder! @relation(name: "OrderInvoice")
+    timeDue: DateTime!
+    timePaid: DateTime
+    vatRate: Int! @default(value: 16)
+    netAmount: Float!
+    vatAmount: Float!
+    grossAmount: Float!
+}

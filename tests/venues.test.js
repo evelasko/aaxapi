@@ -28,6 +28,11 @@ beforeEach(async () => {
     }}, '{ id }')
 })
 
+afterAll(async () => {
+    await prisma.mutation.deleteManyEvents()
+    await prisma.mutation.deleteManyVenues()
+    await prisma.mutation.deleteManyUsers()    
+})
 
 test ('Venue should exist and have one event', async () => {
     const venues = await prisma.query.venues({},'{id}')

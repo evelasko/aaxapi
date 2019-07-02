@@ -2,11 +2,11 @@ import cloudinary from 'cloudinary';
 
 cloudinary.config(process.env.CLOUDINARY_URL)
 
-const cloudinaryUpload = async ({stream}) => {
+const cloudinaryUpload = async ({stream, folder}) => {
     try {
         return new Promise((resolve, reject) => {
             const streamLoad = cloudinary.v2.uploader.upload_stream( 
-              {folder: 'aaxapi_images'}, 
+              {folder}, 
               (error, result) => { if (result) { resolve(result.public_id) } else { reject(error) } }
             )
             stream.pipe(streamLoad)
@@ -17,8 +17,14 @@ const cloudinaryUpload = async ({stream}) => {
 
 export const processUpload = async upload => {
   const { stream, filename } = await upload
-  const public_id = await cloudinaryUpload({stream})
+  const folder = 'aaxapi_images'
+  const public_id = await cloudinaryUpload({stream, folder})
   return public_id
+}
+
+export const processUploadToFolder = async ({upload, folder}) => {
+  const { stream, filename } = await upload
+  const public_id = await cloudinaryUpload({stream, folder})
 }
 
 export const getSecureImage = async public_id => {

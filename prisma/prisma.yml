@@ -7,3 +7,5 @@ datamodel:
   - model/appmodel.graphql
   - model/institute.graphql
   - model/admin.graphql
+  - model/congress.graphql
+  - model/store.graphql
