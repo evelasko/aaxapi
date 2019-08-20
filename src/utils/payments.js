@@ -25,7 +25,7 @@ const createPayment = ({data, description, ccv, expiry, total, pan, titular, pay
         "DS_MERCHANT_URLOK":urlOK,
         "DS_MERCHANT_URLKO":urlKO
     };
-
+    console.log(`PARAMS TO SING\n________________________${JSON.stringify(mParams)}\n_____________________`)
     return  {
         signature: redsys.createMerchantSignature(DS_MERCHANT_KEY, mParams),
         merchantParameters: redsys.createMerchantParameters(mParams),
