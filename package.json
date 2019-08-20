@@ -56,6 +56,8 @@
     "order-id": "^1.1.0",
     "pg": "^7.9.0",
     "prisma-binding": "^2.3.10",
+    "qs": "^6.8.0",
+    "redsys-pos": "^1.0.2",
     "shortid": "^2.2.14",
     "string-to-ascii": "^1.0.2-0",
     "uuid": "^3.3.3",

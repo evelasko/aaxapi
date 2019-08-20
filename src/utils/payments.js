@@ -1,5 +1,7 @@
 import express from 'express';
 import CryptoJS from 'crypto-js';
+import qs from 'qs';
+import axios from 'axios';
 const Redsys = require('node-redsys-api').Redsys;
 const orderid = require('order-id')(process.env.JWT_SECRET)
 
@@ -32,7 +34,6 @@ const createPayment = ({data, description, ccv, expiry, total, pan, titular, pay
         raw: mParams
     };
 }
-
 
 const paymentRoutes = express.Router()
 
@@ -89,6 +90,27 @@ paymentRoutes.post('/', async (req, res) => {
     console.log(msg2)
 
     const msg3 = JSON.stringify(raw)
+
+    const formData = { 
+        Ds_SignatureVersion: 'HMAC_SHA256_V1',
+        Ds_MerchantParameters: merchantParameters,
+        Ds_Signature: signature 
+    };
+    const options = {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    data: qs.stringify(formData),
+    url: process.env.DS_PAYMENT_GATEWAY,
+    };
+
+    axios(options).then( (response) => {
+    console.log('RES DATA: ',response.data);
+    console.log('RES STATUS: ',response.status);
+    console.log('RES TEXT: ',response.statusText);
+    console.log('RES HEADERS: ',response.headers);
+    console.log('RES CONFIG: ',response.config);
+  });
+
     // return a text response
     const data = {
         responses: [
