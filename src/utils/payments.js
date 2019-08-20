@@ -16,7 +16,7 @@ const createPayment = ({data, description, ccv, expiry, total, pan, titular, pay
         "DS_MERCHANT_MERCHANTCODE":DS_MERCHANT_CODE,
         "DS_MERCHANT_MERCHANTNAME":"Fundacion Alicia Alonso",
         "DS_MERCHANT_CURRENCY":DS_MERCHANT_CURRENCY,
-        "DS_MERCHANT_TRANSACTIONTYPE":0,
+        "DS_MERCHANT_TRANSACTIONTYPE":"0",
         "DS_MERCHANT_TERMINAL":DS_MERCHANT_TERMINAL,
         "DS_MERCHANT_PAN":pan,
         "DS_MERCHANT_EXPIRYDATE":expiry,
@@ -46,11 +46,12 @@ paymentRoutes.post('/', async (req, res) => {
     // print request body
     console.log('Req Body: ',req.body);
 
+
     const {expiry, ccv, email} = req.body
     const pan = CryptoJS.AES.decrypt(req.body.codenumber, process.env.JWT_SECRET).toString(CryptoJS.enc.Utf8)
     const paymentId = orderid.generate()
 
-    const {signature, merchantParameters} = createPayment({
+    const paymentData = {
         description:'Participacion Regular', 
         // Opcional. 125 se considera su longitud máxima. 
         // Este campo se mostrará al titular en la pantalla de confirmación de la compra
@@ -72,22 +73,33 @@ paymentRoutes.post('/', async (req, res) => {
         url:process.env.HOST + "payment/confirmation",  
         // Obligatorio si el comercio tiene notificación “on-line”.
         // URL del comercio que recibirá un post con los datos de la transacción
-        urlOK:'',
-        urlKO:'',
+        urlOK:process.env.HOST + "payment/confirmation/ok",
+        urlKO:process.env.HOST + "payment/confirmation/ko",
         data: email    
         // Opcional para el comercio para ser incluidos en los datos
         // enviados por la respuesta “on-line” al comercio si se ha elegido esta opción
-    })
+    }
 
-    console.log(`\nSIGNATURE:\n${signature}\n_____________________________________\nPARAMS:\n${merchantParameters}`)
+    const msg1 = `Payment Data:\n____________________________________\n${JSON.stringify(paymentData)}\n_________________________________`
+    console.log(msg1)
 
+    const {signature, merchantParameters, raw} = createPayment(paymentData)
 
+    const msg2 = `\nSIGNATURE:\n${signature}\n_____________________________________\nPARAMS:\n${merchantParameters}`
+    console.log(msg2)
+
+    const msg3 = JSON.stringify(raw)
     // return a text response
     const data = {
         responses: [
             {
                 type: 'text',
-                elements: ['Hi', 'Hello']
+                elements: [msg1, msg2, msg3]
+            },
+            {
+                type: 'json',
+                raw: { raw },
+                data: { paymentData }
             }
         ]
     };
