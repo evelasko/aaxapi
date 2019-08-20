@@ -5,6 +5,12 @@ import axios from 'axios';
 const Redsys = require('node-redsys-api').Redsys;
 const orderid = require('order-id')(process.env.JWT_SECRET)
 
+function generateOrderId() {
+    var chars = "abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ";
+    return orderid.generate().replace("-", chars.substr( Math.floor(Math.random() * 53) , 1))
+}
+
+
 //Snippet to obtain the signature & merchantParameters
 const createPayment = ({data, description, ccv, expiry, total, pan, titular, paymentId, url, urlOK, urlKO}) => {
     const redsys = new Redsys();
@@ -50,7 +56,7 @@ paymentRoutes.post('/', async (req, res) => {
 
     const {expiry, ccv, email} = req.body
     const pan = CryptoJS.AES.decrypt(req.body.codenumber, process.env.JWT_SECRET).toString(CryptoJS.enc.Utf8)
-    const paymentId = orderid.generate()
+    const paymentId = generateOrderId()
 
     const paymentData = {
         description:'Participacion Regular', 
@@ -129,8 +135,16 @@ paymentRoutes.post('/', async (req, res) => {
     res.json(data);
   });
 
-export default paymentRoutes
-
 paymentRoutes.post('/confirmation', async (req, res) => {
-    console.log('Req Body: ',req.body);
+    console.log('/confirmation Req Body: ',req.body);
 })
+
+paymentRoutes.post('/confirmation/ok', async (req, res) => {
+    console.log('/ok Req Body: ',req.body);
+})
+
+paymentRoutes.post('/confirmation/ko', async (req, res) => {
+    console.log('/ko Req Body: ',req.body);
+})
+
+export default paymentRoutes
