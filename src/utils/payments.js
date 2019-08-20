@@ -113,11 +113,13 @@ paymentRoutes.post('/', async (req, res) => {
     url: process.env.DS_PAYMENT_GATEWAY,
     };
 
-    axios(options).then( (response) => {
-        console.log("Axios Response")
-    console.log('RESPONSE: ',response);
-  });
+    const rxs = await axios(options)
+//     .then( (response) => {
+//         console.log("Axios Response")
+//     console.log('RESPONSE: ',response);
+//   });
 
+    console.log(`##################################\nRSX:\n${rsx}`)
     // return a text response
     const data = {
         responses: [
@@ -129,6 +131,9 @@ paymentRoutes.post('/', async (req, res) => {
                 type: 'json',
                 raw: { raw },
                 data: { paymentData }
+            },
+            {
+                rsx
             }
         ]
     };
