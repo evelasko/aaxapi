@@ -110,11 +110,8 @@ paymentRoutes.post('/', async (req, res) => {
     };
 
     axios(options).then( (response) => {
-    console.log('RES DATA: ',response.data);
-    console.log('RES STATUS: ',response.status);
-    console.log('RES TEXT: ',response.statusText);
-    console.log('RES HEADERS: ',response.headers);
-    console.log('RES CONFIG: ',response.config);
+        console.log("Axios Response")
+    console.log('RESPONSE: ',JSON.stringify(response));
   });
 
     // return a text response
@@ -136,7 +133,7 @@ paymentRoutes.post('/', async (req, res) => {
   });
 
 paymentRoutes.post('/confirmation', async (req, res) => {
-    console.log('/confirmation Req Body: ',req.body);
+    console.log('/confirmation Req Body: ',JSON.stringify(req));
 })
 
 paymentRoutes.post('/confirmation/ok', async (req, res) => {
