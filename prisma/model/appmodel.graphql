@@ -7,10 +7,10 @@ type News {
   imageURL: String
   expiration: DateTime
   category: String
-  featured: Boolean @default(value: "false")
+  featured: Boolean @default(value: false)
   target: UserGroup!
-  deleteUpon: Boolean @default(value: "false")
-  published: Boolean! @default(value: "false")
+  deleteUpon: Boolean @default(value: false)
+  published: Boolean! @default(value: false)
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -26,8 +26,8 @@ type Event {
   access: String
   accessPoint: String
   target: UserGroup!
-  deleteUpon: Boolean @default(value: "false")
-  published: Boolean! @default(value: "false")
+  deleteUpon: Boolean @default(value: false)
+  published: Boolean! @default(value: false)
   venue: Venue! @relation(name: "EventToVenue", onDelete: SET_NULL)
   createdAt: DateTime!
   updatedAt: DateTime!

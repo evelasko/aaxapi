@@ -18,18 +18,19 @@ type Address {
   country: String!
   latitude: Float
   longitude: Float
-  user: User! @relation(name: "UserToAddress", onDelete: SET_NULL )
+  user: User! @relation(link: INLINE name: "UserToAddress", onDelete: SET_NULL )
 }
 type PhoneNumber {
   id: ID! @unique
   countryCode: Int!
   phone: Int! @unique
-  verified: Boolean! @default(value: "false")
-  user: User! @relation(name: "UserToPhone", onDelete: SET_NULL )
+  verified: Boolean! @default(value: false)
+  user: User! @relation(link: INLINE name: "UserToPhone", onDelete: SET_NULL )
 }
 type nID {
+  id: ID! @unique
   nID: String!@unique
   sourceType: nIdType!
-  verified: Boolean! @default(value: "false")
-  user: User! @relation(name: "UserToNationalID", onDelete: SET_NULL)
+  verified: Boolean! @default(value: false)
+  user: User! @relation(link: INLINE name: "UserToNationalID", onDelete: SET_NULL)
 }

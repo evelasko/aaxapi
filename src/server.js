@@ -7,6 +7,7 @@ import Redis from 'ioredis';
 import { redisSessionPrefix } from './constants';
 import prisma from './prisma';
 import { fragmentReplacements, resolvers, typeDefs } from './schema';
+import paymentRoutes from './utils/payments'
 
 export const redis = new Redis(process.env.REDIS_URL)
 const pubsub = new PubSub()
@@ -60,6 +61,9 @@ server.express.use('/mobile', proxy({
                                 changeOrigin: true,
                                 pathRewrite: { '/mobile' : '' }
                               }))
+
+server.express.use('/payment', paymentRoutes)
+
 
 export { server as default };
 

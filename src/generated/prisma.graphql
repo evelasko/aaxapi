@@ -1,5 +1,5 @@
-# source: http://localhost:4466/aaxapi/dev
-# timestamp: Sun Jun 23 2019 10:15:42 GMT+0200 (Central European Summer Time)
+# source: https://aax-server-529ce68a69.herokuapp.com/aaXapi/prod
+# timestamp: Tue Aug 20 2019 10:30:05 GMT+0900 (Japan Standard Time)
 
 type Address implements Node {
   id: ID!
@@ -109,9 +109,7 @@ input AddressSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [AddressSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -685,9 +683,7 @@ input AdminCompetenceSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [AdminCompetenceSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -1070,9 +1066,7 @@ input AdminRoleSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [AdminRoleSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -1651,9 +1645,7 @@ input BranchSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [BranchSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -2089,9 +2081,7 @@ input CommitteBoardUserSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [CommitteBoardUserSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -2336,9 +2326,7 @@ input CongressEditionSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [CongressEditionSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -2683,9 +2671,7 @@ input CongressProductSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [CongressProductSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -2797,6 +2783,7 @@ type CustomerOrder implements Node {
   customer: User!
   items(where: CustomerOrderItemsWhereInput, orderBy: CustomerOrderItemsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerOrderItems!]
   invoice: Invoice!
+  paymentId: String!
 }
 
 """A connection to a list of items."""
@@ -2810,6 +2797,7 @@ type CustomerOrderConnection {
 }
 
 input CustomerOrderCreateInput {
+  paymentId: String!
   customer: UserCreateOneInput!
   items: CustomerOrderItemsCreateManyWithoutOrderInput
   invoice: InvoiceCreateOneWithoutOrderInput!
@@ -2826,11 +2814,13 @@ input CustomerOrderCreateOneWithoutItemsInput {
 }
 
 input CustomerOrderCreateWithoutInvoiceInput {
+  paymentId: String!
   customer: UserCreateOneInput!
   items: CustomerOrderItemsCreateManyWithoutOrderInput
 }
 
 input CustomerOrderCreateWithoutItemsInput {
+  paymentId: String!
   customer: UserCreateOneInput!
   invoice: InvoiceCreateOneWithoutOrderInput!
 }
@@ -3020,9 +3010,7 @@ input CustomerOrderItemsSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [CustomerOrderItemsSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -3196,6 +3184,8 @@ input CustomerOrderItemsWhereUniqueInput {
 enum CustomerOrderOrderByInput {
   id_ASC
   id_DESC
+  paymentId_ASC
+  paymentId_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -3204,6 +3194,7 @@ enum CustomerOrderOrderByInput {
 
 type CustomerOrderPreviousValues {
   id: ID!
+  paymentId: String!
 }
 
 type CustomerOrderSubscriptionPayload {
@@ -3223,9 +3214,7 @@ input CustomerOrderSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [CustomerOrderSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -3246,9 +3235,14 @@ input CustomerOrderSubscriptionWhereInput {
 }
 
 input CustomerOrderUpdateInput {
+  paymentId: String
   customer: UserUpdateOneRequiredInput
   items: CustomerOrderItemsUpdateManyWithoutOrderInput
   invoice: InvoiceUpdateOneRequiredWithoutOrderInput
+}
+
+input CustomerOrderUpdateManyMutationInput {
+  paymentId: String
 }
 
 input CustomerOrderUpdateOneRequiredWithoutInvoiceInput {
@@ -3266,11 +3260,13 @@ input CustomerOrderUpdateOneRequiredWithoutItemsInput {
 }
 
 input CustomerOrderUpdateWithoutInvoiceDataInput {
+  paymentId: String
   customer: UserUpdateOneRequiredInput
   items: CustomerOrderItemsUpdateManyWithoutOrderInput
 }
 
 input CustomerOrderUpdateWithoutItemsDataInput {
+  paymentId: String
   customer: UserUpdateOneRequiredInput
   invoice: InvoiceUpdateOneRequiredWithoutOrderInput
 }
@@ -3334,6 +3330,46 @@ input CustomerOrderWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  paymentId: String
+
+  """All values that are not equal to given value."""
+  paymentId_not: String
+
+  """All values that are contained in given list."""
+  paymentId_in: [String!]
+
+  """All values that are not contained in given list."""
+  paymentId_not_in: [String!]
+
+  """All values less than the given value."""
+  paymentId_lt: String
+
+  """All values less than or equal the given value."""
+  paymentId_lte: String
+
+  """All values greater than the given value."""
+  paymentId_gt: String
+
+  """All values greater than or equal the given value."""
+  paymentId_gte: String
+
+  """All values containing the given string."""
+  paymentId_contains: String
+
+  """All values not containing the given string."""
+  paymentId_not_contains: String
+
+  """All values starting with the given string."""
+  paymentId_starts_with: String
+
+  """All values not starting with the given string."""
+  paymentId_not_starts_with: String
+
+  """All values ending with the given string."""
+  paymentId_ends_with: String
+
+  """All values not ending with the given string."""
+  paymentId_not_ends_with: String
   customer: UserWhereInput
   items_every: CustomerOrderItemsWhereInput
   items_some: CustomerOrderItemsWhereInput
@@ -3343,6 +3379,7 @@ input CustomerOrderWhereInput {
 
 input CustomerOrderWhereUniqueInput {
   id: ID
+  paymentId: String
 }
 
 scalar DateTime
@@ -3921,9 +3958,7 @@ input EventSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [EventSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -4594,9 +4629,7 @@ input InvoiceSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [InvoiceSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -4868,9 +4901,6 @@ input InvoiceWhereUniqueInput {
   id: ID
 }
 
-"""Raw JSON value"""
-scalar Json
-
 """
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
@@ -4995,6 +5025,7 @@ type Mutation {
   updateManyProposals(data: ProposalUpdateManyMutationInput!, where: ProposalWhereInput): BatchPayload!
   updateManyProductCategories(data: ProductCategoryUpdateManyMutationInput!, where: ProductCategoryWhereInput): BatchPayload!
   updateManyProductImages(data: ProductImageUpdateManyMutationInput!, where: ProductImageWhereInput): BatchPayload!
+  updateManyCustomerOrders(data: CustomerOrderUpdateManyMutationInput!, where: CustomerOrderWhereInput): BatchPayload!
   updateManyCustomerOrderItemses(data: CustomerOrderItemsUpdateManyMutationInput!, where: CustomerOrderItemsWhereInput): BatchPayload!
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -5024,7 +5055,6 @@ type Mutation {
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyInvoices(where: InvoiceWhereInput): BatchPayload!
-  executeRaw(database: PrismaDatabase, query: String!): Json!
 }
 
 enum MutationType {
@@ -5502,9 +5532,7 @@ input NewsSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [NewsSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -5948,7 +5976,8 @@ input NewsWhereUniqueInput {
   id: ID
 }
 
-type nID {
+type nID implements Node {
+  id: ID!
   nID: String!
   sourceType: nIdType!
   verified: Boolean!
@@ -5993,14 +6022,14 @@ type nIDEdge {
 }
 
 enum nIDOrderByInput {
+  id_ASC
+  id_DESC
   nID_ASC
   nID_DESC
   sourceType_ASC
   sourceType_DESC
   verified_ASC
   verified_DESC
-  id_ASC
-  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -6008,6 +6037,7 @@ enum nIDOrderByInput {
 }
 
 type nIDPreviousValues {
+  id: ID!
   nID: String!
   sourceType: nIdType!
   verified: Boolean!
@@ -6030,9 +6060,7 @@ input nIDSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [nIDSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -6101,6 +6129,46 @@ input nIDWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [nIDWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   nID: String
 
   """All values that are not equal to given value."""
@@ -6159,6 +6227,7 @@ input nIDWhereInput {
 }
 
 input nIDWhereUniqueInput {
+  id: ID
   nID: String
 }
 
@@ -6376,9 +6445,7 @@ input ParticipantSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [ParticipantSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -6666,9 +6733,7 @@ input PhoneNumberSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [PhoneNumberSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -6826,10 +6891,6 @@ input PhoneNumberWhereUniqueInput {
   phone: Int
 }
 
-enum PrismaDatabase {
-  default
-}
-
 type Product implements Node {
   id: ID!
   name: String!
@@ -6911,9 +6972,7 @@ input ProductCategorySubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [ProductCategorySubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -7321,9 +7380,7 @@ input ProductImageSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [ProductImageSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -7689,9 +7746,7 @@ input ProductSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [ProductSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -8012,9 +8067,7 @@ input ProgramSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [ProgramSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -8378,9 +8431,7 @@ input ProposalReviewSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [ProposalReviewSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -8664,9 +8715,7 @@ input ProposalSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [ProposalSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -9076,9 +9125,7 @@ input SocialLinkSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [SocialLinkSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -9288,9 +9335,7 @@ input SocialNetworkSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [SocialNetworkSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -10314,9 +10359,7 @@ input UserSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [UserSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -11296,9 +11339,7 @@ input VenueSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [VenueSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """

@@ -13,7 +13,7 @@ type Product {
     id: ID! @unique
     name: String!
     unitPrice: Float!
-    type: ProductType! @default(value: "PRODUCT")
+    type: ProductType! @default(value: PRODUCT)
     category: ProductCategory! @relation(name: "ProductToCategory", onDelete: SET_NULL)
     images: [ProductImage!]! @relation(name: "ProductImages")
 }
@@ -29,7 +29,8 @@ type CustomerOrder {
     id: ID! @unique
     customer: User!
     items: [CustomerOrderItems!]! @relation(name: "OrderItems")
-    invoice: Invoice! @relation(name: "OrderInvoice")
+    invoice: Invoice! @relation(name: "OrderInvoice" onDelete: CASCADE)
+    paymentId: String! @unique
 }
 
 type CustomerOrderItems {
@@ -42,7 +43,7 @@ type CustomerOrderItems {
 
 type Invoice {
     id: ID! @unique
-    order: CustomerOrder! @relation(name: "OrderInvoice")
+    order: CustomerOrder! @relation(link: INLINE name: "OrderInvoice")
     timeDue: DateTime!
     timePaid: DateTime
     vatRate: Int! @default(value: 16)

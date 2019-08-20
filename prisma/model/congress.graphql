@@ -30,11 +30,11 @@ type Participant {
     id: ID! @unique
     user: User! @relation(name: "UserAsCongressSpeaker")
     type: ParticipationType!
-    participationStatus: ParticipationStatus! @default(value: "PREACTIVE")
+    participationStatus: ParticipationStatus! @default(value: PREACTIVE)
     congress: CongressEdition! @relation(name: "ParticipantToCongress", onDelete: SET_NULL)
     proposals: [Proposal!]! @relation(name: "SpeakerToProposal", onDelete: CASCADE)
-    paymentSettled: Boolean! @default(value: "false")
-    authorized: Boolean! @default(value: "false")
+    paymentSettled: Boolean! @default(value: false)
+    authorized: Boolean! @default(value: false)
     invoiceID: Invoice
 }
 type CommitteBoardUser {
@@ -47,13 +47,13 @@ type ProposalReview {
     id: ID! @unique
     proposal: Proposal! @relation(name: "ProposalReviews", onDelete: SET_NULL)
     committeUser: CommitteBoardUser! @relation(name: "CommitteeBoardReviews", onDelete: SET_NULL)
-    status: ProposalStatus! @default(value: "INREVIEW")
+    status: ProposalStatus! @default(value: INREVIEW)
 }
 type Proposal {
     id: ID! @unique
     speakerApplication: Participant! @relation(name: "SpeakerToProposal", onDelete: SET_NULL)
     abstract: String!
-    status: ProposalStatus! @default(value: "INREVIEW")
+    status: ProposalStatus! @default(value: INREVIEW)
     reviews: [ProposalReview!]! @relation(name: "ProposalReviews", onDelete: CASCADE)
 }
 
