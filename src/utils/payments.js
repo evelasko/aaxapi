@@ -102,6 +102,10 @@ paymentRoutes.post('/', async (req, res) => {
         Ds_MerchantParameters: merchantParameters,
         Ds_Signature: signature 
     };
+
+    const qsData = qs.stringify(formData)
+    console.log("QS:", qsData)
+
     const options = {
     method: 'POST',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -111,7 +115,7 @@ paymentRoutes.post('/', async (req, res) => {
 
     axios(options).then( (response) => {
         console.log("Axios Response")
-    console.log('RESPONSE: ',JSON.stringify(response));
+    console.log('RESPONSE: ',response);
   });
 
     // return a text response
@@ -133,7 +137,7 @@ paymentRoutes.post('/', async (req, res) => {
   });
 
 paymentRoutes.post('/confirmation', async (req, res) => {
-    console.log('/confirmation Req Body: ',JSON.stringify(req));
+    console.log('/confirmation Req Body: ', req);
 })
 
 paymentRoutes.post('/confirmation/ok', async (req, res) => {
