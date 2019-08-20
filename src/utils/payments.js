@@ -7,7 +7,7 @@ const orderid = require('order-id')(process.env.JWT_SECRET)
 
 function generateOrderId() {
     var chars = "abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ";
-    return orderid.generate().replace("-", chars.substr( Math.floor(Math.random() * 53) , 1))
+    return orderid.generate().replace("-", chars.substr( Math.floor(Math.random() * 53) , 1) ).slice(0,10)
 }
 
 
