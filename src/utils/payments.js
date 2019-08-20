@@ -119,7 +119,7 @@ paymentRoutes.post('/', async (req, res) => {
 //     console.log('RESPONSE: ',response);
 //   });
 
-    console.log(`##################################\nRSX:\n${rsx}`)
+    console.log(`##################################\nRSX:\n${rxs}`)
     // return a text response
     const data = {
         responses: [
@@ -133,7 +133,7 @@ paymentRoutes.post('/', async (req, res) => {
                 data: { paymentData }
             },
             {
-                rsx
+                rxs
             }
         ]
     };
