@@ -2,6 +2,7 @@ import express from 'express';
 import CryptoJS from 'crypto-js';
 import qs from 'qs';
 import axios from 'axios';
+import isHtml from 'is-html';
 const Redsys = require('node-redsys-api').Redsys;
 const orderid = require('order-id')(process.env.JWT_SECRET)
 
@@ -66,7 +67,7 @@ paymentRoutes.post('/', async (req, res) => {
         expiry,     
         // Opcional. Caducidad de la tarjeta. 
         // Su formato es AAMM, siendo AA los dos últimos dígitos del año y MM los dos dígitos del mes
-        total:180.00,  
+        total:1,  
         // Obligatorio. Para Euros las dos últimas posiciones se consideran decimales
         pan, 
         titular: 'Fundacion Alicia Alonso',    
@@ -113,14 +114,25 @@ paymentRoutes.post('/', async (req, res) => {
     url: process.env.DS_PAYMENT_GATEWAY,
     };
 
-    const rxs = await axios(options)
+    let rxs;
+    try { rxs = await axios(options); }
+    catch(e) { rxs = e }
+
+//     const rxs = axios(options)
 //     .then( (response) => {
 //         console.log("Axios Response")
-//     console.log('RESPONSE: ',response);
+//         console.log('RESPONSE: ',response);
+//         return response
 //   });
 
-    console.log(`##################################\nRSX:\n${rxs}`)
+    console.log(`##################################\nRSX Data:\n${rxs.data}\n\n\n\n\n_____________________\nRXS Config.Data:\n${rxs.config.data}`)
     // return a text response
+
+    if (isHtml(rxs.data)) {
+        res.set('Content-Type', 'text/html')
+        res.send(rxs.data)
+        return null
+    }
     const data = {
         responses: [
             {
@@ -132,9 +144,7 @@ paymentRoutes.post('/', async (req, res) => {
                 raw: { raw },
                 data: { paymentData }
             },
-            {
-                rxs
-            }
+            { rxsData: rxs.data }
         ]
     };
   

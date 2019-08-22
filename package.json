@@ -43,6 +43,7 @@
     "handlebars": "^4.1.2",
     "http-proxy-middleware": "^0.19.1",
     "ioredis": "^4.9.0",
+    "is-html": "^2.0.0",
     "jsonwebtoken": "^8.4.0",
     "lodash": "^4.17.15",
     "mailgun-js": "^0.22.0",
