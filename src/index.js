@@ -8,10 +8,13 @@ const options = {
   port,
   cors: {
     origin: [
-          'http://localhost:3000', 'http://localhost:3001',
+          'http://localhost:3000', 
+          'http://localhost:3001', 
+          'http://localhost:8000/',
           'http://localhost', 
           'https://aaxadmin.netlify.com', 
-          'https://admin.alicialonso.org', 'https://alicialonso.org'
+          'https://admin.alicialonso.org', 
+          'https://alicialonso.org'
         ],
     credentials: true,
     optionsSuccessStatus: 200
@@ -23,5 +26,3 @@ initFullCache().then(res => {
   initScheduleJob() // init scheduler for outdated nodes
 })
 server.start(options, () => { console.log('Server up and running at port: ', port || 4000) })
-
-//, 'http://localhost:8080'

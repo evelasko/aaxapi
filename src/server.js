@@ -54,15 +54,16 @@ server.express.use(session(
     }
   })
 )
+server.express.use('/payment', paymentRoutes)
+
 server.express.use('/images', express.static('images'))
 server.express.use('/resources', express.static('resources'))
+
 server.express.use('/mobile', proxy({ 
                                 target: process.env.HOST, 
                                 changeOrigin: true,
                                 pathRewrite: { '/mobile' : '' }
                               }))
-
-server.express.use('/payment', paymentRoutes)
 
 
 export { server as default };

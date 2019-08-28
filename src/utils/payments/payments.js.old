@@ -1,0 +1,199 @@
+import express from 'express';
+import CryptoJS from 'crypto-js';
+import cors from 'cors';
+import shortid from 'shortid';
+import qs from 'qs';
+import axios from 'axios';
+import isHtml from 'is-html';
+const Redsys = require('node-redsys-api').Redsys;
+const orderid = require('order-id')(process.env.JWT_SECRET)
+
+const whitelist = ['http://localhost:8000', 'https://congreso.alicialonso.org']
+const corsLimited = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+//Snippet to generate order reference
+const generateOrderId = () => {
+    var chars = 'abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ';
+    shortid.characters(
+      '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_',
+    );
+    return (
+      orderid
+        .generate()
+        .slice(12, 16)
+        .split('')
+        .reverse()
+        .join('') +
+      shortid
+        .generate()
+        .replace('-', chars.substr(Math.floor(Math.random() * 53), 1))
+        .replace('_', chars.substr(Math.floor(Math.random() * 53), 1))
+    ).slice(0, 11);
+  };
+
+//Snippet to obtain the signature & merchantParameters
+const createPayment = ({data, description, total, titular, paymentId, url, urlOk, urlKo}) => {
+    const redsys = new Redsys();
+    const {DS_MERCHANT_CODE, DS_MERCHANT_CURRENCY, DS_MERCHANT_TERMINAL, DS_MERCHANT_KEY } = process.env
+    const mParams = {
+        "DS_MERCHANT_AMOUNT": Math.round(total*100).toString(),
+        "DS_MERCHANT_ORDER": paymentId || generateOrderId(),
+        "DS_MERCHANT_PRODUCTDESCRIPTION": description || "no description",
+        "DS_MERCHANT_MERCHANTDATA": data || "no data",
+        "DS_MERCHANT_TITULAR":titular || "Fundacion Alicia Alonso",
+        "DS_MERCHANT_MERCHANTCODE":DS_MERCHANT_CODE,
+        "DS_MERCHANT_MERCHANTNAME":"Fundacion Alicia Alonso",
+        "DS_MERCHANT_CURRENCY":DS_MERCHANT_CURRENCY,
+        "DS_MERCHANT_TRANSACTIONTYPE":"0",
+        "DS_MERCHANT_TERMINAL":DS_MERCHANT_TERMINAL,
+        // "DS_MERCHANT_PAN":pan,
+        // "DS_MERCHANT_EXPIRYDATE":expiry,
+        // "DS_MERCHANT_CVV2":ccv,
+        "DS_MERCHANT_MERCHANTURL": url || process.env.HOST + "payment/confirmation",
+        "DS_MERCHANT_URLOK": urlOk || process.env.HOST + "payment/confirmation/ok",
+        "DS_MERCHANT_URLKO":urlKo
+    };
+    console.log(`PARAMS TO SING\n________________________${JSON.stringify(mParams)}\n_____________________`)
+    return  {
+        signature: redsys.createMerchantSignature(DS_MERCHANT_KEY, mParams),
+        merchantParameters: redsys.createMerchantParameters(mParams),
+        raw: mParams
+    };
+}
+
+// Payment Routes Config
+const paymentRoutes = express.Router()
+paymentRoutes.use(express.urlencoded())
+paymentRoutes.use(cors())
+
+// Payment Routes
+paymentRoutes.post('/', async (req, res) => {
+    // check if verification token is correct
+    // if (req.query.token !== token) {
+    //     return res.sendStatus(401);
+    // }
+  
+    // print request body
+    console.log('Req Body: ',req.body);
+
+    const {orderData} = req.body
+
+    try {
+        if (orderData) {
+            const txData = JSON.parse(orderData)
+            console.log("EMAIL: ", txData.email)
+        }
+    }
+    catch(e) {
+        console.log("Error", e)
+    }
+
+    const paymentData = {
+        description:'Participacion Regular',     
+        total:1,  
+        data: orderData || 'no order data'    
+    }
+
+    const msg1 = `PAYMENT DATA:\n${JSON.stringify(paymentData)}\n\n\n`
+    console.log(msg1)
+
+    const {signature, merchantParameters, raw} = createPayment(paymentData)
+
+    const msg2 =    `SIGNATURE:\n${signature}\n\n\n
+                     PARAMS:\n${merchantParameters}`
+    console.log(msg2)
+
+    // __________________________________________________ SEND FORM
+    const formData = { 
+        Ds_SignatureVersion: 'HMAC_SHA256_V1',
+        Ds_MerchantParameters: merchantParameters,
+        Ds_Signature: signature 
+    };
+
+    const qsData = qs.stringify(formData)
+    console.log(`QS STRINGIFIED DATA:\n${qsData}\n\n\n`)
+
+    const options = {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        data: qs.stringify(formData),
+        url: process.env.DS_PAYMENT_GATEWAY,
+    };
+
+    // let rxs;
+    // .then( (response) => {
+    //     console.log(`\n\n\n\n\n\nAXIOS RESPONSE\n\n\n`)
+    //     console.log('RESPONSE: ',response);
+    //     return response
+    // });
+
+    try { 
+        const rxs = await axios(options); 
+        console.log(`\n\nRSX DATA:\n${rxs.data}\n\n\n\n\nRXS CONFIG.DATA:\n${rxs.config.data}`)
+        // return a text response
+
+        if (isHtml(rxs.data)) {
+            res.set('Content-Type', 'text/html')
+            res.send(rxs.data)
+            return null
+        }
+}
+    catch(e) { throw new Error(`ERROR:${e}`) }
+    
+    const data = {
+        responses: [
+            {
+                type: 'text',
+                elements: [msg1, msg2]
+            },
+            {
+                type: 'json',
+                raw: { raw },
+                data: { paymentData }
+            },
+            { rxsData: rxs.data }
+        ]
+    };
+  
+    res.json(data);
+});
+
+paymentRoutes.post('/getsignature', cors(corsLimited), express.json(), async (req, res) => {
+    
+    console.log("Payment signature requested")
+    
+    const { txData, description, total, urlOk, urlKo } = req.query
+    const {
+        signature,
+        merchantParameters,
+    } = createPayment({ data: txData, description, total, urlOk, urlKo})
+
+    res.send({
+        Ds_SignatureVersion: 'HMAC_SHA256_V1',
+        Ds_Signature: signature,
+        Ds_MerchantParameters: merchantParameters
+    })
+})
+
+paymentRoutes.post('/confirmation', express.urlencoded(), async (req, res) => {
+    console.log('/confirmation Req Body: ', req);
+    res.send("payment confirmation listener outlet")
+})
+
+paymentRoutes.post('/confirmation/ok', async (req, res) => {
+    console.log('/ok Req Body: ',req.body);
+})
+
+paymentRoutes.post('/confirmation/ko', async (req, res) => {
+    console.log('/ko Req Body: ',req.body);
+})
+
+export default paymentRoutes
