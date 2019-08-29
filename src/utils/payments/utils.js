@@ -1,4 +1,6 @@
 import shortid from 'shortid';
+import { json } from 'body-parser';
+const Entities = require('html-entities').AllHtmlEntities;
 const Redsys = require('node-redsys-api').Redsys;
 const orderid = require('order-id')(process.env.JWT_SECRET)
 
@@ -23,7 +25,7 @@ export const generateOrderId = () => {
   };
 
 //Snippet to obtain the signature & merchantParameters
-const createPayment = ({data, description, total, titular, paymentId, url, urlOk, urlKo}) => {
+export const createPayment = ({data, description, total, titular, paymentId, urlOk, urlKo}) => {
     const redsys = new Redsys();
     const {DS_MERCHANT_CODE, DS_MERCHANT_CURRENCY, DS_MERCHANT_TERMINAL, DS_MERCHANT_KEY } = process.env
     const mParams = {
@@ -51,4 +53,27 @@ const createPayment = ({data, description, total, titular, paymentId, url, urlOk
     };
 }
 
-export default createPayment
+export const processResponse = (tpvResponse) => {
+    //Snippet to process the TPV callback
+    const redsys = new Redsys(); 
+    const merchantParams = tpvResponse.Ds_MerchantParameters || tpvResponse.DS_MERCHANTPARAMETERS;
+    const signature = tpvResponse.Ds_Signature || tpvResponse.DS_SIGNATURE;
+
+    const merchantParamsDecoded = redsys.decodeMerchantParameters(merchantParams);
+    const merchantSignatureNotif = redsys.createMerchantSignatureNotif(process.env.DS_MERCHANT_KEY, merchantParams);
+    const dsResponse = parseInt(merchantParamsDecoded.Ds_Response || merchantParamsDecoded.DS_RESPONSE);
+
+    const entities = new Entities();
+
+    if (redsys.merchantSignatureIsValid(signature , merchantSignatureNotif) && dsResponse > -1 && dsResponse < 100 ) {
+        console.log('TPV payment is OK');
+        return { 
+            merchantParamsDecoded, 
+            data: JSON.parse(entities.decode(merchantParamsDecoded.Ds_MerchantData)),
+            response: true
+        }
+    } else {
+        console.log('TPV payment KO');
+        return { merchantParamsDecoded, response: false}
+    }
+}

@@ -53,13 +53,14 @@ export const Discount = manager.define('discount', {
     }
 )
 
-const Invoice = manager.define('invoice', {
+export const Invoice = manager.define('invoice', {
     id: { 
         type: Sequelize.DataTypes.UUID ,
         primaryKey: true,
         allowNull: false,
         defaultValue: Sequelize.literal('uuid_generate_v4()')
     },
+    amount: {type: Sequelize.INTEGER, allowNull: false},
     email: {type: Sequelize.STRING, allowNull: false },
     firstname: {type: Sequelize.STRING, allowNull: false },
     lastname: {type: Sequelize.STRING, allowNull: false },
