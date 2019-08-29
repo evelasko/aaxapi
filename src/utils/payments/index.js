@@ -86,7 +86,7 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
         } = params
 
         // fake product ID for testing
-        const productId = "156f39d8-6521-4a1a-b263-2f29f9f5e8e8"
+        // const productId = "156f39d8-6521-4a1a-b263-2f29f9f5e8e8"
         // retrieve the product from database using the id that came in the json data parameter
         const purchasedProduct = await Product.findOne({ where: { id: productId }})
 
