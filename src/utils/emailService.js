@@ -34,7 +34,7 @@ export const sendConfirmationEmail = async (to, link) => {
       to,
       'Tu nueva cuenta en alicialonso.org',
       `Por favor usa el siguiente vínculo: ${link} para confirmar tu email`,
-      `templates/emailConfirmation.hbs`,
+      `views/emailConfirmation.hbs`,
       { confirmation_link: link }
   )
 }
@@ -44,7 +44,7 @@ export const sendResetPassword = async (to, link, name) => {
       to,
       'Restablecer contraseña en alicialonso.org',
       `Por favor usa el siguiente vínculo: ${link} para restablecer tu contraseña`,
-      `templates/resetPassword.hbs`,
+      `views/resetPassword.hbs`,
       { link, name }
   )
 }
@@ -55,7 +55,7 @@ export const sendConfirmGroup = async (to, name, groupRequest) => {
       to,
       `Bienvenido al colectivo ${groupRequest} @alicialonso.org`,
       `Por favor usa el siguiente vínculo: ${process.env.APP_HOST} para iniciar sesión en tu cuenta y acceder al nuevo contenido.`,
-      `templates/confirmGroupRequest.hbs`,
+      `views/confirmGroupRequest.hbs`,
       { link: 'https://admin.alicialonso.org/login', name, groupRequest }
   )
 }
@@ -66,7 +66,7 @@ export const sendRejectGroup = async (to, name, groupRequest) => {
       to,
       'Rechazada solicitud de grupo en alicialonso.org',
       `Lamentablemente hemos rechazado tu solicitud de incorporación al grupo ${groupRequest}. Por favor responde a este email si quisieras aportar alguna información adicional para efectuar una segunda verificación.`,
-      `templates/rejectGroupRequest.hbs`,
+      `views/rejectGroupRequest.hbs`,
       { link: process.env.APP_HOST, name, groupRequest }
   )
 }
@@ -85,20 +85,20 @@ export const sendBetaWelcome = async (to) => {
       
 
       Si no desea recibir más notificaciones de alicialonso.org por favor responda a este mismo email.`,
-      `templates/betatestwelcome.hbs`,
+      `views/betatestwelcome.hbs`,
       { link: process.env.APP_HOST, email:to }
   )
 }
 
 export const sendInstitutionalMessage = async ({to, subject, presentation, message, farewell, name, charge}) => {
   const res = await sendEmail(
-    to, subject, message, 'templates/institutionalMessage.hbs',
+    to, subject, message, 'views/institutionalMessage.hbs',
     { presentation, message, farewell, name, charge }
   )
 }
 
 export const sendCongressMessage = async ( { to, replyTo = 'info@alicialonso.org', subject, message } ) => {
   return await sendEmail(
-    to, subject, message, 'templates/institutionalMessage.hbs', {}
+    to, subject, message, 'views/institutionalMessage.hbs', {}
   )
 }

@@ -1,0 +1,334 @@
+enum UserGroup {
+  PUBLIC
+  STAFF
+  STUDENT
+}
+
+enum nIdType {
+  PASSPORT
+  NATIONALID
+  SOCIALSECURITY
+  OTHER
+}
+
+type Address {
+  id: ID! @id
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  country: String!
+  latitude: Float
+  longitude: Float
+  user: User! @relation(name: "UserToAddress")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type PhoneNumber {
+  id: ID! @id
+  countryCode: Int!
+  phone: Int! @unique
+  verified: Boolean! @default(value: false)
+  user: User! @relation(name: "UserToPhone")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type nID {
+  id: ID! @id
+  nID: String! @unique
+  sourceType: nIdType!
+  verified: Boolean! @default(value: false)
+  user: User! @relation(name: "UserToNationalID")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type User {
+  id: ID! @id
+  name: String
+  lastname: String
+  email: String! @unique
+  emailVerified: Boolean! @default(value: false)
+  password: String!
+  address: Address @relation(name: "UserToAddress")
+  phone: PhoneNumber @relation(name: "UserToPhone")
+  nID: nID @relation(name: "UserToNationalID")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+  socialLinks: [SocialLink] @relation(name: "UserSocialLinks")
+  notificationsDevice: String
+  notificationsPermission: Boolean
+  notificationsPrefEmail: Boolean @default(value: true)
+  notificationsPrefPush: Boolean @default(value: true)
+  notificationsPrefReminderEmail: Boolean @default(value: true)
+  notificationsPrefReminderPush: Boolean @default(value: true)
+  group: UserGroup! @default(value: PUBLIC)
+  groupRequest: UserGroup @default(value: PUBLIC)
+  branch: Branch @relation(name: "BranchToStudent")
+  department: Branch @relation(name: "BranchToStaff")
+  academicYear: Int @default(value: 0)
+  isAdmin: Boolean! @default(value: false)
+  adminRole: AdminRole @relation(name: "UserToRoles")
+  newses: [News] @relation(name: "NewsToUser")
+  events: [Event] @relation(name: "EventToUser")
+}
+
+type SocialLink {
+  id: ID! @id
+  user: User! @relation(name: "UserSocialLinks")
+  network: SocialNetwork! @relation(name: "LinkToSocialNetwork")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type SocialNetwork {
+  id: ID! @id
+  name: String! @unique
+  baseURL: String! @unique
+  links: [SocialLink] @relation(name: "LinkToSocialNetwork")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type News {
+  id: ID! @id
+  author: User! @relation(name: "NewsToUser")
+  title: String!
+  subtitle: String
+  body: String!
+  imageURL: String
+  expiration: DateTime
+  category: String
+  featured: Boolean @default(value: false)
+  target: UserGroup!
+  deleteUpon: Boolean @default(value: false)
+  published: Boolean! @default(value: false)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Event {
+  id: ID! @id
+  author: User! @relation(name: "EventToUser")
+  title: String!
+  subtitle: String
+  organizer: String
+  body: String!
+  imageURL: String
+  date: DateTime!
+  access: String
+  accessPoint: String
+  target: UserGroup!
+  deleteUpon: Boolean @default(value: false)
+  published: Boolean! @default(value: false)
+  venue: Venue! @relation(name: "EventToVenue")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Venue {
+  id: ID! @id
+  name: String!
+  address: String!
+  placeID: String
+  latitude: Float
+  longitude: Float
+  events: [Event] @relation(name: "EventToVenue")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Program {
+  id: ID! @id
+  name: String!
+  branches: [Branch] @relation(name: "ProgramToBranches")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Branch {
+  id: ID! @id
+  name: String! @unique
+  shortName: String!
+  description: String
+  program: Program! @relation(name: "ProgramToBranches")
+  students: [User] @relation(name: "BranchToStudent")
+  staff: [User] @relation(name: "BranchToStaff")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type AdminRole {
+  id: ID! @id
+  name: String! @unique
+  competences: [AdminCompetence] @relation(name: "RolesToCompetence")
+  admins: [User] @relation(name: "UserToRoles")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type AdminCompetence {
+  id: ID! @id
+  name: String! @unique
+  description: String
+  roles: [AdminRole] @relation(name: "RolesToCompetence")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+enum ParticipationType {
+  ATTENDEE
+  SPEAKER
+}
+
+enum ParticipationStatus {
+  PREACTIVE
+  ACTIVE
+  CANCELED
+}
+
+enum ProposalStatus {
+  INREVIEW
+  APPROVED
+  REJECTED
+}
+
+type CongressEdition {
+  id: ID! @id
+  year: Int!
+  participants: [Participant] @relation(name: "ParticipantToCongress")
+  startDate: DateTime
+  endDate: DateTime
+  products: [CongressProduct] @relation(name: "ProductsOfCongress")
+  committee: [CommitteBoardUser] @relation(name: "CongressCommitteeBoard")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type CongressProduct {
+  id: ID! @id
+  congress: CongressEdition! @relation(name: "ProductsOfCongress")
+  product: Product! @relation(link: TABLE)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Participant {
+  id: ID! @id
+  user: User! @relation(name: "UserAsCongressSpeaker")
+  type: ParticipationType!
+  participationStatus: ParticipationStatus! @default(value: PREACTIVE)
+  congress: CongressEdition! @relation(name: "ParticipantToCongress")
+  proposals: [Proposal] @relation(name: "SpeakerToProposal")
+  paymentSettled: Boolean! @default(value: false)
+  authorized: Boolean! @default(value: false)
+  invoiceID: Invoice @relation(link: TABLE)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type CommitteBoardUser {
+  id: ID! @id
+  congress: CongressEdition! @relation(name: "CongressCommitteeBoard")
+  user: User! @relation(link: TABLE)
+  reviews: [ProposalReview] @relation(name: "CommitteeBoardReviews")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type ProposalReview {
+  id: ID! @id
+  proposal: Proposal! @relation(name: "ProposalReviews")
+  committeUser: CommitteBoardUser! @relation(name: "CommitteeBoardReviews")
+  status: ProposalStatus! @default(value: INREVIEW)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Proposal {
+  id: ID! @id
+  speakerApplication: Participant! @relation(name: "SpeakerToProposal")
+  abstract: String!
+  status: ProposalStatus! @default(value: INREVIEW)
+  reviews: [ProposalReview] @relation(name: "ProposalReviews")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type ProductCategory {
+  id: ID! @id
+  name: String!
+  products: [Product] @relation(name: "ProductToCategory")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+enum ProductType {
+  PRODUCT
+  SERVICE
+}
+
+type Product {
+  id: ID! @id
+  name: String!
+  unitPrice: Float!
+  type: ProductType! @default(value: PRODUCT)
+  category: ProductCategory! @relation(name: "ProductToCategory")
+  images: [ProductImage] @relation(name: "ProductImages")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type ProductImage {
+  id: ID! @id
+  title: String! @default(value: "untitled")
+  product: Product! @relation(name: "ProductImages")
+  imageURL: String!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type CustomerOrder {
+  id: ID! @id
+  customer: User! @relation(link: TABLE)
+  items: [CustomerOrderItems] @relation(name: "OrderItems")
+  invoice: Invoice! @relation(name: "OrderInvoice")
+  paymentId: String! @unique
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type CustomerOrderItems {
+  id: ID! @id
+  order: CustomerOrder! @relation(name: "OrderItems")
+  item: Product! @relation(name: "ProductsInOrder")
+  quantity: Int!
+  orderPrice: Float!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Invoice {
+  id: ID! @id
+  order: CustomerOrder! @relation(name: "OrderInvoice")
+  timeDue: DateTime!
+  timePaid: DateTime
+  vatRate: Int! @default(value: 16)
+  netAmount: Float!
+  vatAmount: Float!
+  grossAmount: Float!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Discount {
+  id: ID! @id
+  email: String!
+  total: Float!
+  description: String!
+  applied: Boolean! @default(value: false)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}

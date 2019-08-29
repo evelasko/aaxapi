@@ -3,7 +3,7 @@ import cors from 'cors';
 import QRCode from 'qrcode';
 import  { createPayment, processResponse } from './utils'
 import manager, { Product, Discount, Invoice, pCategory, addDiscount } from './manager'; 
-import { sendEmail } from '../emailService';
+import { sendEmail } from '../../utils/emailService';
 
 const whitelist = [
     'http://localhost:8000', 
@@ -49,9 +49,6 @@ paymentRoutes.post('/', async (req, res) => {
 
 // Get signature to process payment
 paymentRoutes.post('/getsignature', cors(corsLimited), async (req, res) => {
-    
-    console.log("Payment signature requested")
-    
     const { txData, description, total, urlOk, urlKo } = req.query
     const {
         signature,
@@ -82,11 +79,13 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
         // create data for the invoice and the ticket
         const { 
             merchantParamsDecoded: { Ds_AuthorisationCode, Ds_Order, Ds_Amount },
-            data: { productId, firstname, lastname, email, address1, address2, city, region, country, zip }
+            data: { 
+                // productId, 
+                firstname, lastname, email, address1, address2, city, region, country, zip }
         } = params
 
         // fake product ID for testing
-        // const productId = "156f39d8-6521-4a1a-b263-2f29f9f5e8e8"
+        const productId = "156f39d8-6521-4a1a-b263-2f29f9f5e8e8"
         // retrieve the product from database using the id that came in the json data parameter
         const purchasedProduct = await Product.findOne({ where: { id: productId }})
 
@@ -112,14 +111,14 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
             email, // address to send mail to
             'Confirmación de Participación — I Congreso Mundial de Investigación en las Artes del Espectáculo', // subject
             `Por favor usa el siguiente vínculo: ${browserURL} para visualizar su ticket de confirmación de asistencia al I Congreso Mundial de Investigación en las Artes Escénicas`, // fallback text
-            `templates/emailticket.hbs`, // template file
+            `views/emailticket.hbs`, // template file
             { 
                 qrcode,
                 browserURL, // variable to include in the email template with the address to access without mail client
                 Ds_Order, // comes from the bank response, not from our data params
                 ticketName: purchasedProduct.name, //ombine product name with product description,
                 ticketDescription: purchasedProduct.description,
-                total: (parseInt(Ds_Amount)/100).toString(), // the amount charged for the ticket, take the one coming from the bank fromated as text incuding euro
+                total: (parseInt(Ds_Amount)/100).toFixed(2).toString(), // the amount charged for the ticket, take the one coming from the bank fromated as text incuding euro
                 fullname: `${firstname} ${lastname}`, // complete name of the participant
                 address1, 
                 address2, 
@@ -129,13 +128,7 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
                 zip 
             } 
         )
-
-        console.log("MAIL RESPONSE: ", mailResponse)
-        console.log("PURCHASED PRODCT:", purchasedProduct)
-        console.log("DISCOUNT: ", discount)
-        console.log("RECEIPT", receipt)
-        res.send("Done")
-
+        res.send("done")
     }
     else {
         console.log("TRANSACTION WAS KO...")
@@ -144,18 +137,40 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
     
 })
 
-// Retreive QRCode
-paymentRoutes.get('/qrcode/:code', express.urlencoded({extended: true}), async (req, res) => {
-    const qr = await qrcode.toDataURL(req.params.code)
-    res.send(`<div><h1>HELLO</h1><img src="${qr}"/></div>`)
+
+// render receipt in browser
+paymentRoutes.get('/receipt/:orderid', express.urlencoded({extended: true}), async (req, res) => {
+    const { params: { orderid } } = req
+    const invoice = await Invoice.findOne({ where: { orderid }, include: [{ model:Product }] })
+    if (!invoice) {
+        res.send(`<h2>No Order for ${orderid} was found...</h2>`)
+        return null
+    }
+    // res.send(invoice)
+    // return null
+    const { address1, address2, city, region, country, zip } = invoice
+    const qrcode = await QRCode.toDataURL(orderid)
+    res.render('emailticket', {
+        layout: false,
+        qrcode,
+        Ds_Order: orderid,
+        ticketName: invoice.product.name,
+        ticketDescription: invoice.product.description,
+        total: (parseInt(invoice.amount)/100).toFixed(2).toString(),
+        fullname: `${invoice.firstname} ${invoice.lastname}`,
+        address1, 
+        address2, 
+        city, 
+        region, 
+        country, 
+        zip 
+    })
 })
 
 
 
-
-
 // GET STORE DATA
-// ===========================================================
+// ===========================================================ß
 // GENERAL
 // -----------------------------------------------------------
 // get all products

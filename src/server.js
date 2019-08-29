@@ -7,7 +7,8 @@ import Redis from 'ioredis';
 import { redisSessionPrefix } from './constants';
 import prisma from './prisma';
 import { fragmentReplacements, resolvers, typeDefs } from './schema';
-import paymentRoutes from './utils/payments'
+import paymentRoutes from './routes/payments'
+import hbs from 'express-handlebars'
 
 export const redis = new Redis(process.env.REDIS_URL)
 const pubsub = new PubSub()
@@ -63,8 +64,15 @@ server.express.use('/mobile', proxy({
                                 target: process.env.HOST, 
                                 changeOrigin: true,
                                 pathRewrite: { '/mobile' : '' }
-                              }))
+}))
 
+server.express.engine( 'hbs', hbs({
+    extname: 'hbs',
+    //views: '/templates',
+    //layoutsDir: __dirname + '/templates/pages/',
+    //partialsDir: __dirname + '/templates/partials/'
+  }));
+server.express.set('view engine', 'hbs');
 
 export { server as default };
 
