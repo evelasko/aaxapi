@@ -2,6 +2,8 @@ import cloudinary from 'cloudinary';
 
 cloudinary.config(process.env.CLOUDINARY_URL)
 
+export default cloudinary
+
 const cloudinaryUpload = async ({stream, folder}) => {
     try {
         return new Promise((resolve, reject) => {
@@ -14,6 +16,26 @@ const cloudinaryUpload = async ({stream, folder}) => {
     }
     catch (err) { throw new Error(`Failed to upload to cloudinary! Err: ${err.message}`) }
 }
+
+// export const cloudinaryUnmanagedUploads = async ({files = [], folder = ''}) => {
+//     if (!files.length) return
+//     try {
+//         return new Promise((resolve, reject) => {
+//             cloudinary.v2.uploader.upload(
+//                 file,
+//                 {
+//                     folder,
+//                     use_filename: true,
+//                     resource_type: 'auto'
+//                 }, 
+//                 (error, result) => { 
+//                     if (result) { resolve(result) } 
+//                     else { reject(error) } }
+//             )
+//         })
+//     }
+//     catch(e) { throw new Error(`Failed upload to Cloudianry: ${e.message}`) }
+// }
 
 export const processUpload = async upload => {
   const { stream, filename } = await upload

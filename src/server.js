@@ -11,25 +11,12 @@ import paymentRoutes from './routes/payments'
 import hbs from 'express-handlebars'
 
 export const redis = new Redis(process.env.REDIS_URL)
-const pubsub = new PubSub()
-// const options = {
-//   retry_strategy: options => {
-//     // reconnect after
-//     return Math.max(options.attempt * 100, 3000);
-//   }
-// }
-// const pubsub = new RedisPubSub({
-//   publisher: new Redis(),
-//   subscriber: new Redis()
-// })
 
 const server = new GraphQLServer({
     typeDefs,
     resolvers,
-    // middlewares: middlewareShield,
     context:({request, response}) => ({
         redis,
-        // pubsub,
         prisma,
         request,
         response,
@@ -56,22 +43,15 @@ server.express.use(session(
   })
 )
 server.express.use('/payment', paymentRoutes)
-
 server.express.use('/images', express.static('images'))
 server.express.use('/resources', express.static('resources'))
-
 server.express.use('/mobile', proxy({ 
                                 target: process.env.HOST, 
                                 changeOrigin: true,
                                 pathRewrite: { '/mobile' : '' }
 }))
 
-server.express.engine( 'hbs', hbs({
-    extname: 'hbs',
-    //views: '/templates',
-    //layoutsDir: __dirname + '/templates/pages/',
-    //partialsDir: __dirname + '/templates/partials/'
-  }));
+server.express.engine( 'hbs', hbs({ extname: 'hbs', }));
 server.express.set('view engine', 'hbs');
 
 export { server as default };
