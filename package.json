@@ -10,9 +10,11 @@
   "scripts": {
     "test": "env-cmd ./config/test.env jest --watch",
     "dev": "env-cmd ./config/dev.env nodemon src/index.js --exec babel-node",
+    "dex": "env-cmd ./config/dex.env nodemon src/index.js --exec babel-node",
     "start": "node dist/index.js",
     "heroku-postbuild": "babel src --out-dir dist --copy-files",
-    "get-schema": "graphql get-schema -p prisma --dotenv config/dev.env"
+    "get-schema-dev": "graphql get-schema -p prisma --dotenv config/dev.env",
+    "get-schema-dex": "graphql get-schema -p prisma --dotenv config/dex.env"
   },
   "jest": {
     "globalSetup": "./tests/jest/globalSetup.js",
@@ -22,9 +24,7 @@
   "author": "Enrique Velasco",
   "license": "MIT",
   "dependencies": {
-    "@destinationstransfers/passkit": "^6.5.1",
     "@google/maps": "^0.5.5",
-    "@graphql-inspector/cli": "^1.23.1",
     "adm-zip": ">=0.4.11",
     "apollo-boost": "^0.1.28",
     "apollo-engine": "^1.1.2",
@@ -60,7 +60,6 @@
     "nodemailer-mailgun-transport": "^1.4.0",
     "nodemailer-smtp-transport": "^2.7.4",
     "order-id": "^1.1.0",
-    "passkit-generator": "^2.0.0",
     "pg": "^7.12.1",
     "pg-hstore": "^2.3.3",
     "prisma-binding": "^2.3.10",
