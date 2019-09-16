@@ -17,7 +17,7 @@ type User {
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
 
-    name: String!
+    firstname: String!
     lastname: String!
     email: String! @unique
     emailVerified: Boolean! @default(value: false)
@@ -27,7 +27,7 @@ type User {
     groupRequest: UserGroup
 
     isAdmin: Boolean! @default(value: false)
-    adminRole: AdminRole @relation(name: "UserRoles", link: INLINE)
+    roles: [Role!]! @relation(name: "UserRoles", link: TABLE)
     
     avatar: String
     addresses: [Address!]! @relation(name: "UserAddress", onDelete: CASCADE)
@@ -48,13 +48,18 @@ type User {
     discountRequests: [DiscountRequest!]! @relation(name: "UserDiscountRequests", onDelete: CASCADE)
 }
 
-type AdminRole {
+type Role {
     id: ID! @id
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
 
     name: String!
-    admins: [User!]! @relation(name: "UserRoles")
+    users: [User!]! @relation(name: "UserRoles")
+}
+
+type UserRoles @relationTable {
+    user: User!
+    role: Role!
 }
 
 type SocialLink {
@@ -114,7 +119,7 @@ type Device {
     countryCode: String
     number: String
     type: DeviceType! @default(value: PHONE)
-    notificationsId: String
+    notificationsDevice: String # external ID (from expo)
     notificationsPermission: Boolean
     verified: Boolean! @default(value: false)
 }

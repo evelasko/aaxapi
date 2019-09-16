@@ -60,30 +60,22 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
             merchantParamsDecoded: { Ds_AuthorisationCode, Ds_Order, Ds_Amount },
             data: { 
                 productId, discountId,
-                firstname, lastname, email, address1, address2, city, region, country, code }
+                firstname, lastname, email, institution }
         } = params
 
-        //-- check if user exists and has a primary address set
-        const user = await prisma.query.user({where:{email}}, `{ addresses(where:{primary:true}) { id }  }`)
+        //-- check if user exists
+        const user = await prisma.query.user({where:{email}}, `{ id metadata }`)
         if (!user) {
             await prisma.mutation.createUser(
-                {
-                    data: {
-                        email, firstname, lastname, password: process.env.SCHEMA_GUEST_USERS_PWD,
-                        addresses: { create: { primary: true, address1, address2, city, region, code, country } }
-                    }
-                },
+                { data: { email, firstname, lastname, password: process.env.SCHEMA_GUEST_USERS_PWD } },
                 `{ id }`)
         } else {
-            await prisma.mutation.updateUser(
-                {
-                    where: { email },
-                    data: {
-                        addresses: { create: { primary: true, address1, address2, city, region, code, country } }
-                    }
-                },
-                `{ id }`
-            )
+            if (institution) {
+                await prisma.mutation.updateUser(
+                    { where: { email }, data: { metadata: { institution } } },
+                    `{ id }`
+                )
+            }
         }
 
         //-- create data for the invoice and the ticket
@@ -119,13 +111,14 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
                     info = `{ id items { product { name description } discount { name } } }`
                     const { discountRequests } = await prisma.query.user(
                         {where:{email}}, 
-                        `{discountRequests(where: { discount: { id: "${discountId}"}}) { id }}`
+                        `{ discountRequests(where: { discount: { id: "${discountId}"}}) { id } }`
                     )
-                    discountRequest = await prisma.mutation.updateDiscountRequest(
-                        {where:{id:discountRequests[0].id}, data:{applied:true}},
-                        `{ discount { name }}`)
+                    if (discountRequests[0].id) {
+                        discountRequest = await prisma.mutation.updateDiscountRequest(
+                            {where:{id:discountRequests[0].id}, data:{applied:true}},
+                            `{ discount { name }}`)
+                    }
             }
-
             // create Order / Transaction
             const order = await prisma.mutation.createOrder( args, `{ id items { product { name description } } }`)
 
@@ -151,12 +144,6 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
                     ticketDescription,
                     total: (parseInt(Ds_Amount)/100).toFixed(2).toString(), //-- the amount charged for the ticket, take the one coming from the bank fromated as text incuding euro
                     fullname: `${firstname} ${lastname}`, //-- complete name of the participant
-                    address1, 
-                    address2, 
-                    city, 
-                    region, 
-                    country, 
-                    code 
                 } 
             )
             res.send("done")
@@ -411,8 +398,16 @@ paymentRoutes.get('/attendee/find/discount', async (req, res) => {
             {where: {email}},
             `{
                 email firstname lastname
-                discountRequests(where: {discount:{product:{id:"${paymentConfig.baseProductIDs.attendee}"}}} )
-                    { id applied approved discount { id name description unitPrice } }
+                discountRequests(
+                    where: { 
+                      AND: [ 
+                      {  discount: { product: {id: "${paymentConfig.baseProductIDs.attendee}"} }  },
+                      { approved: true },
+                      { applied: false }
+                    ] 
+                    }
+                    ) { id applied approved discount { id name description unitPrice } }
+                }
             }`
         )
         if (!foundDiscount) {

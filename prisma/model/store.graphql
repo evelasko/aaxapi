@@ -3,7 +3,7 @@ type ProductCategory {
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
 
-    name: String!
+    name: String! @unique
     products: [Product!]! @relation(name: "ProductCategories", onDelete: SET_NULL)
 }
 

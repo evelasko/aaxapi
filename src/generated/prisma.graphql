@@ -1,5 +1,5 @@
 # source: http://localhost:4466/aaxapi/dex
-# timestamp: Sun Sep 15 2019 21:17:48 GMT+0200 (Central European Summer Time)
+# timestamp: Mon Sep 16 2019 13:36:23 GMT+0200 (Central European Summer Time)
 
 type Address implements Node {
   id: ID!
@@ -887,278 +887,7 @@ input AddressWhereUniqueInput {
   id: ID
 }
 
-type AdminRole implements Node {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  name: String!
-  admins(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
-}
-
-"""A connection to a list of items."""
-type AdminRoleConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [AdminRoleEdge]!
-  aggregate: AggregateAdminRole!
-}
-
-input AdminRoleCreateInput {
-  id: ID
-  name: String!
-  admins: UserCreateManyWithoutAdminRoleInput
-}
-
-input AdminRoleCreateOneWithoutAdminsInput {
-  create: AdminRoleCreateWithoutAdminsInput
-  connect: AdminRoleWhereUniqueInput
-}
-
-input AdminRoleCreateWithoutAdminsInput {
-  id: ID
-  name: String!
-}
-
-"""An edge in a connection."""
-type AdminRoleEdge {
-  """The item at the end of the edge."""
-  node: AdminRole!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-enum AdminRoleOrderByInput {
-  id_ASC
-  id_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  name_ASC
-  name_DESC
-}
-
-type AdminRolePreviousValues {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  name: String!
-}
-
-type AdminRoleSubscriptionPayload {
-  mutation: MutationType!
-  node: AdminRole
-  updatedFields: [String!]
-  previousValues: AdminRolePreviousValues
-}
-
-input AdminRoleSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [AdminRoleSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [AdminRoleSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [AdminRoleSubscriptionWhereInput!]
-
-  """The subscription event gets dispatched when it's listed in mutation_in"""
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: AdminRoleWhereInput
-}
-
-input AdminRoleUpdateInput {
-  name: String
-  admins: UserUpdateManyWithoutAdminRoleInput
-}
-
-input AdminRoleUpdateManyMutationInput {
-  name: String
-}
-
-input AdminRoleUpdateOneWithoutAdminsInput {
-  create: AdminRoleCreateWithoutAdminsInput
-  connect: AdminRoleWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: AdminRoleUpdateWithoutAdminsDataInput
-  upsert: AdminRoleUpsertWithoutAdminsInput
-}
-
-input AdminRoleUpdateWithoutAdminsDataInput {
-  name: String
-}
-
-input AdminRoleUpsertWithoutAdminsInput {
-  update: AdminRoleUpdateWithoutAdminsDataInput!
-  create: AdminRoleCreateWithoutAdminsInput!
-}
-
-input AdminRoleWhereInput {
-  """Logical AND on all given filters."""
-  AND: [AdminRoleWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [AdminRoleWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [AdminRoleWhereInput!]
-  id: ID
-
-  """All values that are not equal to given value."""
-  id_not: ID
-
-  """All values that are contained in given list."""
-  id_in: [ID!]
-
-  """All values that are not contained in given list."""
-  id_not_in: [ID!]
-
-  """All values less than the given value."""
-  id_lt: ID
-
-  """All values less than or equal the given value."""
-  id_lte: ID
-
-  """All values greater than the given value."""
-  id_gt: ID
-
-  """All values greater than or equal the given value."""
-  id_gte: ID
-
-  """All values containing the given string."""
-  id_contains: ID
-
-  """All values not containing the given string."""
-  id_not_contains: ID
-
-  """All values starting with the given string."""
-  id_starts_with: ID
-
-  """All values not starting with the given string."""
-  id_not_starts_with: ID
-
-  """All values ending with the given string."""
-  id_ends_with: ID
-
-  """All values not ending with the given string."""
-  id_not_ends_with: ID
-  createdAt: DateTime
-
-  """All values that are not equal to given value."""
-  createdAt_not: DateTime
-
-  """All values that are contained in given list."""
-  createdAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  createdAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  createdAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  createdAt_lte: DateTime
-
-  """All values greater than the given value."""
-  createdAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """All values that are not equal to given value."""
-  updatedAt_not: DateTime
-
-  """All values that are contained in given list."""
-  updatedAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  updatedAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  updatedAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  updatedAt_lte: DateTime
-
-  """All values greater than the given value."""
-  updatedAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  updatedAt_gte: DateTime
-  name: String
-
-  """All values that are not equal to given value."""
-  name_not: String
-
-  """All values that are contained in given list."""
-  name_in: [String!]
-
-  """All values that are not contained in given list."""
-  name_not_in: [String!]
-
-  """All values less than the given value."""
-  name_lt: String
-
-  """All values less than or equal the given value."""
-  name_lte: String
-
-  """All values greater than the given value."""
-  name_gt: String
-
-  """All values greater than or equal the given value."""
-  name_gte: String
-
-  """All values containing the given string."""
-  name_contains: String
-
-  """All values not containing the given string."""
-  name_not_contains: String
-
-  """All values starting with the given string."""
-  name_starts_with: String
-
-  """All values not starting with the given string."""
-  name_not_starts_with: String
-
-  """All values ending with the given string."""
-  name_ends_with: String
-
-  """All values not ending with the given string."""
-  name_not_ends_with: String
-  admins_every: UserWhereInput
-  admins_some: UserWhereInput
-  admins_none: UserWhereInput
-}
-
-input AdminRoleWhereUniqueInput {
-  id: ID
-}
-
 type AggregateAddress {
-  count: Int!
-}
-
-type AggregateAdminRole {
   count: Int!
 }
 
@@ -1219,6 +948,10 @@ type AggregateProductCategory {
 }
 
 type AggregateProgram {
+  count: Int!
+}
+
+type AggregateRole {
   count: Int!
 }
 
@@ -2130,7 +1863,7 @@ type Device implements Node {
   countryCode: String
   number: String
   type: DeviceType!
-  notificationsId: String
+  notificationsDevice: String
   notificationsPermission: Boolean
   verified: Boolean!
 }
@@ -2150,7 +1883,7 @@ input DeviceCreateInput {
   countryCode: String
   number: String
   type: DeviceType
-  notificationsId: String
+  notificationsDevice: String
   notificationsPermission: Boolean
   verified: Boolean
   owner: UserCreateOneWithoutDevicesInput
@@ -2166,7 +1899,7 @@ input DeviceCreateWithoutOwnerInput {
   countryCode: String
   number: String
   type: DeviceType
-  notificationsId: String
+  notificationsDevice: String
   notificationsPermission: Boolean
   verified: Boolean
 }
@@ -2193,8 +1926,8 @@ enum DeviceOrderByInput {
   number_DESC
   type_ASC
   type_DESC
-  notificationsId_ASC
-  notificationsId_DESC
+  notificationsDevice_ASC
+  notificationsDevice_DESC
   notificationsPermission_ASC
   notificationsPermission_DESC
   verified_ASC
@@ -2208,7 +1941,7 @@ type DevicePreviousValues {
   countryCode: String
   number: String
   type: DeviceType!
-  notificationsId: String
+  notificationsDevice: String
   notificationsPermission: Boolean
   verified: Boolean!
 }
@@ -2396,46 +2129,46 @@ input DeviceScalarWhereInput {
 
   """All values that are not contained in given list."""
   type_not_in: [DeviceType!]
-  notificationsId: String
+  notificationsDevice: String
 
   """All values that are not equal to given value."""
-  notificationsId_not: String
+  notificationsDevice_not: String
 
   """All values that are contained in given list."""
-  notificationsId_in: [String!]
+  notificationsDevice_in: [String!]
 
   """All values that are not contained in given list."""
-  notificationsId_not_in: [String!]
+  notificationsDevice_not_in: [String!]
 
   """All values less than the given value."""
-  notificationsId_lt: String
+  notificationsDevice_lt: String
 
   """All values less than or equal the given value."""
-  notificationsId_lte: String
+  notificationsDevice_lte: String
 
   """All values greater than the given value."""
-  notificationsId_gt: String
+  notificationsDevice_gt: String
 
   """All values greater than or equal the given value."""
-  notificationsId_gte: String
+  notificationsDevice_gte: String
 
   """All values containing the given string."""
-  notificationsId_contains: String
+  notificationsDevice_contains: String
 
   """All values not containing the given string."""
-  notificationsId_not_contains: String
+  notificationsDevice_not_contains: String
 
   """All values starting with the given string."""
-  notificationsId_starts_with: String
+  notificationsDevice_starts_with: String
 
   """All values not starting with the given string."""
-  notificationsId_not_starts_with: String
+  notificationsDevice_not_starts_with: String
 
   """All values ending with the given string."""
-  notificationsId_ends_with: String
+  notificationsDevice_ends_with: String
 
   """All values not ending with the given string."""
-  notificationsId_not_ends_with: String
+  notificationsDevice_not_ends_with: String
   notificationsPermission: Boolean
 
   """All values that are not equal to given value."""
@@ -2493,7 +2226,7 @@ input DeviceUpdateInput {
   countryCode: String
   number: String
   type: DeviceType
-  notificationsId: String
+  notificationsDevice: String
   notificationsPermission: Boolean
   verified: Boolean
   owner: UserUpdateOneWithoutDevicesInput
@@ -2503,7 +2236,7 @@ input DeviceUpdateManyDataInput {
   countryCode: String
   number: String
   type: DeviceType
-  notificationsId: String
+  notificationsDevice: String
   notificationsPermission: Boolean
   verified: Boolean
 }
@@ -2512,7 +2245,7 @@ input DeviceUpdateManyMutationInput {
   countryCode: String
   number: String
   type: DeviceType
-  notificationsId: String
+  notificationsDevice: String
   notificationsPermission: Boolean
   verified: Boolean
 }
@@ -2538,7 +2271,7 @@ input DeviceUpdateWithoutOwnerDataInput {
   countryCode: String
   number: String
   type: DeviceType
-  notificationsId: String
+  notificationsDevice: String
   notificationsPermission: Boolean
   verified: Boolean
 }
@@ -2737,46 +2470,46 @@ input DeviceWhereInput {
 
   """All values that are not contained in given list."""
   type_not_in: [DeviceType!]
-  notificationsId: String
+  notificationsDevice: String
 
   """All values that are not equal to given value."""
-  notificationsId_not: String
+  notificationsDevice_not: String
 
   """All values that are contained in given list."""
-  notificationsId_in: [String!]
+  notificationsDevice_in: [String!]
 
   """All values that are not contained in given list."""
-  notificationsId_not_in: [String!]
+  notificationsDevice_not_in: [String!]
 
   """All values less than the given value."""
-  notificationsId_lt: String
+  notificationsDevice_lt: String
 
   """All values less than or equal the given value."""
-  notificationsId_lte: String
+  notificationsDevice_lte: String
 
   """All values greater than the given value."""
-  notificationsId_gt: String
+  notificationsDevice_gt: String
 
   """All values greater than or equal the given value."""
-  notificationsId_gte: String
+  notificationsDevice_gte: String
 
   """All values containing the given string."""
-  notificationsId_contains: String
+  notificationsDevice_contains: String
 
   """All values not containing the given string."""
-  notificationsId_not_contains: String
+  notificationsDevice_not_contains: String
 
   """All values starting with the given string."""
-  notificationsId_starts_with: String
+  notificationsDevice_starts_with: String
 
   """All values not starting with the given string."""
-  notificationsId_not_starts_with: String
+  notificationsDevice_not_starts_with: String
 
   """All values ending with the given string."""
-  notificationsId_ends_with: String
+  notificationsDevice_ends_with: String
 
   """All values not ending with the given string."""
-  notificationsId_not_ends_with: String
+  notificationsDevice_not_ends_with: String
   notificationsPermission: Boolean
 
   """All values that are not equal to given value."""
@@ -6280,7 +6013,7 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createAdminRole(data: AdminRoleCreateInput!): AdminRole!
+  createRole(data: RoleCreateInput!): Role!
   createSocialLink(data: SocialLinkCreateInput!): SocialLink!
   createSocialNetwork(data: SocialNetworkCreateInput!): SocialNetwork!
   createOfficialDocument(data: OfficialDocumentCreateInput!): OfficialDocument!
@@ -6305,7 +6038,7 @@ type Mutation {
   createItem(data: ItemCreateInput!): Item!
   createUser(data: UserCreateInput!): User!
   createDiscount(data: DiscountCreateInput!): Discount!
-  updateAdminRole(data: AdminRoleUpdateInput!, where: AdminRoleWhereUniqueInput!): AdminRole
+  updateRole(data: RoleUpdateInput!, where: RoleWhereUniqueInput!): Role
   updateSocialLink(data: SocialLinkUpdateInput!, where: SocialLinkWhereUniqueInput!): SocialLink
   updateSocialNetwork(data: SocialNetworkUpdateInput!, where: SocialNetworkWhereUniqueInput!): SocialNetwork
   updateOfficialDocument(data: OfficialDocumentUpdateInput!, where: OfficialDocumentWhereUniqueInput!): OfficialDocument
@@ -6330,7 +6063,7 @@ type Mutation {
   updateItem(data: ItemUpdateInput!, where: ItemWhereUniqueInput!): Item
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateDiscount(data: DiscountUpdateInput!, where: DiscountWhereUniqueInput!): Discount
-  deleteAdminRole(where: AdminRoleWhereUniqueInput!): AdminRole
+  deleteRole(where: RoleWhereUniqueInput!): Role
   deleteSocialLink(where: SocialLinkWhereUniqueInput!): SocialLink
   deleteSocialNetwork(where: SocialNetworkWhereUniqueInput!): SocialNetwork
   deleteOfficialDocument(where: OfficialDocumentWhereUniqueInput!): OfficialDocument
@@ -6355,7 +6088,7 @@ type Mutation {
   deleteItem(where: ItemWhereUniqueInput!): Item
   deleteUser(where: UserWhereUniqueInput!): User
   deleteDiscount(where: DiscountWhereUniqueInput!): Discount
-  upsertAdminRole(where: AdminRoleWhereUniqueInput!, create: AdminRoleCreateInput!, update: AdminRoleUpdateInput!): AdminRole!
+  upsertRole(where: RoleWhereUniqueInput!, create: RoleCreateInput!, update: RoleUpdateInput!): Role!
   upsertSocialLink(where: SocialLinkWhereUniqueInput!, create: SocialLinkCreateInput!, update: SocialLinkUpdateInput!): SocialLink!
   upsertSocialNetwork(where: SocialNetworkWhereUniqueInput!, create: SocialNetworkCreateInput!, update: SocialNetworkUpdateInput!): SocialNetwork!
   upsertOfficialDocument(where: OfficialDocumentWhereUniqueInput!, create: OfficialDocumentCreateInput!, update: OfficialDocumentUpdateInput!): OfficialDocument!
@@ -6380,7 +6113,7 @@ type Mutation {
   upsertItem(where: ItemWhereUniqueInput!, create: ItemCreateInput!, update: ItemUpdateInput!): Item!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertDiscount(where: DiscountWhereUniqueInput!, create: DiscountCreateInput!, update: DiscountUpdateInput!): Discount!
-  updateManyAdminRoles(data: AdminRoleUpdateManyMutationInput!, where: AdminRoleWhereInput): BatchPayload!
+  updateManyRoles(data: RoleUpdateManyMutationInput!, where: RoleWhereInput): BatchPayload!
   updateManySocialLinks(data: SocialLinkUpdateManyMutationInput!, where: SocialLinkWhereInput): BatchPayload!
   updateManySocialNetworks(data: SocialNetworkUpdateManyMutationInput!, where: SocialNetworkWhereInput): BatchPayload!
   updateManyOfficialDocuments(data: OfficialDocumentUpdateManyMutationInput!, where: OfficialDocumentWhereInput): BatchPayload!
@@ -6405,7 +6138,7 @@ type Mutation {
   updateManyItems(data: ItemUpdateManyMutationInput!, where: ItemWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyDiscounts(data: DiscountUpdateManyMutationInput!, where: DiscountWhereInput): BatchPayload!
-  deleteManyAdminRoles(where: AdminRoleWhereInput): BatchPayload!
+  deleteManyRoles(where: RoleWhereInput): BatchPayload!
   deleteManySocialLinks(where: SocialLinkWhereInput): BatchPayload!
   deleteManySocialNetworks(where: SocialNetworkWhereInput): BatchPayload!
   deleteManyOfficialDocuments(where: OfficialDocumentWhereInput): BatchPayload!
@@ -10076,7 +9809,7 @@ input ProgramWhereUniqueInput {
 }
 
 type Query {
-  adminRoles(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminRole]!
+  roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role]!
   socialLinks(where: SocialLinkWhereInput, orderBy: SocialLinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SocialLink]!
   socialNetworks(where: SocialNetworkWhereInput, orderBy: SocialNetworkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SocialNetwork]!
   officialDocuments(where: OfficialDocumentWhereInput, orderBy: OfficialDocumentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OfficialDocument]!
@@ -10101,7 +9834,7 @@ type Query {
   items(where: ItemWhereInput, orderBy: ItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Item]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   discounts(where: DiscountWhereInput, orderBy: DiscountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Discount]!
-  adminRole(where: AdminRoleWhereUniqueInput!): AdminRole
+  role(where: RoleWhereUniqueInput!): Role
   socialLink(where: SocialLinkWhereUniqueInput!): SocialLink
   socialNetwork(where: SocialNetworkWhereUniqueInput!): SocialNetwork
   officialDocument(where: OfficialDocumentWhereUniqueInput!): OfficialDocument
@@ -10126,7 +9859,7 @@ type Query {
   item(where: ItemWhereUniqueInput!): Item
   user(where: UserWhereUniqueInput!): User
   discount(where: DiscountWhereUniqueInput!): Discount
-  adminRolesConnection(where: AdminRoleWhereInput, orderBy: AdminRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminRoleConnection!
+  rolesConnection(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RoleConnection!
   socialLinksConnection(where: SocialLinkWhereInput, orderBy: SocialLinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SocialLinkConnection!
   socialNetworksConnection(where: SocialNetworkWhereInput, orderBy: SocialNetworkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SocialNetworkConnection!
   officialDocumentsConnection(where: OfficialDocumentWhereInput, orderBy: OfficialDocumentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OfficialDocumentConnection!
@@ -10157,6 +9890,426 @@ type Query {
     """The ID of an object"""
     id: ID!
   ): Node
+}
+
+type Role implements Node {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+}
+
+"""A connection to a list of items."""
+type RoleConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [RoleEdge]!
+  aggregate: AggregateRole!
+}
+
+input RoleCreateInput {
+  id: ID
+  name: String!
+  users: UserCreateManyWithoutRolesInput
+}
+
+input RoleCreateManyWithoutUsersInput {
+  create: [RoleCreateWithoutUsersInput!]
+  connect: [RoleWhereUniqueInput!]
+}
+
+input RoleCreateWithoutUsersInput {
+  id: ID
+  name: String!
+}
+
+"""An edge in a connection."""
+type RoleEdge {
+  """The item at the end of the edge."""
+  node: Role!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum RoleOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  name_ASC
+  name_DESC
+}
+
+type RolePreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+}
+
+input RoleScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [RoleScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [RoleScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [RoleScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+type RoleSubscriptionPayload {
+  mutation: MutationType!
+  node: Role
+  updatedFields: [String!]
+  previousValues: RolePreviousValues
+}
+
+input RoleSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [RoleSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [RoleSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [RoleSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: RoleWhereInput
+}
+
+input RoleUpdateInput {
+  name: String
+  users: UserUpdateManyWithoutRolesInput
+}
+
+input RoleUpdateManyDataInput {
+  name: String
+}
+
+input RoleUpdateManyMutationInput {
+  name: String
+}
+
+input RoleUpdateManyWithoutUsersInput {
+  create: [RoleCreateWithoutUsersInput!]
+  connect: [RoleWhereUniqueInput!]
+  set: [RoleWhereUniqueInput!]
+  disconnect: [RoleWhereUniqueInput!]
+  delete: [RoleWhereUniqueInput!]
+  update: [RoleUpdateWithWhereUniqueWithoutUsersInput!]
+  updateMany: [RoleUpdateManyWithWhereNestedInput!]
+  deleteMany: [RoleScalarWhereInput!]
+  upsert: [RoleUpsertWithWhereUniqueWithoutUsersInput!]
+}
+
+input RoleUpdateManyWithWhereNestedInput {
+  where: RoleScalarWhereInput!
+  data: RoleUpdateManyDataInput!
+}
+
+input RoleUpdateWithoutUsersDataInput {
+  name: String
+}
+
+input RoleUpdateWithWhereUniqueWithoutUsersInput {
+  where: RoleWhereUniqueInput!
+  data: RoleUpdateWithoutUsersDataInput!
+}
+
+input RoleUpsertWithWhereUniqueWithoutUsersInput {
+  where: RoleWhereUniqueInput!
+  update: RoleUpdateWithoutUsersDataInput!
+  create: RoleCreateWithoutUsersInput!
+}
+
+input RoleWhereInput {
+  """Logical AND on all given filters."""
+  AND: [RoleWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [RoleWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [RoleWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  users_every: UserWhereInput
+  users_some: UserWhereInput
+  users_none: UserWhereInput
+}
+
+input RoleWhereUniqueInput {
+  id: ID
 }
 
 type Session implements Node {
@@ -12458,7 +12611,7 @@ input SubjectWhereUniqueInput {
 }
 
 type Subscription {
-  adminRole(where: AdminRoleSubscriptionWhereInput): AdminRoleSubscriptionPayload
+  role(where: RoleSubscriptionWhereInput): RoleSubscriptionPayload
   socialLink(where: SocialLinkSubscriptionWhereInput): SocialLinkSubscriptionPayload
   socialNetwork(where: SocialNetworkSubscriptionWhereInput): SocialNetworkSubscriptionPayload
   officialDocument(where: OfficialDocumentSubscriptionWhereInput): OfficialDocumentSubscriptionPayload
@@ -12998,7 +13151,7 @@ type User implements Node {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean!
@@ -13006,7 +13159,7 @@ type User implements Node {
   group: UserGroup!
   groupRequest: UserGroup
   isAdmin: Boolean!
-  adminRole: AdminRole
+  roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role!]
   avatar: String
   addresses(where: AddressWhereInput, orderBy: AddressOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Address!]
   devices(where: DeviceWhereInput, orderBy: DeviceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Device!]
@@ -13034,7 +13187,7 @@ type UserConnection {
 
 input UserCreateInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13044,7 +13197,7 @@ input UserCreateInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   devices: DeviceCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
@@ -13058,11 +13211,6 @@ input UserCreateInput {
   discountRequests: DiscountRequestCreateManyWithoutUserInput
 }
 
-input UserCreateManyWithoutAdminRoleInput {
-  create: [UserCreateWithoutAdminRoleInput!]
-  connect: [UserWhereUniqueInput!]
-}
-
 input UserCreateManyWithoutAvailableLessonsInput {
   create: [UserCreateWithoutAvailableLessonsInput!]
   connect: [UserWhereUniqueInput!]
@@ -13070,6 +13218,11 @@ input UserCreateManyWithoutAvailableLessonsInput {
 
 input UserCreateManyWithoutDepartmentInput {
   create: [UserCreateWithoutDepartmentInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateManyWithoutRolesInput {
+  create: [UserCreateWithoutRolesInput!]
   connect: [UserWhereUniqueInput!]
 }
 
@@ -13125,7 +13278,7 @@ input UserCreateOneWithoutTeachedSessionsInput {
 
 input UserCreateWithoutAddressesInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13135,32 +13288,7 @@ input UserCreateWithoutAddressesInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
-  devices: DeviceCreateManyWithoutOwnerInput
-  officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
-  socialNetworkLinks: SocialLinkCreateManyWithoutOwnerInput
-  department: DepartmentCreateOneWithoutMembersInput
-  newses: NewsCreateManyWithoutAuthorInput
-  events: EventCreateManyWithoutAuthorInput
-  lessonsManaged: LessonCreateManyWithoutManagerInput
-  availableLessons: LessonCreateManyWithoutAvailableTeachersInput
-  teachedSessions: SessionCreateManyWithoutByInput
-  discountRequests: DiscountRequestCreateManyWithoutUserInput
-}
-
-input UserCreateWithoutAdminRoleInput {
-  id: ID
-  name: String!
-  lastname: String!
-  email: String!
-  emailVerified: Boolean
-  password: String!
-  group: UserGroup
-  groupRequest: UserGroup
-  isAdmin: Boolean
-  avatar: String
-  metadata: Json
-  addresses: AddressCreateManyWithoutOwnerInput
+  roles: RoleCreateManyWithoutUsersInput
   devices: DeviceCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
   socialNetworkLinks: SocialLinkCreateManyWithoutOwnerInput
@@ -13175,7 +13303,7 @@ input UserCreateWithoutAdminRoleInput {
 
 input UserCreateWithoutAvailableLessonsInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13185,7 +13313,7 @@ input UserCreateWithoutAvailableLessonsInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   devices: DeviceCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
@@ -13200,7 +13328,7 @@ input UserCreateWithoutAvailableLessonsInput {
 
 input UserCreateWithoutDepartmentInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13210,7 +13338,7 @@ input UserCreateWithoutDepartmentInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   devices: DeviceCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
@@ -13225,7 +13353,7 @@ input UserCreateWithoutDepartmentInput {
 
 input UserCreateWithoutDevicesInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13235,7 +13363,7 @@ input UserCreateWithoutDevicesInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
   socialNetworkLinks: SocialLinkCreateManyWithoutOwnerInput
@@ -13250,7 +13378,7 @@ input UserCreateWithoutDevicesInput {
 
 input UserCreateWithoutDiscountRequestsInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13260,7 +13388,7 @@ input UserCreateWithoutDiscountRequestsInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   devices: DeviceCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
@@ -13275,7 +13403,7 @@ input UserCreateWithoutDiscountRequestsInput {
 
 input UserCreateWithoutEventsInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13285,7 +13413,7 @@ input UserCreateWithoutEventsInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   devices: DeviceCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
@@ -13300,7 +13428,7 @@ input UserCreateWithoutEventsInput {
 
 input UserCreateWithoutLessonsManagedInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13310,7 +13438,7 @@ input UserCreateWithoutLessonsManagedInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   devices: DeviceCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
@@ -13325,7 +13453,7 @@ input UserCreateWithoutLessonsManagedInput {
 
 input UserCreateWithoutNewsesInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13335,7 +13463,7 @@ input UserCreateWithoutNewsesInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   devices: DeviceCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
@@ -13350,7 +13478,7 @@ input UserCreateWithoutNewsesInput {
 
 input UserCreateWithoutOfficialDocumentsInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13360,7 +13488,7 @@ input UserCreateWithoutOfficialDocumentsInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   devices: DeviceCreateManyWithoutOwnerInput
   socialNetworkLinks: SocialLinkCreateManyWithoutOwnerInput
@@ -13373,9 +13501,9 @@ input UserCreateWithoutOfficialDocumentsInput {
   discountRequests: DiscountRequestCreateManyWithoutUserInput
 }
 
-input UserCreateWithoutSocialNetworkLinksInput {
+input UserCreateWithoutRolesInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13385,7 +13513,32 @@ input UserCreateWithoutSocialNetworkLinksInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  addresses: AddressCreateManyWithoutOwnerInput
+  devices: DeviceCreateManyWithoutOwnerInput
+  officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
+  socialNetworkLinks: SocialLinkCreateManyWithoutOwnerInput
+  department: DepartmentCreateOneWithoutMembersInput
+  newses: NewsCreateManyWithoutAuthorInput
+  events: EventCreateManyWithoutAuthorInput
+  lessonsManaged: LessonCreateManyWithoutManagerInput
+  availableLessons: LessonCreateManyWithoutAvailableTeachersInput
+  teachedSessions: SessionCreateManyWithoutByInput
+  discountRequests: DiscountRequestCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutSocialNetworkLinksInput {
+  id: ID
+  firstname: String!
+  lastname: String!
+  email: String!
+  emailVerified: Boolean
+  password: String!
+  group: UserGroup
+  groupRequest: UserGroup
+  isAdmin: Boolean
+  avatar: String
+  metadata: Json
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   devices: DeviceCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
@@ -13400,7 +13553,7 @@ input UserCreateWithoutSocialNetworkLinksInput {
 
 input UserCreateWithoutTeachedSessionsInput {
   id: ID
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean
@@ -13410,7 +13563,7 @@ input UserCreateWithoutTeachedSessionsInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleCreateOneWithoutAdminsInput
+  roles: RoleCreateManyWithoutUsersInput
   addresses: AddressCreateManyWithoutOwnerInput
   devices: DeviceCreateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentCreateManyWithoutOwnerInput
@@ -13445,8 +13598,8 @@ enum UserOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  name_ASC
-  name_DESC
+  firstname_ASC
+  firstname_DESC
   lastname_ASC
   lastname_DESC
   email_ASC
@@ -13471,7 +13624,7 @@ type UserPreviousValues {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
+  firstname: String!
   lastname: String!
   email: String!
   emailVerified: Boolean!
@@ -13576,46 +13729,46 @@ input UserScalarWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  name: String
+  firstname: String
 
   """All values that are not equal to given value."""
-  name_not: String
+  firstname_not: String
 
   """All values that are contained in given list."""
-  name_in: [String!]
+  firstname_in: [String!]
 
   """All values that are not contained in given list."""
-  name_not_in: [String!]
+  firstname_not_in: [String!]
 
   """All values less than the given value."""
-  name_lt: String
+  firstname_lt: String
 
   """All values less than or equal the given value."""
-  name_lte: String
+  firstname_lte: String
 
   """All values greater than the given value."""
-  name_gt: String
+  firstname_gt: String
 
   """All values greater than or equal the given value."""
-  name_gte: String
+  firstname_gte: String
 
   """All values containing the given string."""
-  name_contains: String
+  firstname_contains: String
 
   """All values not containing the given string."""
-  name_not_contains: String
+  firstname_not_contains: String
 
   """All values starting with the given string."""
-  name_starts_with: String
+  firstname_starts_with: String
 
   """All values not starting with the given string."""
-  name_not_starts_with: String
+  firstname_not_starts_with: String
 
   """All values ending with the given string."""
-  name_ends_with: String
+  firstname_ends_with: String
 
   """All values not ending with the given string."""
-  name_not_ends_with: String
+  firstname_not_ends_with: String
   lastname: String
 
   """All values that are not equal to given value."""
@@ -13844,7 +13997,7 @@ input UserSubscriptionWhereInput {
 }
 
 input UserUpdateDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -13854,7 +14007,7 @@ input UserUpdateDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
@@ -13869,7 +14022,7 @@ input UserUpdateDataInput {
 }
 
 input UserUpdateInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -13879,7 +14032,7 @@ input UserUpdateInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
@@ -13894,7 +14047,7 @@ input UserUpdateInput {
 }
 
 input UserUpdateManyDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -13907,7 +14060,7 @@ input UserUpdateManyDataInput {
 }
 
 input UserUpdateManyMutationInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -13917,18 +14070,6 @@ input UserUpdateManyMutationInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-}
-
-input UserUpdateManyWithoutAdminRoleInput {
-  create: [UserCreateWithoutAdminRoleInput!]
-  connect: [UserWhereUniqueInput!]
-  set: [UserWhereUniqueInput!]
-  disconnect: [UserWhereUniqueInput!]
-  delete: [UserWhereUniqueInput!]
-  update: [UserUpdateWithWhereUniqueWithoutAdminRoleInput!]
-  updateMany: [UserUpdateManyWithWhereNestedInput!]
-  deleteMany: [UserScalarWhereInput!]
-  upsert: [UserUpsertWithWhereUniqueWithoutAdminRoleInput!]
 }
 
 input UserUpdateManyWithoutAvailableLessonsInput {
@@ -13953,6 +14094,18 @@ input UserUpdateManyWithoutDepartmentInput {
   updateMany: [UserUpdateManyWithWhereNestedInput!]
   deleteMany: [UserScalarWhereInput!]
   upsert: [UserUpsertWithWhereUniqueWithoutDepartmentInput!]
+}
+
+input UserUpdateManyWithoutRolesInput {
+  create: [UserCreateWithoutRolesInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutRolesInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutRolesInput!]
 }
 
 input UserUpdateManyWithWhereNestedInput {
@@ -14035,7 +14188,7 @@ input UserUpdateOneWithoutDevicesInput {
 }
 
 input UserUpdateWithoutAddressesDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14045,31 +14198,7 @@ input UserUpdateWithoutAddressesDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
-  devices: DeviceUpdateManyWithoutOwnerInput
-  officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
-  socialNetworkLinks: SocialLinkUpdateManyWithoutOwnerInput
-  department: DepartmentUpdateOneWithoutMembersInput
-  newses: NewsUpdateManyWithoutAuthorInput
-  events: EventUpdateManyWithoutAuthorInput
-  lessonsManaged: LessonUpdateManyWithoutManagerInput
-  availableLessons: LessonUpdateManyWithoutAvailableTeachersInput
-  teachedSessions: SessionUpdateManyWithoutByInput
-  discountRequests: DiscountRequestUpdateManyWithoutUserInput
-}
-
-input UserUpdateWithoutAdminRoleDataInput {
-  name: String
-  lastname: String
-  email: String
-  emailVerified: Boolean
-  password: String
-  group: UserGroup
-  groupRequest: UserGroup
-  isAdmin: Boolean
-  avatar: String
-  metadata: Json
-  addresses: AddressUpdateManyWithoutOwnerInput
+  roles: RoleUpdateManyWithoutUsersInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
   socialNetworkLinks: SocialLinkUpdateManyWithoutOwnerInput
@@ -14083,7 +14212,7 @@ input UserUpdateWithoutAdminRoleDataInput {
 }
 
 input UserUpdateWithoutAvailableLessonsDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14093,7 +14222,7 @@ input UserUpdateWithoutAvailableLessonsDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
@@ -14107,7 +14236,7 @@ input UserUpdateWithoutAvailableLessonsDataInput {
 }
 
 input UserUpdateWithoutDepartmentDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14117,7 +14246,7 @@ input UserUpdateWithoutDepartmentDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
@@ -14131,7 +14260,7 @@ input UserUpdateWithoutDepartmentDataInput {
 }
 
 input UserUpdateWithoutDevicesDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14141,7 +14270,7 @@ input UserUpdateWithoutDevicesDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
   socialNetworkLinks: SocialLinkUpdateManyWithoutOwnerInput
@@ -14155,7 +14284,7 @@ input UserUpdateWithoutDevicesDataInput {
 }
 
 input UserUpdateWithoutDiscountRequestsDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14165,7 +14294,7 @@ input UserUpdateWithoutDiscountRequestsDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
@@ -14179,7 +14308,7 @@ input UserUpdateWithoutDiscountRequestsDataInput {
 }
 
 input UserUpdateWithoutEventsDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14189,7 +14318,7 @@ input UserUpdateWithoutEventsDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
@@ -14203,7 +14332,7 @@ input UserUpdateWithoutEventsDataInput {
 }
 
 input UserUpdateWithoutLessonsManagedDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14213,7 +14342,7 @@ input UserUpdateWithoutLessonsManagedDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
@@ -14227,7 +14356,7 @@ input UserUpdateWithoutLessonsManagedDataInput {
 }
 
 input UserUpdateWithoutNewsesDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14237,7 +14366,7 @@ input UserUpdateWithoutNewsesDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
@@ -14251,7 +14380,7 @@ input UserUpdateWithoutNewsesDataInput {
 }
 
 input UserUpdateWithoutOfficialDocumentsDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14261,7 +14390,7 @@ input UserUpdateWithoutOfficialDocumentsDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   socialNetworkLinks: SocialLinkUpdateManyWithoutOwnerInput
@@ -14274,8 +14403,8 @@ input UserUpdateWithoutOfficialDocumentsDataInput {
   discountRequests: DiscountRequestUpdateManyWithoutUserInput
 }
 
-input UserUpdateWithoutSocialNetworkLinksDataInput {
-  name: String
+input UserUpdateWithoutRolesDataInput {
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14285,7 +14414,31 @@ input UserUpdateWithoutSocialNetworkLinksDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  addresses: AddressUpdateManyWithoutOwnerInput
+  devices: DeviceUpdateManyWithoutOwnerInput
+  officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
+  socialNetworkLinks: SocialLinkUpdateManyWithoutOwnerInput
+  department: DepartmentUpdateOneWithoutMembersInput
+  newses: NewsUpdateManyWithoutAuthorInput
+  events: EventUpdateManyWithoutAuthorInput
+  lessonsManaged: LessonUpdateManyWithoutManagerInput
+  availableLessons: LessonUpdateManyWithoutAvailableTeachersInput
+  teachedSessions: SessionUpdateManyWithoutByInput
+  discountRequests: DiscountRequestUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutSocialNetworkLinksDataInput {
+  firstname: String
+  lastname: String
+  email: String
+  emailVerified: Boolean
+  password: String
+  group: UserGroup
+  groupRequest: UserGroup
+  isAdmin: Boolean
+  avatar: String
+  metadata: Json
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
@@ -14299,7 +14452,7 @@ input UserUpdateWithoutSocialNetworkLinksDataInput {
 }
 
 input UserUpdateWithoutTeachedSessionsDataInput {
-  name: String
+  firstname: String
   lastname: String
   email: String
   emailVerified: Boolean
@@ -14309,7 +14462,7 @@ input UserUpdateWithoutTeachedSessionsDataInput {
   isAdmin: Boolean
   avatar: String
   metadata: Json
-  adminRole: AdminRoleUpdateOneWithoutAdminsInput
+  roles: RoleUpdateManyWithoutUsersInput
   addresses: AddressUpdateManyWithoutOwnerInput
   devices: DeviceUpdateManyWithoutOwnerInput
   officialDocuments: OfficialDocumentUpdateManyWithoutOwnerInput
@@ -14322,11 +14475,6 @@ input UserUpdateWithoutTeachedSessionsDataInput {
   discountRequests: DiscountRequestUpdateManyWithoutUserInput
 }
 
-input UserUpdateWithWhereUniqueWithoutAdminRoleInput {
-  where: UserWhereUniqueInput!
-  data: UserUpdateWithoutAdminRoleDataInput!
-}
-
 input UserUpdateWithWhereUniqueWithoutAvailableLessonsInput {
   where: UserWhereUniqueInput!
   data: UserUpdateWithoutAvailableLessonsDataInput!
@@ -14335,6 +14483,11 @@ input UserUpdateWithWhereUniqueWithoutAvailableLessonsInput {
 input UserUpdateWithWhereUniqueWithoutDepartmentInput {
   where: UserWhereUniqueInput!
   data: UserUpdateWithoutDepartmentDataInput!
+}
+
+input UserUpdateWithWhereUniqueWithoutRolesInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutRolesDataInput!
 }
 
 input UserUpsertNestedInput {
@@ -14387,12 +14540,6 @@ input UserUpsertWithoutTeachedSessionsInput {
   create: UserCreateWithoutTeachedSessionsInput!
 }
 
-input UserUpsertWithWhereUniqueWithoutAdminRoleInput {
-  where: UserWhereUniqueInput!
-  update: UserUpdateWithoutAdminRoleDataInput!
-  create: UserCreateWithoutAdminRoleInput!
-}
-
 input UserUpsertWithWhereUniqueWithoutAvailableLessonsInput {
   where: UserWhereUniqueInput!
   update: UserUpdateWithoutAvailableLessonsDataInput!
@@ -14403,6 +14550,12 @@ input UserUpsertWithWhereUniqueWithoutDepartmentInput {
   where: UserWhereUniqueInput!
   update: UserUpdateWithoutDepartmentDataInput!
   create: UserCreateWithoutDepartmentInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutRolesInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutRolesDataInput!
+  create: UserCreateWithoutRolesInput!
 }
 
 input UserWhereInput {
@@ -14498,46 +14651,46 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  name: String
+  firstname: String
 
   """All values that are not equal to given value."""
-  name_not: String
+  firstname_not: String
 
   """All values that are contained in given list."""
-  name_in: [String!]
+  firstname_in: [String!]
 
   """All values that are not contained in given list."""
-  name_not_in: [String!]
+  firstname_not_in: [String!]
 
   """All values less than the given value."""
-  name_lt: String
+  firstname_lt: String
 
   """All values less than or equal the given value."""
-  name_lte: String
+  firstname_lte: String
 
   """All values greater than the given value."""
-  name_gt: String
+  firstname_gt: String
 
   """All values greater than or equal the given value."""
-  name_gte: String
+  firstname_gte: String
 
   """All values containing the given string."""
-  name_contains: String
+  firstname_contains: String
 
   """All values not containing the given string."""
-  name_not_contains: String
+  firstname_not_contains: String
 
   """All values starting with the given string."""
-  name_starts_with: String
+  firstname_starts_with: String
 
   """All values not starting with the given string."""
-  name_not_starts_with: String
+  firstname_not_starts_with: String
 
   """All values ending with the given string."""
-  name_ends_with: String
+  firstname_ends_with: String
 
   """All values not ending with the given string."""
-  name_not_ends_with: String
+  firstname_not_ends_with: String
   lastname: String
 
   """All values that are not equal to given value."""
@@ -14726,7 +14879,9 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   avatar_not_ends_with: String
-  adminRole: AdminRoleWhereInput
+  roles_every: RoleWhereInput
+  roles_some: RoleWhereInput
+  roles_none: RoleWhereInput
   addresses_every: AddressWhereInput
   addresses_some: AddressWhereInput
   addresses_none: AddressWhereInput

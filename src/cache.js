@@ -3,8 +3,8 @@ import prisma from './prisma'
 import { usersCacheKey, eventsCacheKey, newsesCacheKey } from './constants'
 
 const queryCacheUsers = `{
-    id email password name lastname isAdmin emailVerified groupRequest group
-    devices { notificationsId notificationsPermission }
+    id email password firstname lastname isAdmin emailVerified groupRequest group
+    devices { notificationsDevice notificationsPermission }
 }`
 const queryCacheEvents = `{
     id title subtitle imageURL date target status author { id }

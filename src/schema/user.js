@@ -4,7 +4,7 @@ import isEmail from 'validator/lib/isEmail';
 import { cacheUsers } from '../cache';
 import { userSessionIdPrefix } from '../constants';
 import { sendBetaWelcome, sendConfirmationEmail, sendConfirmGroup, sendEmail, sendRejectGroup, sendResetPassword } from '../utils/emailService';
-import { generateResetToken } from '../utils/generateToken';
+import { generateResetToken, generateLoginToken } from '../utils/generateToken';
 import hashPassword from '../utils/hashPassword';
 import { getUserByEmail, getUserById } from '../utils/queryCache';
 
@@ -15,19 +15,19 @@ import { getUserByEmail, getUserById } from '../utils/queryCache';
 export const typeDef = `
 type User {
     id: ID!
-    name: String
+    firstname: String
     lastname: String
     email: String
     emailVerified: Boolean
     password: String!
     group: UserGroup!
     groupRequest: UserGroup
-    address: Address
-    phone: PhoneNumber
     isAdmin: Boolean
 
     newses: [News!]!
     events: [Event!]!
+
+    devices: [Device!]!
 
     notificationsDevice: String
     notificationsPermission: Boolean
@@ -36,6 +36,28 @@ type User {
     notificationsPrefReminderEmail: Boolean
     notificationsPrefReminderPush: Boolean
 }
+
+enum DeviceType {
+  PHONE
+  TABLET
+  OTHER
+}
+
+type Device {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  owner: User
+  countryCode: String
+  number: String
+  type: DeviceType!
+  notificationsId: String
+  notificationsPermission: Boolean
+  verified: Boolean!
+}
+
+
 type UserPayload {
   user: User
   error: String
@@ -57,14 +79,12 @@ input LoginUserMobileInput {
 input CreateUserInput {
     email: String!
     password: String!
-    name: String
-    lastname: String
+    firstname: String!
+    lastname: String!
     groupRequest: UserGroup
-    nID: String
-    nIDType: nIdType
 }
 input UpdateUserInput {
-    name: String
+    firstname: String
     lastname: String
     group: UserGroup
     isAdmin: Boolean
@@ -112,7 +132,7 @@ export const Resolvers = {
     },
     Query: {
         users(parent, { query, group }, { prisma }, info) {
-            const q = {where: { OR: [ { name_contains: query || ''}, {lastname_contains: query || ''}, {email_contains: query || ''} ] }}
+            const q = {where: { OR: [ { firstname_contains: query || ''}, {lastname_contains: query || ''}, {email_contains: query || ''} ] }}
             if (group) q.where.AND = [{group}]
             return prisma.query.users(q, info)
         },
@@ -139,15 +159,15 @@ export const Resolvers = {
             if (await getUserByEmail(data.email)) throw new Error('la dirección de email introducida ya está en uso...') // return { error: '@signUpUser: email already registered' }
             const password = await hashPassword(data.password)
             if (data.groupRequest && data.groupRequest != 'PUBLIC') {
-              await sendEmail('enrique.prez.velasco@gmail.com', 'aaXadmin: User Group Request', `User ${data.name} ${data.lastname} has requested to join ${data.groupRequest} group. Please review this case to confirm the join.`)
+              await sendEmail('enrique.prez.velasco@gmail.com', 'aaXadmin: User Group Request', `User ${data.firstname} ${data.lastname} has requested to join ${data.groupRequest} group. Please review this case to confirm the join.`)
             }
             data.group = 'PUBLIC'
-            const user = await prisma.mutation.createUser({ data: { ...data, password } }, '{ id }')
+            const {id} = await prisma.mutation.createUser({ data: { ...data, password } }, '{ id }')
             await cacheUsers()
-            const token = generateResetToken(user)
+            const token = generateResetToken({id})
             const link = `${process.env.FRONT_END_HOST}confirm-email/${token}`
-            const res = await sendConfirmationEmail(data.email, link)
-            return { token: user.id }
+            await sendConfirmationEmail(data.email, link)
+            return { token }
           }
           catch(error) { throw new Error(error.message) }// return { error: `@signUpUser: ${error.message}`} }
         },
@@ -168,7 +188,7 @@ export const Resolvers = {
               await prisma.mutation.updateUser({ where: { id }, data: { password: '' } }, '{ id }')
               const token = generateResetToken({id: user.id})
               const link = `${process.env.FRONT_END_HOST}change-password/${token}`
-              await sendResetPassword(email, link, user.name)
+              await sendResetPassword(email, link, user.firstname)
               return { token }
             } catch(err) { return {error: `error @sendForgotPasswordEmail: ${err.message}`} }
             
@@ -188,27 +208,28 @@ export const Resolvers = {
             } catch(error) { return {error: `@changePassword: ${error.message}`} }
 
         },
-        async loginUser(parent, {data}, { session, request, redis }, info) {
+        async loginUser(parent, {data}, { session, request, response, redis }, info) {
             if (!isEmail(data.email)) return { error: '@logInUser: email not valid' }
             const user = await getUserByEmail(data.email)
             if ( !user  ) return {error: `@loginUser: User not found`}
             const match = await bcrypt.compare(data.password, user.password)
             if ( !match ) return {error: `@loginUser: Invalid password`}
+
             if (!user.emailVerified) {
-              const token = generateResetToken({id: user.id})
-              const link = `${process.env.FRONT_END_HOST}confirm-email/${token}`
-              const res = await sendConfirmationEmail(data.email, link)
+              const link = `${process.env.FRONT_END_HOST}confirm-email/${generateResetToken({id: user.id})}`
+              sendConfirmationEmail(data.email, link)
               return {error: '@loginUser: eMail not verified'}
             }
+
             session.userId = user.id
             session.isAdmin = user.isAdmin
             session.group = user.group
-            console.log('SESSION: ', session)
+            const token = generateLoginToken({ userId: user.id, isAdmin: user.isAdmin, group: user.group})
+
             if (request.sessionID) { await redis.lpush(`${userSessionIdPrefix}${user.id}`, request.sessionID) }
-            return { token: user.id }
+            return { token , error:'' }
         },
         async loginUserMobile(parent, {data}, { prisma }, info) {
-            // if (!isEmail(data.email)) return { error: '@logInUser: email not valid' }
             const user = await getUserByEmail(data.email)
             if ( !user  ) { throw new Error('El email no coincide con ningún usuario') }
             const match = await bcrypt.compare(data.password, user.password)
@@ -280,15 +301,15 @@ export const Resolvers = {
               const { group, groupRequest } = user
               if (!groupRequest) { return {error:'@confirmGroupRequest: no request found...'}}
               if (confirm && groupRequest) {
-                const res = await prisma.mutation.updateUser({where: {id}, data:{group: groupRequest, groupRequest: null}}, '{id email name lastname}' )
+                const res = await prisma.mutation.updateUser({where: {id}, data:{group: groupRequest, groupRequest: null}}, '{id email firstname lastname}' )
                 await cacheUsers()
-                sendConfirmGroup(res.email, res.name, groupRequest)
+                sendConfirmGroup(res.email, res.firstname, groupRequest)
                 return {token: res.id}
               }
               else {
-                const res = await prisma.mutation.updateUser({where: {id}, data:{groupRequest: null}}, '{id, email, name}' )
+                const res = await prisma.mutation.updateUser({where: {id}, data:{groupRequest: null}}, '{id, email, firstname}' )
                 await cacheUsers()
-                sendRejectGroup(res.email, res.name, groupRequest)
+                sendRejectGroup(res.email, res.firstname, groupRequest)
                 return {token: res.id}
               }
             } catch(error) { return {error: `@confirmGroupRequest: ${error}`}}

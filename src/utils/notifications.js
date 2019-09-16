@@ -1,5 +1,5 @@
 import Expo from 'expo-server-sdk';
-let expo = new Expo();
+const expo = new Expo();
 
 export const sendNotification = async (PushTokens, title, body, data) => {
     // Create the messages that you want to send to clients
