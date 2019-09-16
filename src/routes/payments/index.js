@@ -398,16 +398,12 @@ paymentRoutes.get('/attendee/find/discount', async (req, res) => {
             {where: {email}},
             `{
                 email firstname lastname
-                discountRequests(
-                    where: { 
-                      AND: [ 
+                discountRequests
+                (where: {  AND:  [ 
                       {  discount: { product: {id: "${paymentConfig.baseProductIDs.attendee}"} }  },
                       { approved: true },
                       { applied: false }
-                    ] 
-                    }
-                    ) { id applied approved discount { id name description unitPrice } }
-                }
+                ]}) { id applied approved discount { id name description unitPrice } }
             }`
         )
         if (!foundDiscount) {
