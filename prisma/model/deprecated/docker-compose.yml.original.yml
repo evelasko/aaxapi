@@ -1,4 +1,3 @@
-# DEPRECATED! USE THE ONE @ ~/Docker/prisma AND RECOMPOSE
 version: '3'
 services:
   prisma:
@@ -14,11 +13,11 @@ services:
         databases:
           default:
             connector: postgres
-            host: postgres_container # ec2-54-246-117-62.eu-west-1.compute.amazonaws.com
+            host: ec2-54-246-117-62.eu-west-1.compute.amazonaws.com
             port: '5432'
-            database: prismadevserver # d7l5hh2b1rervd
-            ssl: false
-            user: potter # xytxnirrjgbtzc
-            password: 810101 # 9f4bbf20949db64bcd5a756e1a365a64d5bde4388ec7942e3cb4022b31174b34
+            database: d7l5hh2b1rervd
+            ssl: true
+            user: xytxnirrjgbtzc
+            password: 9f4bbf20949db64bcd5a756e1a365a64d5bde4388ec7942e3cb4022b31174b34
             migrations: true
             rawAccess: true

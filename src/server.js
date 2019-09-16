@@ -9,6 +9,7 @@ import prisma from './prisma';
 import { fragmentReplacements, resolvers, typeDefs } from './schema';
 import paymentRoutes from './routes/payments'
 import hbs from 'express-handlebars'
+import { verify } from 'jsonwebtoken'
 
 export const redis = new Redis(process.env.REDIS_URL)
 
@@ -42,6 +43,20 @@ server.express.use(session(
     }
   })
 )
+
+server.express.use(({session, headers}, _, next) => {
+  let user = undefined
+  try {
+    if (headers.auth) user = verify(headers.auth, process.env.JWT_SECRET)
+    if (user) {
+      session.userId = user.userId
+      session.isAdmin = user.isAdmin
+      session.group = user.group
+    }
+  } catch(e) { next(); return }
+  next()
+})
+
 server.express.use('/payment', paymentRoutes)
 server.express.use('/images', express.static('images'))
 server.express.use('/resources', express.static('resources'))

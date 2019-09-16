@@ -1,8 +1,8 @@
 import shortid from 'shortid';
-import { json } from 'body-parser';
 const Entities = require('html-entities').AllHtmlEntities;
 const Redsys = require('node-redsys-api').Redsys;
 const orderid = require('order-id')(process.env.JWT_SECRET)
+import paymentConfig from './config'
 
 //Snippet to generate order reference
 export const generateOrderId = () => {
@@ -42,9 +42,9 @@ export const createPayment = ({data, description, total, titular, paymentId, url
         // "DS_MERCHANT_PAN":pan,
         // "DS_MERCHANT_EXPIRYDATE":expiry,
         // "DS_MERCHANT_CVV2":ccv,
-        "DS_MERCHANT_MERCHANTURL": process.env.HOST + "payment/confirmation",
-        "DS_MERCHANT_URLOK": urlOk || process.env.HOST + "payment/confirmation/ok",
-        "DS_MERCHANT_URLKO":urlKo
+        "DS_MERCHANT_MERCHANTURL": paymentConfig.paymentConfirmationRoute,
+        "DS_MERCHANT_URLOK": urlOk || paymentConfig.payment_OK_Route,
+        "DS_MERCHANT_URLKO":urlKo || paymentConfig.payment_KO_Route
     };
     return  {
         signature: redsys.createMerchantSignature(DS_MERCHANT_KEY, mParams),
@@ -66,14 +66,15 @@ export const processResponse = (tpvResponse) => {
     const entities = new Entities();
 
     if (redsys.merchantSignatureIsValid(signature , merchantSignatureNotif) && dsResponse > -1 && dsResponse < 100 ) {
-        console.log('TPV payment is OK');
+        console.log('😉 TPV 支払い OK');
         return { 
             merchantParamsDecoded, 
             data: JSON.parse(entities.decode(merchantParamsDecoded.Ds_MerchantData)),
+            Ds_AuthorisationCode,
             response: true
         }
     } else {
-        console.log('TPV payment KO');
+        console.log('😣 TPV 支払い was KO');
         return { merchantParamsDecoded, response: false}
     }
 }

@@ -1,0 +1,78 @@
+type Program {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    name: String! @unique
+    shortName: String! @unique
+    description: String
+    branches: [Branch!]! @relation(name: "ProgramBranches", onDelete: CASCADE)
+}
+
+type Branch {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    name: String! @unique
+    shortName: String! @unique
+    description: String
+    program: Program! @relation(name: "ProgramBranches", link: INLINE, onDelete: SET_NULL)
+    subjects: [Subject!]! @relation(name: "BranchSubjects", onDelete: CASCADE)
+}
+
+type Subject {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    name: String! @unique
+    shortName: String! @unique
+    description: String
+    branch: Branch! @relation(name: "BranchSubjects", link: INLINE, onDelete: SET_NULL)
+    lesson: Lesson @relation(name: "SubjectLessons", link: INLINE, onDelete: CASCADE)
+}
+
+type Lesson {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    name: String!
+    subjects: [Subject!]! @relation(name: "SubjectLessons", onDelete: SET_NULL)
+    period: OperatingPeriod! @relation(name: "OperatingPeriodLessons", link: INLINE, onDelete: SET_NULL)
+    sessions: [Session!]! @relation(name: "LessonSessions", link: TABLE onDelete: SET_NULL)
+    manager: User! @relation(name: "LessonManager" link: INLINE, onDelete: SET_NULL)
+    availableTeachers: [User!]! @relation(name: "LessonsTeachers", link: TABLE, onDelete: CASCADE)
+}
+
+type OperatingPeriod {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    yearStart: Int!
+    yearEnd: Int!
+    lessons: [Lesson!]! @relation(name: "OperatingPeriodLessons", onDelete: CASCADE)
+}
+
+type Session {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    lesson: Lesson! @relation(name: "LessonSessions", onDelete: SET_NULL)
+    closedAt: DateTime!
+    by: User! @relation(name: "TeachedSession", link: INLINE, onDelete: SET_NULL)
+    at: Space! @relation(name: "SessionSpace", link: INLINE, onDelete: SET_NULL)
+}
+
+type LessonSessions @relationTable {
+    lesson: Lesson!
+    session: Session!
+}
+
+type LessonsTeachers @relationTable {
+    teacher: User!
+    lesson: Lesson!
+}

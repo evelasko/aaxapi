@@ -2,11 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import QRCode from 'qrcode';
 import  { createPayment, processResponse } from './utils'
-import manager, { Product, Discount, Invoice, pCategory, addDiscount } from './manager'; 
 import { sendEmail } from '../../utils/emailService';
 import formidable from 'formidable'
 import cloudinary from '../../utils/upload'
-import NotifEmails from './notifications'
+import prisma from '../../prisma'
+import paymentConfig from './config'
 
 const whitelist = [
     'http://localhost',
@@ -28,28 +28,11 @@ const paymentRoutes = express.Router()
 paymentRoutes.use(express.json())
 paymentRoutes.use(cors())
 
-//-- Payment Routes
-paymentRoutes.post('/', async (req, res) => {
-    // check if verification token is correct
-    // if (req.query.token !== token) {
-    //     return res.sendStatus(401);
-    // }
-  
-    // print request body
-    // console.log('Req Body: ',req.body);
+//-- ROUTES
 
-    
-    const data = {
-        responses: [
-            {
-                type: 'text',
-                elements: "request received"
-            },
-        ]
-    };
-  
-    res.json(data);
-});
+paymentRoutes.get('/', async(req, res) => {
+    res.send('PAYMENT ROUTE BASE')
+})
 
 //-- Get signature to process payment
 paymentRoutes.post('/getsignature', cors(corsLimited), async (req, res) => {
@@ -69,68 +52,115 @@ paymentRoutes.post('/getsignature', cors(corsLimited), async (req, res) => {
 //-- Receive payment response from bank
 paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), async ({body}, res) => {
 
-    // const body = { 
-    //             Ds_SignatureVersion: 'HMAC_SHA256_V1',
-    //             Ds_MerchantParameters: 'eyJEc19EYXRlIjoiMjhcLzA4XC8yMDE5IiwiRHNfSG91ciI6IjEyOjI3IiwiRHNfU2VjdXJlUGF5bWVudCI6IjEiLCJEc19DYXJkX0NvdW50cnkiOiI3MjQiLCJEc19BbW91bnQiOiIxMDAiLCJEc19DdXJyZW5jeSI6Ijk3OCIsIkRzX09yZGVyIjoiMjczN01Sb0xvSFgiLCJEc19NZXJjaGFudENvZGUiOiIyODU0NjU3MjAiLCJEc19UZXJtaW5hbCI6IjAwMiIsIkRzX1Jlc3BvbnNlIjoiMDAwMCIsIkRzX01lcmNoYW50RGF0YSI6InsmIzM0O2ZpcnN0bmFtZSYjMzQ7OiYjMzQ7RW5yaXF1ZSYjMzQ7LCYjMzQ7bGFzdG5hbWUmIzM0OzomIzM0O1BlcmV6JiMzNDssJiMzNDtlbWFpbCYjMzQ7OiYjMzQ7ZGVzY3VlbnRvQGVzdHVkaWFudGUuY29tJiMzNDssJiMzNDthZGRyZXNzMSYjMzQ7OiYjMzQ7RWR1YXJkbyBSaXZhcyAxNCYjMzQ7LCYjMzQ7YWRkcmVzczImIzM0OzomIzM0OyYjMzQ7LCYjMzQ7Y291bnRyeSYjMzQ7OiYjMzQ7U3BhaW4mIzM0OywmIzM0O3JlZ2lvbiYjMzQ7OiYjMzQ7TWFkcmlkJiMzNDssJiMzNDtjaXR5JiMzNDs6JiMzNDtNYWRyaWQmIzM0OywmIzM0O3ppcCYjMzQ7OiYjMzQ7MjgwMDkmIzM0OywmIzM0O3RvdGFsJiMzNDs6MX0iLCJEc19UcmFuc2FjdGlvblR5cGUiOiIwIiwiRHNfQ29uc3VtZXJMYW5ndWFnZSI6IjEiLCJEc19BdXRob3Jpc2F0aW9uQ29kZSI6IjMzMTIxNCIsIkRzX0NhcmRfQnJhbmQiOiIxIn0=',
-    //             Ds_Signature: 't7X1rLJU-71qunQkBMcrT8QG6Zb-pQXeH_U_U_HZ2Bs=' 
-    //         }
-
     const params = processResponse(body)
 
     if (params.response) {
         //-- the transaction went thru
-
-        //-- create data for the invoice and the ticket
         const { 
             merchantParamsDecoded: { Ds_AuthorisationCode, Ds_Order, Ds_Amount },
             data: { 
-                productId, 
-                firstname, lastname, email, address1, address2, city, region, country, zip }
+                productId, discountId,
+                firstname, lastname, email, address1, address2, city, region, country, code }
         } = params
 
-        //-- fake product ID for testing
-        // const productId = "156f39d8-6521-4a1a-b263-2f29f9f5e8e8"
-        // retrieve the product from database using the id that came in the json data parameter
-        const purchasedProduct = await Product.findOne({ where: { id: productId }})
+        //-- check if user exists and has a primary address set
+        const user = await prisma.query.user({where:{email}}, `{ addresses(where:{primary:true}) { id }  }`)
+        if (!user) {
+            await prisma.mutation.createUser(
+                {
+                    data: {
+                        email, firstname, lastname, password: process.env.SCHEMA_GUEST_USERS_PWD,
+                        addresses: { create: { primary: true, address1, address2, city, region, code, country } }
+                    }
+                },
+                `{ id }`)
+        } else {
+            await prisma.mutation.updateUser(
+                {
+                    where: { email },
+                    data: {
+                        addresses: { create: { primary: true, address1, address2, city, region, code, country } }
+                    }
+                },
+                `{ id }`
+            )
+        }
 
-        //-- create new invoice 
-        let receipt = await Invoice.create({
-            email, firstname, lastname, address1, address2, city, region, country, zip,
-            orderid: Ds_Order,
-            paymentid: Ds_AuthorisationCode,
-            amount: Ds_Amount
-        })
-        //-- link invoice to purchased product
-        receipt = await receipt.setProduct(purchasedProduct)
-        //-- check if discount and set applied to true
-        const discount = await Discount.findOne({ where: { email }})
-        if (discount) { await discount.update({applied: true}) }
+        //-- create data for the invoice and the ticket
         
-        //-- compose and send email/ticket to buyer
-        const qrcode = await QRCode.toDataURL(Ds_Order)
-        const browserURL = `${process.env.HOST}payment/receipt/${Ds_Order}`
-        const mailResponse = await sendEmail(
-            email, // address to send mail to
-            'Confirmación de Participación — I Congreso Mundial de Investigación en las Artes del Espectáculo', // subject
-            `Por favor usa el siguiente vínculo: ${browserURL} para visualizar su ticket de confirmación de asistencia al I Congreso Mundial de Investigación en las Artes Escénicas`, // fallback text
-            `views/emailticket.hbs`, //-- template file
-            { 
-                qrcode,
-                browserURL, //-- variable to include in the email template with the address to access without mail client
-                Ds_Order, //-- comes from the bank response, not from our data params
-                ticketName: purchasedProduct.name, //ombine product name with product description,
-                ticketDescription: purchasedProduct.description,
-                total: (parseInt(Ds_Amount)/100).toFixed(2).toString(), //-- the amount charged for the ticket, take the one coming from the bank fromated as text incuding euro
-                fullname: `${firstname} ${lastname}`, //-- complete name of the participant
-                address1, 
-                address2, 
-                city, 
-                region, 
-                country, 
-                zip 
-            } 
-        )
-        res.send("done")
+        try {
+            let args = {
+                data: {
+                    total: Ds_Amount,
+                    reference: Ds_Order,
+                    paymentSettled: true,
+                    customer: { connect: { email } },
+                    transactions: { 
+                        create: {
+                            type: "SALE",
+                            reference: Ds_AuthorisationCode,
+                            amount: Ds_Amount,
+                        }
+                    },
+                    items: { 
+                        create: {
+                            quantity: 1,
+                            orderPrice: Ds_Amount,
+                            product: { connect: { id: productId} },
+                        } 
+                    }
+                }
+            }
+
+            let discountRequest = null
+            // add the discount to the order mutation arguments and set it to APPLIED: TRUE
+            if (discountId) {
+                    args.data.items.create.discount = { connect: { id: discountId } }
+                    info = `{ id items { product { name description } discount { name } } }`
+                    const { discountRequests } = await prisma.query.user(
+                        {where:{email}}, 
+                        `{discountRequests(where: { discount: { id: "${discountId}"}}) { id }}`
+                    )
+                    discountRequest = await prisma.mutation.updateDiscountRequest(
+                        {where:{id:discountRequests[0].id}, data:{applied:true}},
+                        `{ discount { name }}`)
+            }
+
+            // create Order / Transaction
+            const order = await prisma.mutation.createOrder( args, `{ id items { product { name description } } }`)
+
+            const ticketName = discountRequest ? 
+                `${order.items[0].product.name} (${discountRequest.discount.name})` 
+                : 
+                `${order.items[0].product.name}`
+            const ticketDescription = `${order.items[0].product.description}`
+        
+            //-- compose and send email/ticket to buyer
+            const qrcode = await QRCode.toDataURL(Ds_Order)
+            const browserURL = `${process.env.HOST}payment/receipt/${order.id}`
+            await sendEmail(
+                email, // address to send mail to
+                'Confirmación de Participación — I Congreso Mundial de Investigación en las Artes del Espectáculo', // subject
+                `Por favor usa el siguiente vínculo: ${browserURL} para visualizar su ticket de confirmación de asistencia al I Congreso Mundial de Investigación en las Artes Escénicas`, // fallback text
+                `views/emailticket.hbs`, //-- template file
+                { 
+                    qrcode,
+                    browserURL, //-- variable to include in the email template with the address to access without mail client
+                    Ds_Order, //-- comes from the bank's response, not from our data params
+                    ticketName, 
+                    ticketDescription,
+                    total: (parseInt(Ds_Amount)/100).toFixed(2).toString(), //-- the amount charged for the ticket, take the one coming from the bank fromated as text incuding euro
+                    fullname: `${firstname} ${lastname}`, //-- complete name of the participant
+                    address1, 
+                    address2, 
+                    city, 
+                    region, 
+                    country, 
+                    code 
+                } 
+            )
+            res.send("done")
+        } catch(e) { throw new Error(`@ /confirmation (create order and notify):\n${e}`)}
     }
     else {
         console.log("ERROR! TRANSACTION WAS KO...")
@@ -140,32 +170,46 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
 //-- render receipt in browser
 paymentRoutes.get('/receipt/:orderid', express.urlencoded({extended: true}), async (req, res) => {
     const { params: { orderid } } = req
-    const invoice = await Invoice.findOne({ where: { orderid }, include: [{ model:Product }] })
-    if (!invoice) {
-        res.send(`<h2>No Order for ${orderid} was found...</h2>`)
-        return null
-    }
-    // res.send(invoice)
-    // return null
-    const { address1, address2, city, region, country, zip } = invoice
-    const qrcode = await QRCode.toDataURL(orderid)
-    res.render('emailticket', {
-        layout: false,
-        qrcode,
-        Ds_Order: orderid,
-        ticketName: invoice.product.name,
-        ticketDescription: invoice.product.description,
-        total: (parseInt(invoice.amount)/100).toFixed(2).toString(),
-        fullname: `${invoice.firstname} ${invoice.lastname}`,
-        address1, 
-        address2, 
-        city, 
-        region, 
-        country, 
-        zip 
-    })
-})
+    try {
+        const order = await prisma.query.order({where: { id: orderid}}, `{
+            id
+            reference
+            total
+            customer { 
+                firstname 
+                lastname
+                addresses(where: { primary: true }) {
+                    address1 address2 city region code country
+                }
+            }
+            items {
+                orderPrice
+                product { name description }
+                discount { name description }
+                quantity
+            }
+        }`)
 
+        if (!order) {
+            res.send(`<h2>No Order found for ID: ${orderid} ...</h2>`)
+            return
+        }
+
+        const { reference, total, items, customer: { firstname, lastname, addresses } } = order
+
+        const qrcode = await QRCode.toDataURL(reference)
+        res.render('emailticket', {
+            layout: false,
+            qrcode,
+            Ds_Order: reference,
+            ticketName: `${items[0].product.name} – ${items[0].discount ? items[0].discount.name : ''}`,
+            ticketDescription: items[0].product.description,
+            total: (parseInt(total)/100).toFixed(2).toString(),
+            fullname: `${firstname} ${lastname}`,
+            ...addresses[0]
+        })
+    } catch(e) { throw new Error(` @ /receipt/order (render hbs):\n ${e}`)}
+})
 
 
 // GET STORE DATA
@@ -174,14 +218,7 @@ paymentRoutes.get('/receipt/:orderid', express.urlencoded({extended: true}), asy
 // -----------------------------------------------------------
 //-- get all products
 paymentRoutes.get('/products', express.urlencoded({extended:true}), async (req, res) => {
-    try { res.send({ products: await Product.findAll() }) }
-    catch(e) { res.send({error:e}) }
-})
-//-- create new product ***
-paymentRoutes.post('/product/new', cors(corsLimited), async ({query}, res) => {
-    //-- validation must occur @ frontend
-    //-- to always receive: name, description, content, unitprice, category    
-    try { res.send({ product: await Product.create({ ...query }) }) }
+    try { res.send({ products: await prisma.query.products({}, `{ id name description }`)}) }
     catch(e) { res.send({error:e}) }
 })
 
@@ -192,91 +229,124 @@ paymentRoutes.post('/product/new', cors(corsLimited), async ({query}, res) => {
 paymentRoutes.get('/attendee/base', async (req, res) => {
     try {
         res.send({
-            baseProduct: await Product.findOne({where: { category: 'Attendee', base: true}})
+            baseProduct: await prisma.query.product(
+                {where: {id: process.env.CONGRESS_ATT_BASE_PROD} }, 
+                `{ id name description content unitPrice }`
+            )
         })
     } catch(e) { res.send({ baseProduct: null, error:e}) } 
 })
 
-//-- get attendee's available discounts
+//-- get available discounts fo attendee's base product
 paymentRoutes.get('/attendee/discounts', async (req, res) => {
     try {
-        res.send({ discounts: await Product.findAll({ where: { category: 'Attendee', base: false } } ) })
+        const { discounts } = await prisma.query.product(
+            {where: { id: process.env.CONGRESS_ATT_BASE_PROD} },
+            `{ discounts { id name description unitPrice requirements } }`
+        ) //
+        res.send({discounts})
     } catch(e) { res.send({ discounts: null, error: e})}
 })
 
-//-- set new discount and notify
-paymentRoutes.post('/request/discount', cors(corsLimited), async (req, res) => {
+//-- create new discount request and notify
+paymentRoutes.post('/attendee/requestdiscount', cors(corsLimited), async (req, res) => {
     var form = new formidable.IncomingForm();
     form.multiples = true
     form.parse(req, async (err, { email, discount, firstname, lastname }, { files }) => {
-        const emailCheck = await Discount.findOne({where: { email }})
-        if (emailCheck) {
-            res.send({error: 'email already used'})
-            return
-        }
-        let fl = []
-        if (!Array.isArray(files)) { fl.push(files) }
-        else { fl = files }
-        let res_promises = fl.map(file => new Promise((resolve, reject) => {
-            cloudinary.v2.uploader.upload(file.path, { 
-                    folder: 'congreso_documentacion',
-                    use_filename: true,
-                    unique_filename: true 
-                }, 
-                function (error, result) {
-                    if(error) reject(error)
-                    else resolve(result.secure_url)
-                }
-            )
-        })
-        )
-        // Promise.all will fire when all promises are resolved 
-        Promise.all(res_promises)
-        .then(async (result) => {
-            try { 
-                const newDiscount = await addDiscount({email, firstname, lastname, productId: discount, documentation: result})
-                const product = await Product.findOne({where: {id: discount}})
-                // notify 
+        try {
+            const user = await prisma.query.user({where: { email }}, `{
+                id firstname lastname discountRequests(where: {discount: {product: {id:"${paymentConfig.baseProductIDs.attendee}"}}}) { id }
+            }`)
 
-                const approveLink = `${process.env.HOST}payment/discount/approve/${newDiscount.id}`
-                const link = `${process.env.HOST}payment/request/discount/${newDiscount.id}`
+            if (user) {
+                res.send({error: 'discount request already exists for that email address'})
+                return
+            }
+            let fl = []
+            if (!Array.isArray(files)) { fl.push(files) }
+            else { fl = files }
+            let res_promises = fl.map(file => new Promise((resolve, reject) => {
+                cloudinary.v2.uploader.upload(file.path, { 
+                        folder: 'congreso_documentacion',
+                        use_filename: true,
+                        unique_filename: true 
+                    }, 
+                    function (error, result) {
+                        if(error) reject(error)
+                        else resolve(result.secure_url)
+                    }
+                )
+            })
+            )
+        
+            // Promise.all will fire when all promises are resolved 
+            Promise.all(res_promises)
+            .then(async (result) => {
+
+                // -- configure prisma mutation's user connection
+                let requestee = { create: { firstname, lastname, email, password:process.env.SCHEMA_GUEST_USERS_PWD } }
+                if (user) {
+                    requestee = { connect: { id: user.id} }
+                }
+
+                // create new request
+                const newRequest = await prisma.mutation.createDiscountRequest(
+                    { data:{ 
+                        discount: {connect: {id: discount}},
+                        user: requestee,
+                        documentation: {set: result},
+                    }},
+                    `{ id user { firstname lastname } discount { name description product { name description} } }`
+                )
+
+                // notify 
+                const approveLink = `${process.env.HOST}payment/discount/approve/${newRequest.id}`
+                const link = `${process.env.HOST}payment/view/discountrequest/${newRequest.id}`
 
                 await sendEmail(
-                    NotifEmails.discounts[0], // address to send mail to
-                    'Solicitud de Descuento', // subject
+                    paymentConfig.notifications.recipients.newDiscountRequest.toString(), // addresses to send mail to
+                    'Nueva Solicitud de Descuento', // subject
                     `Por favor usa el siguiente vínculo: ${link} para visualizar los detalles del descuento solicitado.`, // fallback text
                     `views/congressDiscountApprove.hbs`, //-- template file
                     { 
                         link,
-                        productName: product.name,
-                        discount: product.description,
+                        productName: `${newRequest.discount.product.name} –— ${newRequest.discount.name}`,
+                        discount: newRequest.discount.name,
                         approveLink,
                         fullname: `${firstname} ${lastname}`,
                         documentation: result
                     } 
                 )
-                res.send({newDiscount})
-            } 
-            catch(e) { res.send({error:e}); throw new Error(`ERROR: ${e}`) }
-        })
-        .catch((error) => { throw new Error(`upload to cloudinary failed: ${error}`) })
+                res.send({newRequest})
+            })
+            .catch((error) => { throw new Error(`@ route payment/attendee/requestdiscount (promise.all): ${error}`) })
+        } catch(e) { throw new Error(`@ route payment/attendee/requestdiscount (form.parse): \n${e}\n\n`)}
     })
 })
 
 //-- render view of requested discount in browser
-paymentRoutes.get('/request/discount/:id', express.urlencoded({extended: true}), async (req, res) => {
+paymentRoutes.get('/view/discountrequest/:id', express.urlencoded({extended: true}), async (req, res) => {
     const { params: { id } } = req
-    const discount = await Discount.findOne({ where: { id }, include: [{ model:Product }] })
-    if (!discount) {
-        res.send(`<h2>No Order for ${orderid} was found...</h2>`)
-        return null
+    if (!id) {
+        res.send(`<h1>404 Page Not Found</h1><p>Missing discount request's ID...</p>`)
+        return
     }
-    const { documentation, firstname, lastname } = discount
+    const discountQuery = await prisma.query.discountRequest({where: {id}}, `{
+        id  documentation user { firstname lastname }
+        discount { name description unitPrice product { name description } }
+    }`)  
+    
+    if (!discountQuery) {
+        res.send(`<h1>787 Unable to Load</h1><p>No Order for ${orderid} was found...</p>`)
+        return
+    }
+
+    const { documentation, user: { firstname, lastname }, discount  } = discountQuery
     res.render('congressDiscountApprove', {
         layout: false,
         documentation,
-        productName: discount.product.name,
-        discount: discount.product.description,
+        productName: `${discount.product.name} (${discount.name})`,
+        discount:`${discount.product.description}\n${discount.description}`,
         fullname: `${firstname} ${lastname}`,
         approveLink: `${process.env.HOST}payment/discount/approve/${discount.id}`
     })
@@ -285,15 +355,47 @@ paymentRoutes.get('/request/discount/:id', express.urlencoded({extended: true}),
 //-- approve discount
 paymentRoutes.get('/discount/approve/:id', express.urlencoded({extended: true}), async (req, res) => {
     const { params: { id } } = req
-    const discount = await Discount.findOne({where: {id}})
-    if (!discount) {
-        res.send('<h2>The discount was not found...</h2>')
+    const discountRequest = await prisma.query.discountRequest({where: {id}}, `{applied approved}`)
+    if (!discountRequest) {
+        // discount request was not found
+        res.send('<h2>The discount request was not found...</h2>')
+        return
+    }
+    if (discountRequest.applied || discountRequest.approved) {
+        // discount request has been either applied or already approved
+        res.send(`<h2>No changes allowed for status:</h2><p>applied: ${discountRequest.applied}</p><p>approved:${discountRequest.approved}</p>`)
         return
     }
     try {
-        await discount.update({ approved: true })
-        // notify user
-        res.send(`<h2>Successfully Approved and Notified</h2><p>${JSON.stringify(discount)}</p>`)
+        const mutatedRequest = await prisma.mutation.updateDiscountRequest(
+            {where: {id}, data: {approved: true}}, 
+            `{
+                approved
+                user { email firstname lastname }
+                discount { name description product { name }}
+             }`
+        ) 
+        if (mutatedRequest.approved) {
+            // notify user
+            const { discount, user } = mutatedRequest
+            await sendEmail(
+                mutatedRequest.user.email, // addresses to send mail to
+                'Confirmación Descuento: Congreso Mundial de Investigación en Artes del Espectáculo', // subject
+                `El descuento solicitado ha sido exitosamente confirmado.
+                Puede continuar el proceso de compra visitando https://congreso.alicialonso.org
+                En el formulario de compra deberá introducir la misma dirección a la que ha recibido este email.
+                \n\n Muchas gracias, esperamos verle pronto.`, // fallback text
+                `views/congressDiscountNotify.hbs`, //-- template file
+                { 
+                    link: paymentConfig.links.attendeeBuyForm,
+                    productName: `${discount.product.name} –— ${discount.name}`,
+                    discount: discount.description,
+                    buyLink: paymentConfig.links.attendeeBuyForm,
+                    fullname: `${user.firstname} ${user.lastname}`,
+                } 
+            )
+            res.send(`<h2>Successfully Approved and Notified</h2><p>${JSON.stringify(mutatedRequest)}</p>`)
+        }
     } catch(e) { res.send(`<h2>Error</h2><p>${JSON.stringify(e)}</p>`) }
 }) 
 
@@ -302,60 +404,26 @@ paymentRoutes.get('/attendee/find/discount', async (req, res) => {
     const { email } = req.query
     try {
         if (!email) {
-            res.send({ foundDiscount: null, applied: false, error: 'please provide an email address'})
-            return null
-        }
-        const foundInvoice = await Invoice.findOne({where: { email }})
-        if (foundInvoice) {
-            res.send({
-                foundDiscount: null, 
-                applied: true, 
-                error: 'email already used'})
-            return null
-        }
-        const foundDiscount = await Discount.findOne({where: { email, approved: true }, include: [ { model: Product } ] })
-        if (!foundDiscount) {
-            res.send({ foundDiscount: null, applied: false, error: 'in review'})
+            res.send({ foundDiscount: null, error: 'please provide an email address'})
             return
         }
-        res.send({ 
-            foundDiscount,
-            applied: false,
-            error: null
-        })
-    } catch(e) { 
-        res.send({
-            foundDiscount: null, 
-            applied:false, 
-            error:e}) }
-})
+        const foundDiscount = await prisma.query.user(
+            {where: {email}},
+            `{
+                email firstname lastname
+                discountRequests(where: {discount:{product:{id:"${paymentConfig.baseProductIDs.attendee}"}}} )
+                    { id applied approved discount { id name description unitPrice } }
+            }`
+        )
+        if (!foundDiscount) {
+            res.send({ foundDiscount: null, error: 'no discount request found'})
+            return
+        }
+        // send the whole object in the response
+        res.send({ foundDiscount, error: null})
 
-
-// SPEAKER
-// -----------------------------------------------------------
-//-- get speaker data
-paymentRoutes.get('/speaker/data', async (req, res) => {
-    res.send({ 
-        products: await Product.findAll({ where: { category: 'Speaker'}}),
-        discounts: await Discount.findAll({
-            include: [{ model: Product, where: { category: 'Speaker'}}]
-        }),
-        baseProduct: await Product.findByPk('6cc4f753-be5e-43b7-b802-c45f14fa6164')
-    })
+    } catch(e) {  res.send({ foundDiscount: null, error:e}) }
 })
-//-- get all invoices
-paymentRoutes.get('/invoices', async (req, res) => {
-    res.send({ invoices: await Invoice.findAll() })
-})
-//-- get invoices for email
-paymentRoutes.get('/invoices/find', async (req, res) => {
-    const { email } = req.query
-    res.send({ 
-        invoice: await Invoice.findAll({ where: { email }}) })
-})
-//-- PASSES
-
-//-- get PASS for email
 
 
 export default paymentRoutes

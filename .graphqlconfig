@@ -5,7 +5,12 @@
             "extensions": {
                 "prisma": "prisma/prisma.yml",
                 "endpoints": {
-                    "default": "http://localhost:4466/aaxapi/dev"
+                    "dex": {
+                        "url": "http://localhost:4466/aaxapi/dex",
+                        "headers": { 
+                            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InNlcnZpY2UiOiJhYXhhcGlAZGV4Iiwicm9sZXMiOlsiYWRtaW4iXX0sImlhdCI6MTU2ODUwNTU5MywiZXhwIjoxNTg1Nzg1NTkzfQ.ol_UWyYEFsxXCEZwq1LFqAAYOPjemwo5MMWy0xJ3_3I" 
+                            }
+                    }
                 }
             }
         }

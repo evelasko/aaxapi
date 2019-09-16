@@ -1,11 +1,9 @@
-endpoint: ${env:PRISMA_ENDPOINT}
+endpoint: "http://localhost:4466/aaxapi/dex" #${env:PRISMA_ENDPOINT}
 #disableAuth: true
-secret: ${env:PRISMA_SECRET}
+secret: "tTo58p9kuZCsWP2qsEJXYo85xlE@huh9ixig7" #${env:PRISMA_SECRET}
 datamodel:
-  - model/common.graphql
-  - model/base.graphql
-  - model/appmodel.graphql
+  - model/user.graphql
+  - model/app.graphql
   - model/institute.graphql
-  - model/admin.graphql
-  - model/congress.graphql
+  - model/academic.graphql
   - model/store.graphql

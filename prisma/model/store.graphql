@@ -1,53 +1,100 @@
 type ProductCategory {
-    id: ID! @unique
-    name: String!
-    products: [Product!]! @relation(name: "ProductToCategory", onDelete: SET_NULL)
-}
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
 
-enum ProductType {
-    PRODUCT
-    SERVICE
+    name: String!
+    products: [Product!]! @relation(name: "ProductCategories", onDelete: SET_NULL)
 }
 
 type Product {
-    id: ID! @unique
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
     name: String!
+    description: String!
+    content: String
     unitPrice: Float!
-    type: ProductType! @default(value: PRODUCT)
-    category: ProductCategory! @relation(name: "ProductToCategory", onDelete: SET_NULL)
-    images: [ProductImage!]! @relation(name: "ProductImages")
+    category: ProductCategory! @relation(name: "ProductCategories", link: INLINE, onDelete: SET_NULL)
+    imageURLs: [String!]! @scalarList(strategy: RELATION)
+    discounts: [Discount!]! @relation(name: "ProductDiscounts", onDelete: CASCADE)
+    orders: [Item!]! @relation(name: "ProductsInOrder")
 }
 
-type ProductImage {
-    id: ID! @unique
-    title: String! @default(value: "untitled")
-    product: Product! @relation(name: "ProductImages")
-    imageURL: String!
+type Discount {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    product: Product! @relation(name: "ProductDiscounts", onDelete: SET_NULL)
+    name: String!
+    description: String!
+
+    code: String
+    unitPrice: Float!
+    discountRequests: [DiscountRequest!]! @relation(name: "DiscountRequests", onDelete: CASCADE)
+
+    requirements: String!
 }
 
-type CustomerOrder {
-    id: ID! @unique
-    customer: User!
-    items: [CustomerOrderItems!]! @relation(name: "OrderItems")
-    invoice: Invoice! @relation(name: "OrderInvoice" onDelete: CASCADE)
-    paymentId: String! @unique
+
+type DiscountRequest {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    discount: Discount! @relation(name: "DiscountRequests", link: INLINE, onDelete: SET_NULL)
+    user: User! @relation(name: "UserDiscountRequests", link: INLINE, onDelete: SET_NULL)
+    applied: Boolean! @default(value: false)
+    approved: Boolean! @default(value: false)
+    documentation: [String!]! @scalarList(strategy: RELATION)
 }
 
-type CustomerOrderItems {
-    id: ID! @unique
-    order: CustomerOrder! @relation(name: "OrderItems")
-    item: Product! @relation(name: "ProductsInOrder")
+enum TxType {
+    SALE
+    PURCHASE
+    RECEIPT
+    PAYMENT
+} 
+
+type Transaction {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    type: TxType! @default(value: SALE)
+    reference: String # in the case of TPV transactions this field is Ds_AuthorisationCode
+    order: Order @relation(name: "OrderTransactions", link: INLINE, onDelete: SET_NULL)
+    amount: Float!
+}
+
+type Order{
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    customer: User! @relation(name: "CustomerOrders", link: INLINE)
+    items: [Item!]! @relation(name: "OrderItems", onDelete: CASCADE)
+    reference: String! @unique
+    metadata: Json
+
+    paymentSettled: Boolean! @default(value: false)
+    paymentDue: DateTime
+    transactions: [Transaction!]! @relation(name: "OrderTransactions", onDelete: CASCADE)
+
+    vatRate: Int @default(value: 0)
+    total: Float!
+}
+
+type Item {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    order: Order! @relation(name: "OrderItems", link: INLINE, onDelete: SET_NULL)
+    product: Product! @relation(name: "ProductsInOrder" link: INLINE, onDelete: SET_NULL)
+    discount: Discount
     quantity: Int!
-    orderPrice: Float!
-}
-
-type Invoice {
-    id: ID! @unique
-    order: CustomerOrder! @relation(link: INLINE name: "OrderInvoice")
-    timeDue: DateTime!
-    timePaid: DateTime
-    vatRate: Int! @default(value: 16)
-    netAmount: Float!
-    vatAmount: Float!
-    grossAmount: Float!
+    orderPrice: Float! # this price either from a product or a discount
 }

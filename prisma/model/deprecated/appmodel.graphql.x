@@ -1,6 +1,6 @@
 type News {
-  id: ID! @unique
-  author: User! @relation(name: "NewsToUser", onDelete: SET_NULL)
+  id: ID! @id
+  author: User! @relation(name: "NewsToUser")
   title: String!
   subtitle: String
   body: String!
@@ -11,12 +11,13 @@ type News {
   target: UserGroup!
   deleteUpon: Boolean @default(value: false)
   published: Boolean! @default(value: false)
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
 }
+
 type Event {
-  id: ID! @unique
-  author: User! @relation(name: "EventToUser", onDelete: SET_NULL)
+  id: ID! @id
+  author: User! @relation(name: "EventToUser")
   title: String!
   subtitle: String
   organizer: String
@@ -28,16 +29,19 @@ type Event {
   target: UserGroup!
   deleteUpon: Boolean @default(value: false)
   published: Boolean! @default(value: false)
-  venue: Venue! @relation(name: "EventToVenue", onDelete: SET_NULL)
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  venue: Venue! @relation(name: "EventToVenue")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
 }
+
 type Venue {
-  id: ID! @unique
+  id: ID! @id
   name: String!
   address: String!
   placeID: String
   latitude: Float
   longitude: Float
-  events: [Event!]! @relation(name: "EventToVenue", onDelete: CASCADE )
+  events: [Event] @relation(name: "EventToVenue")
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
 }

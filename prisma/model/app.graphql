@@ -1,0 +1,65 @@
+enum AppNodeStatus {
+    DRAFT
+    PUBLISHED
+    DEFERED
+}
+
+type News {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    author: User! @relation(name: "UserNewses", onDelete: SET_NULL)
+    title: String!
+    subtitle: String
+    body: String!
+    imageURL: String
+    expiration: DateTime
+    category: String
+    featured: Boolean @default(value: false)
+    target: UserGroup!
+    status: AppNodeStatus! @default(value: DRAFT)
+}
+
+type Event {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    author: User! @relation(name: "UserEvents", onDelete: SET_NULL)
+    title: String!
+    subtitle: String
+    organizer: String
+    body: String!
+    imageURL: String
+    date: DateTime!
+    access: String
+    accessPoint: String
+    target: UserGroup!
+    status: AppNodeStatus! @default(value: DRAFT)
+    place: Space! @relation(name: "EventVenueSpace", link: INLINE, onDelete: SET_NULL)
+}
+
+type Venue {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    name: String!
+    address: String!
+    placeID: String
+    latitude: Float
+    longitude: Float
+    spaces: [Space!]! @relation(name: "VenueSpaces", onDelete: CASCADE)
+}
+
+type Space {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    name: String!
+    venue: Venue! @relation(name: "VenueSpaces", link: INLINE, onDelete: SET_NULL)
+    events: [Event!]! @relation(name: "EventVenueSpace", onDelete: CASCADE)
+    sessions: [Session!]! @relation(name: "SessionSpace", onDelete: CASCADE)
+}

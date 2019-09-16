@@ -1,0 +1,82 @@
+[
+    {
+      "__id": "cjs1jc6ki000q08779wgq2142",
+      "name": "Teatro Tomás y Valiente",
+      "latitude": null,
+      "placeID": "ChIJP3i1y66LQQ0RpSSEnhN7jJY",
+      "__typename": "Venue",
+      "longitude": null,
+      "id": "cjs1jc6ki000q08779wgq2142",
+      "address": "28945, Calle de Leganés, 51, 28945 Fuenlabrada, Madrid, Spain"
+    },
+    {
+      "__id": "cjs1jnln100170877kdx0kgfh",
+      "name": "Plató TV Laboratorio I Campus URJC Fuenlabrada",
+      "latitude": null,
+      "placeID": "ChIJXWN93HiLQQ0RCmnL3E4gv2E",
+      "__typename": "Venue",
+      "longitude": null,
+      "id": "cjs1jnln100170877kdx0kgfh",
+      "address": "Camino Del Molino S/N, 28943 Fuenlabrada, Madrid, Spain"
+    },
+    {
+      "__id": "cjsk2waep001508426xa0j1a3",
+      "name": "Aulario IV URJC Campus Fuenlabrada",
+      "latitude": null,
+      "placeID": "ChIJFyQNMX-LQQ0RVQs3HCOUuwg",
+      "__typename": "Venue",
+      "longitude": null,
+      "id": "cjsk2waep001508426xa0j1a3",
+      "address": "Camino del Molino, s/n, 28943 Fuenlabrada, Madrid, Spain"
+    },
+    {
+      "__id": "cjuwdf81i00310707kwql6n3g",
+      "name": "Círculo de Bellas Artes",
+      "latitude": null,
+      "placeID": "",
+      "__typename": "Venue",
+      "longitude": null,
+      "id": "cjuwdf81i00310707kwql6n3g",
+      "address": "Calle de Alcalá, 42, 28014 Madrid, Spain"
+    },
+    {
+      "__id": "cjuwdg027003607071uvykgjb",
+      "name": "Nave 73",
+      "latitude": null,
+      "placeID": "",
+      "__typename": "Venue",
+      "longitude": null,
+      "id": "cjuwdg027003607071uvykgjb",
+      "address": "Calle de Palos de la Frontera, 5, 28012 Madrid, Spain"
+    },
+    {
+      "__id": "cjvnu0p5y001d0732jgz49bpr",
+      "name": "Acueducto de Segovia",
+      "latitude": null,
+      "placeID": "",
+      "__typename": "Venue",
+      "longitude": null,
+      "id": "cjvnu0p5y001d0732jgz49bpr",
+      "address": "Plaza del Azoguejo, 1, 40001 Segovia, Spain"
+    },
+    {
+      "__id": "cjvnuahj1001j07321y2m3h59",
+      "name": "La Cárcel - Segovia Centro de Creación",
+      "latitude": null,
+      "placeID": "",
+      "__typename": "Venue",
+      "longitude": null,
+      "id": "cjvnuahj1001j07321y2m3h59",
+      "address": "Av. Juan Carlos I, 40005 Segovia, Spain"
+    },
+    {
+      "__id": "cjwaixrq2000m0763dntavqe6",
+      "name": "Salón de Actos, Rectorado. Universidad Rey Juan Carlos, Campus de Móstoles.",
+      "latitude": null,
+      "placeID": "",
+      "__typename": "Venue",
+      "longitude": null,
+      "id": "cjwaixrq2000m0763dntavqe6",
+      "address": "Calle Tulipán, s/n, 28933 Móstoles, Madrid, España"
+    }
+  ]

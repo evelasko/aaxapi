@@ -1,0 +1,120 @@
+enum UserGroup {
+    STUDENT
+    STAFF
+    PUBLIC
+}
+
+enum OfficialDocumentType {
+    NATIONALID
+    PASSPORT
+    SOCIALSECURITY
+    DRIVINGLICENSE
+    OTHER
+}
+
+type User {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    name: String!
+    lastname: String!
+    email: String! @unique
+    emailVerified: Boolean! @default(value: false)
+    password: String!
+    
+    group: UserGroup! @default(value: PUBLIC)
+    groupRequest: UserGroup
+
+    isAdmin: Boolean! @default(value: false)
+    adminRole: AdminRole @relation(name: "UserRoles", link: INLINE)
+    
+    avatar: String
+    addresses: [Address!]! @relation(name: "UserAddress", onDelete: CASCADE)
+    devices: [Device!]! @relation(name: "UserDevices", onDelete: CASCADE)
+    officialDocuments: [OfficialDocument!]! @relation(name: "UserOfficialDocuments", onDelete: CASCADE)
+    socialNetworkLinks: [SocialLink!]! @relation(name: "UserSocialNetworks", onDelete: CASCADE)
+    metadata: Json
+
+    department: Department @relation(name: "DepartmentMembers", link: INLINE, onDelete: SET_NULL)
+
+    newses: [News!]! @relation(name: "UserNewses", onDelete: CASCADE)
+    events: [Event!]! @relation(name: "UserEvents", onDelete: CASCADE)
+
+    lessonsManaged: [Lesson!]! @relation(name: "LessonManager")
+    availableLessons: [Lesson!]! @relation(name: "LessonsTeachers", onDelete: CASCADE)
+    teachedSessions: [Session!]! @relation(name: "TeachedSession", onDelete: CASCADE)
+
+    discountRequests: [DiscountRequest!]! @relation(name: "UserDiscountRequests", onDelete: CASCADE)
+}
+
+type AdminRole {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    name: String!
+    admins: [User!]! @relation(name: "UserRoles")
+}
+
+type SocialLink {
+    id: ID! @id
+    link: String! @unique
+    socialNetwork: SocialNetwork! @relation(name: "LinkSocialNetwork", link: INLINE, onDelete: SET_NULL)
+    owner: User! @relation(name: "UserSocialNetworks", link: INLINE, onDelete: SET_NULL)
+}
+
+type SocialNetwork {
+    id: ID! @id
+    name: String!
+    baseURL: String!
+    ownURL: String!
+    userLinks: [SocialLink!]! @relation(name: "LinkSocialNetwork", onDelete: CASCADE)
+}
+
+type OfficialDocument {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    number: String! @unique
+    type: OfficialDocumentType
+    other: String
+    expiration: DateTime
+    owner: User! @relation(name: "UserOfficialDocuments", link: INLINE, onDelete: SET_NULL)
+}
+
+type Address {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    owner: User @relation(name: "UserAddress", link: INLINE, onDelete: SET_NULL)
+    address1: String!
+    address2: String
+    city: String
+    region: String!
+    country: String!
+    code: String!
+    primary: Boolean! @default(value: false)
+}
+
+enum DeviceType {
+    PHONE
+    TABLET
+    OTHER
+}
+
+type Device {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+
+    owner: User @relation(name: "UserDevices", link: INLINE, onDelete: SET_NULL)
+    countryCode: String
+    number: String
+    type: DeviceType! @default(value: PHONE)
+    notificationsId: String
+    notificationsPermission: Boolean
+    verified: Boolean! @default(value: false)
+}

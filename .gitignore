@@ -4,4 +4,4 @@ dist/
 .vscode/
 .config/
 deploy_schema.sh
-config/
+.graphqlconfig
