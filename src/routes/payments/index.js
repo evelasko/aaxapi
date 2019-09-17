@@ -55,7 +55,7 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
 
         const params = processResponse(body)
         console.log("PARAMS: ", params)
-        
+
         if (params.response) {
             //-- the transaction went thru
             const { 
@@ -110,7 +110,6 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
             // add the discount to the order mutation arguments and set it to APPLIED: TRUE
             if (discountId) {
                     args.data.items.create.discount = { connect: { id: discountId } }
-                    info = `{ id items { product { name description } discount { name } } }`
                     const { discountRequests } = await prisma.query.user(
                         {where:{email}}, 
                         `{ discountRequests(where: { discount: { id: "${discountId}"}}) { id } }`
