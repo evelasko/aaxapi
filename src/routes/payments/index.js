@@ -399,26 +399,32 @@ paymentRoutes.get('/attendee/find/discount', async (req, res) => {
             res.send({ foundDiscount: null, error: 'please provide an email address'})
             return
         }
-        const foundDiscount = await prisma.query.user(
+        let error = null
+
+        let foundUser = await prisma.query.user(
+            {where: { email}},
+            `{ id firstname lastname metadata }`
+        )
+        let foundDiscount = await prisma.query.user(
             {where: {email}},
             `{
-                email firstname lastname
+                email firstname lastname metadata
                 discountRequests
-                (where: {  AND:  [ 
-                      {  discount: { product: {id: "${paymentConfig.baseProductIDs.attendee}"} }  },
-                      { approved: true },
-                      { applied: false }
-                ]}) { id applied approved discount { id name description unitPrice } }
+                (where: { discount: { product: {id: "${paymentConfig.baseProductIDs.attendee}"} } })
+                { id applied approved discount { id name description unitPrice } }
             }`
         )
-        if (!foundDiscount || foundDiscount === undefined) {
-            res.send({ foundDiscount: null, error: 'no discount request found or request already applied'})
-            return
+        
+        if (foundDiscount && foundDiscount.discountRequests.length) {
+            if (foundDiscount.discountRequests[0].applied) 
+                { error = 'La dirección de email ya ha usado un descuento' }
+            if (!foundDiscount.discountRequests[0].approved)
+                { error = 'La dirección de email ya tiene una solicitud descuento en revisión, se le notificará una vez la comisión confirme su solicitud'}
         }
         // send the whole object in the response
-        res.send({ foundDiscount, error: null})
+        res.send({ foundUser, error})
 
-    } catch(e) {  res.send({ foundDiscount: null, error:e}) }
+    } catch(e) {  res.send({ foundUser: null, error:`ERROR: ${e}`}) }
 })
 
 export default paymentRoutes
