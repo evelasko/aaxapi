@@ -83,9 +83,11 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
             //-- create data for the invoice and the ticket
             
         
+            const amountEuro = parseInt(Ds_Amount)
+            const amountCent = (amountEuro / 100).toFixed(2)
             let args = {
                 data: {
-                    total: Ds_Amount,
+                    total: amountEuro,
                     reference: Ds_Order,
                     paymentSettled: true,
                     customer: { connect: { email } },
@@ -93,13 +95,13 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
                         create: {
                             type: "SALE",
                             reference: Ds_AuthorisationCode,
-                            amount: Ds_Amount,
+                            amount: amountCent,
                         }
                     },
                     items: { 
                         create: {
                             quantity: 1,
-                            orderPrice: Ds_Amount,
+                            orderPrice: amountEuro,
                             product: { connect: { id: productId} },
                         } 
                     }
@@ -109,20 +111,21 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
             let discountRequest = null
             // add the discount to the order mutation arguments and set it to APPLIED: TRUE
             if (discountId) {
-                    args.data.items.create.discount = { connect: { id: discountId } }
-                    const { discountRequests } = await prisma.query.user(
-                        {where:{email}}, 
-                        `{ discountRequests(where: { discount: { id: "${discountId}"}}) { id } }`
-                    )
-                    if (discountRequests[0].id) {
+                args.data.items.create.discount = { connect: { id: discountId } }
+                const fuser = await prisma.query.user(
+                    {where:{email}}, 
+                    `{ discountRequests(where: { discount: { id: "${discountId}"}}) { id } }`
+                )
+                if (fuser.discountRequests[0].id) {
                         discountRequest = await prisma.mutation.updateDiscountRequest(
-                            {where:{id:discountRequests[0].id}, data:{applied:true}},
+                            {where:{id:fuser.discountRequests[0].id}, data:{applied:true}},
                             `{ discount { name }}`)
-                    }
+                }  
             }
             // create Order / Transaction
             const order = await prisma.mutation.createOrder( args, `{ id items { product { name description } } }`)
-
+            
+            
             const ticketName = discountRequest ? 
                 `${order.items[0].product.name} (${discountRequest.discount.name})` 
                 : 
