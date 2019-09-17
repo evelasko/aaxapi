@@ -83,8 +83,8 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
             //-- create data for the invoice and the ticket
             
         
-            const amountEuro = parseInt(Ds_Amount)
-            const amountCent = (amountEuro / 100).toFixed(2)
+            const amountCent = parseInt(Ds_Amount)
+            const amountEuro = (amountCent / 100).toFixed(2)
             let args = {
                 data: {
                     total: amountEuro,
