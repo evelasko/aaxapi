@@ -52,6 +52,7 @@ paymentRoutes.post('/getsignature', cors(corsLimited), async (req, res) => {
 //-- Receive payment response from bank
 paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), async ({body}, res) => {
     try {
+        console.log("BODY: ", body)
 
         const params = processResponse(body)
         console.log("PARAMS: ", params)
@@ -84,10 +85,10 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
             
         
             const amountCent = parseInt(Ds_Amount)
-            const amountEuro = (amountCent / 100).toFixed(2)
+            const amountEuro = parseFloat((amountCent / 100).toFixed(2))
             let args = {
                 data: {
-                    total: amountEuro,
+                    total: (amountCent / 100).toFixed(2),
                     reference: Ds_Order,
                     paymentSettled: true,
                     customer: { connect: { email } },
