@@ -51,36 +51,38 @@ paymentRoutes.post('/getsignature', cors(corsLimited), async (req, res) => {
 
 //-- Receive payment response from bank
 paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), async ({body}, res) => {
+    try {
 
-    const params = processResponse(body)
-
-    if (params.response) {
-        //-- the transaction went thru
-        const { 
-            merchantParamsDecoded: { Ds_AuthorisationCode, Ds_Order, Ds_Amount },
-            data: { 
-                productId, discountId,
-                firstname, lastname, email, institution }
-        } = params
-
-        //-- check if user exists
-        const user = await prisma.query.user({where:{email}}, `{ id metadata }`)
-        if (!user) {
-            await prisma.mutation.createUser(
-                { data: { email, firstname, lastname, password: process.env.SCHEMA_GUEST_USERS_PWD } },
-                `{ id }`)
-        } else {
-            if (institution) {
-                await prisma.mutation.updateUser(
-                    { where: { email }, data: { metadata: { institution } } },
-                    `{ id }`
-                )
-            }
-        }
-
-        //-- create data for the invoice and the ticket
+        const params = processResponse(body)
+        console.log("PARAMS: ", params)
         
-        try {
+        if (params.response) {
+            //-- the transaction went thru
+            const { 
+                merchantParamsDecoded: { Ds_AuthorisationCode, Ds_Order, Ds_Amount },
+                data: { 
+                    productId, discountId,
+                    firstname, lastname, email, institution }
+            } = params
+
+            //-- check if user exists
+            const user = await prisma.query.user({where:{email}}, `{ id metadata }`)
+            if (!user) {
+                await prisma.mutation.createUser(
+                    { data: { email, firstname, lastname, password: process.env.SCHEMA_GUEST_USERS_PWD } },
+                    `{ id }`)
+            } else {
+                if (institution) {
+                    await prisma.mutation.updateUser(
+                        { where: { email }, data: { metadata: { institution } } },
+                        `{ id }`
+                    )
+                }
+            }
+
+            //-- create data for the invoice and the ticket
+            
+        
             let args = {
                 data: {
                     total: Ds_Amount,
@@ -147,11 +149,12 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
                 } 
             )
             res.send("done")
-        } catch(e) { throw new Error(`@ /confirmation (create order and notify):\n${e}`)}
-    }
-    else {
-        console.log("ERROR! TRANSACTION WAS KO...")
-    }
+        
+        }
+        else {
+            console.log("ERROR! TRANSACTION WAS KO...")
+        }
+    } catch(e) { throw new Error(`@ /confirmation (create order and notify):\n${e}`)}
 })
 
 //-- render receipt in browser
