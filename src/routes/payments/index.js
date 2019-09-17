@@ -52,10 +52,10 @@ paymentRoutes.post('/getsignature', cors(corsLimited), async (req, res) => {
 //-- Receive payment response from bank
 paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), async ({body}, res) => {
     try {
-        console.log("BODY: ", body)
+        // console.log("BODY: ", body)
 
         const params = processResponse(body)
-        console.log("PARAMS: ", params)
+        // console.log("PARAMS: ", params)
 
         if (params.response) {
             //-- the transaction went thru
@@ -83,12 +83,11 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
 
             //-- create data for the invoice and the ticket
             
-        
             const amountCent = parseInt(Ds_Amount)
             const amountEuro = parseFloat((amountCent / 100).toFixed(2))
             let args = {
                 data: {
-                    total: (amountCent / 100).toFixed(2),
+                    total: amountEuro,
                     reference: Ds_Order,
                     paymentSettled: true,
                     customer: { connect: { email } },
@@ -412,8 +411,8 @@ paymentRoutes.get('/attendee/find/discount', async (req, res) => {
                 ]}) { id applied approved discount { id name description unitPrice } }
             }`
         )
-        if (!foundDiscount) {
-            res.send({ foundDiscount: null, error: 'no discount request found'})
+        if (!foundDiscount || foundDiscount === undefined) {
+            res.send({ foundDiscount: null, error: 'no discount request found or request already applied'})
             return
         }
         // send the whole object in the response
@@ -421,6 +420,5 @@ paymentRoutes.get('/attendee/find/discount', async (req, res) => {
 
     } catch(e) {  res.send({ foundDiscount: null, error:e}) }
 })
-
 
 export default paymentRoutes
