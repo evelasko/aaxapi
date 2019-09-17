@@ -7197,7 +7197,7 @@ type Transaction {
   type: TxType!
   reference: String
   order: Order
-  amount: Float!
+  amount: Int!
 }
 
 type TransactionConnection {
@@ -7211,7 +7211,7 @@ input TransactionCreateInput {
   type: TxType
   reference: String
   order: OrderCreateOneWithoutTransactionsInput
-  amount: Float!
+  amount: Int!
 }
 
 input TransactionCreateManyWithoutOrderInput {
@@ -7223,7 +7223,7 @@ input TransactionCreateWithoutOrderInput {
   id: ID
   type: TxType
   reference: String
-  amount: Float!
+  amount: Int!
 }
 
 type TransactionEdge {
@@ -7252,7 +7252,7 @@ type TransactionPreviousValues {
   updatedAt: DateTime!
   type: TxType!
   reference: String
-  amount: Float!
+  amount: Int!
 }
 
 input TransactionScalarWhereInput {
@@ -7304,14 +7304,14 @@ input TransactionScalarWhereInput {
   reference_not_starts_with: String
   reference_ends_with: String
   reference_not_ends_with: String
-  amount: Float
-  amount_not: Float
-  amount_in: [Float!]
-  amount_not_in: [Float!]
-  amount_lt: Float
-  amount_lte: Float
-  amount_gt: Float
-  amount_gte: Float
+  amount: Int
+  amount_not: Int
+  amount_in: [Int!]
+  amount_not_in: [Int!]
+  amount_lt: Int
+  amount_lte: Int
+  amount_gt: Int
+  amount_gte: Int
   AND: [TransactionScalarWhereInput!]
   OR: [TransactionScalarWhereInput!]
   NOT: [TransactionScalarWhereInput!]
@@ -7339,19 +7339,19 @@ input TransactionUpdateInput {
   type: TxType
   reference: String
   order: OrderUpdateOneWithoutTransactionsInput
-  amount: Float
+  amount: Int
 }
 
 input TransactionUpdateManyDataInput {
   type: TxType
   reference: String
-  amount: Float
+  amount: Int
 }
 
 input TransactionUpdateManyMutationInput {
   type: TxType
   reference: String
-  amount: Float
+  amount: Int
 }
 
 input TransactionUpdateManyWithoutOrderInput {
@@ -7374,7 +7374,7 @@ input TransactionUpdateManyWithWhereNestedInput {
 input TransactionUpdateWithoutOrderDataInput {
   type: TxType
   reference: String
-  amount: Float
+  amount: Int
 }
 
 input TransactionUpdateWithWhereUniqueWithoutOrderInput {
@@ -7438,14 +7438,14 @@ input TransactionWhereInput {
   reference_ends_with: String
   reference_not_ends_with: String
   order: OrderWhereInput
-  amount: Float
-  amount_not: Float
-  amount_in: [Float!]
-  amount_not_in: [Float!]
-  amount_lt: Float
-  amount_lte: Float
-  amount_gt: Float
-  amount_gte: Float
+  amount: Int
+  amount_not: Int
+  amount_in: [Int!]
+  amount_not_in: [Int!]
+  amount_lt: Int
+  amount_lte: Int
+  amount_gt: Int
+  amount_gte: Int
   AND: [TransactionWhereInput!]
   OR: [TransactionWhereInput!]
   NOT: [TransactionWhereInput!]

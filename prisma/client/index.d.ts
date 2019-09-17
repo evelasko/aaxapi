@@ -1710,14 +1710,14 @@ export interface TransactionWhereInput {
   reference_ends_with?: Maybe<String>;
   reference_not_ends_with?: Maybe<String>;
   order?: Maybe<OrderWhereInput>;
-  amount?: Maybe<Float>;
-  amount_not?: Maybe<Float>;
-  amount_in?: Maybe<Float[] | Float>;
-  amount_not_in?: Maybe<Float[] | Float>;
-  amount_lt?: Maybe<Float>;
-  amount_lte?: Maybe<Float>;
-  amount_gt?: Maybe<Float>;
-  amount_gte?: Maybe<Float>;
+  amount?: Maybe<Int>;
+  amount_not?: Maybe<Int>;
+  amount_in?: Maybe<Int[] | Int>;
+  amount_not_in?: Maybe<Int[] | Int>;
+  amount_lt?: Maybe<Int>;
+  amount_lte?: Maybe<Int>;
+  amount_gt?: Maybe<Int>;
+  amount_gte?: Maybe<Int>;
   AND?: Maybe<TransactionWhereInput[] | TransactionWhereInput>;
   OR?: Maybe<TransactionWhereInput[] | TransactionWhereInput>;
   NOT?: Maybe<TransactionWhereInput[] | TransactionWhereInput>;
@@ -5005,7 +5005,7 @@ export interface UserCreateOneWithoutEventsInput {
 export interface TransactionUpdateWithoutOrderDataInput {
   type?: Maybe<TxType>;
   reference?: Maybe<String>;
-  amount?: Maybe<Float>;
+  amount?: Maybe<Int>;
 }
 
 export interface DiscountRequestCreateManyWithoutUserInput {
@@ -5078,14 +5078,14 @@ export interface TransactionScalarWhereInput {
   reference_not_starts_with?: Maybe<String>;
   reference_ends_with?: Maybe<String>;
   reference_not_ends_with?: Maybe<String>;
-  amount?: Maybe<Float>;
-  amount_not?: Maybe<Float>;
-  amount_in?: Maybe<Float[] | Float>;
-  amount_not_in?: Maybe<Float[] | Float>;
-  amount_lt?: Maybe<Float>;
-  amount_lte?: Maybe<Float>;
-  amount_gt?: Maybe<Float>;
-  amount_gte?: Maybe<Float>;
+  amount?: Maybe<Int>;
+  amount_not?: Maybe<Int>;
+  amount_in?: Maybe<Int[] | Int>;
+  amount_not_in?: Maybe<Int[] | Int>;
+  amount_lt?: Maybe<Int>;
+  amount_lte?: Maybe<Int>;
+  amount_gt?: Maybe<Int>;
+  amount_gte?: Maybe<Int>;
   AND?: Maybe<TransactionScalarWhereInput[] | TransactionScalarWhereInput>;
   OR?: Maybe<TransactionScalarWhereInput[] | TransactionScalarWhereInput>;
   NOT?: Maybe<TransactionScalarWhereInput[] | TransactionScalarWhereInput>;
@@ -5109,7 +5109,7 @@ export interface ProductCategoryCreateOneWithoutProductsInput {
 export interface TransactionUpdateManyDataInput {
   type?: Maybe<TxType>;
   reference?: Maybe<String>;
-  amount?: Maybe<Float>;
+  amount?: Maybe<Int>;
 }
 
 export interface ProductCreateimageURLsInput {
@@ -5224,7 +5224,7 @@ export interface TransactionCreateWithoutOrderInput {
   id?: Maybe<ID_Input>;
   type?: Maybe<TxType>;
   reference?: Maybe<String>;
-  amount: Float;
+  amount: Int;
 }
 
 export interface DiscountRequestUpdateWithWhereUniqueWithoutDiscountInput {
@@ -6313,7 +6313,7 @@ export interface UserUpdateManyWithWhereNestedInput {
 export interface TransactionUpdateManyMutationInput {
   type?: Maybe<TxType>;
   reference?: Maybe<String>;
-  amount?: Maybe<Float>;
+  amount?: Maybe<Int>;
 }
 
 export interface UserUpdateManyDataInput {
@@ -7678,7 +7678,7 @@ export interface TransactionCreateInput {
   type?: Maybe<TxType>;
   reference?: Maybe<String>;
   order?: Maybe<OrderCreateOneWithoutTransactionsInput>;
-  amount: Float;
+  amount: Int;
 }
 
 export interface ProductCreateOneWithoutOrdersInput {
@@ -8612,7 +8612,7 @@ export interface TransactionUpdateInput {
   type?: Maybe<TxType>;
   reference?: Maybe<String>;
   order?: Maybe<OrderUpdateOneWithoutTransactionsInput>;
-  amount?: Maybe<Float>;
+  amount?: Maybe<Int>;
 }
 
 export interface OfficialDocumentCreateInput {
@@ -9728,7 +9728,7 @@ export interface Transaction {
   updatedAt: DateTimeOutput;
   type: TxType;
   reference?: String;
-  amount: Float;
+  amount: Int;
 }
 
 export interface TransactionPromise extends Promise<Transaction>, Fragmentable {
@@ -9738,7 +9738,7 @@ export interface TransactionPromise extends Promise<Transaction>, Fragmentable {
   type: () => Promise<TxType>;
   reference: () => Promise<String>;
   order: <T = OrderPromise>() => T;
-  amount: () => Promise<Float>;
+  amount: () => Promise<Int>;
 }
 
 export interface TransactionSubscription
@@ -9750,7 +9750,7 @@ export interface TransactionSubscription
   type: () => Promise<AsyncIterator<TxType>>;
   reference: () => Promise<AsyncIterator<String>>;
   order: <T = OrderSubscription>() => T;
-  amount: () => Promise<AsyncIterator<Float>>;
+  amount: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface TransactionNullablePromise
@@ -9762,7 +9762,7 @@ export interface TransactionNullablePromise
   type: () => Promise<TxType>;
   reference: () => Promise<String>;
   order: <T = OrderPromise>() => T;
-  amount: () => Promise<Float>;
+  amount: () => Promise<Int>;
 }
 
 export interface SocialNetworkEdge {
@@ -13580,7 +13580,7 @@ export interface TransactionPreviousValues {
   updatedAt: DateTimeOutput;
   type: TxType;
   reference?: String;
-  amount: Float;
+  amount: Int;
 }
 
 export interface TransactionPreviousValuesPromise
@@ -13591,7 +13591,7 @@ export interface TransactionPreviousValuesPromise
   updatedAt: () => Promise<DateTimeOutput>;
   type: () => Promise<TxType>;
   reference: () => Promise<String>;
-  amount: () => Promise<Float>;
+  amount: () => Promise<Int>;
 }
 
 export interface TransactionPreviousValuesSubscription
@@ -13602,7 +13602,7 @@ export interface TransactionPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   type: () => Promise<AsyncIterator<TxType>>;
   reference: () => Promise<AsyncIterator<String>>;
-  amount: () => Promise<AsyncIterator<Float>>;
+  amount: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface AggregateRole {
