@@ -55,6 +55,9 @@ export const createPayment = ({data, description, total, titular, paymentId, url
 
 export const processResponse = (tpvResponse) => {
     //Snippet to process the TPV callback
+
+    console.log("TPV Response: ", tpvResponse)
+
     const redsys = new Redsys(); 
     const merchantParams = tpvResponse.Ds_MerchantParameters || tpvResponse.DS_MERCHANTPARAMETERS;
     const signature = tpvResponse.Ds_Signature || tpvResponse.DS_SIGNATURE;
@@ -63,6 +66,8 @@ export const processResponse = (tpvResponse) => {
     const merchantSignatureNotif = redsys.createMerchantSignatureNotif(process.env.DS_MERCHANT_KEY, merchantParams);
     const dsResponse = parseInt(merchantParamsDecoded.Ds_Response || merchantParamsDecoded.DS_RESPONSE);
 
+    console.log("Params: ", merchantParamsDecoded)
+
     const entities = new Entities();
 
     if (redsys.merchantSignatureIsValid(signature , merchantSignatureNotif) && dsResponse > -1 && dsResponse < 100 ) {
@@ -70,7 +75,7 @@ export const processResponse = (tpvResponse) => {
         return { 
             merchantParamsDecoded, 
             data: JSON.parse(entities.decode(merchantParamsDecoded.Ds_MerchantData)),
-            Ds_AuthorisationCode,
+            Ds_AuthorisationCode: merchantParamsDecoded.Ds_AuthorisationCode,
             response: true
         }
     } else {
