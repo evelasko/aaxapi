@@ -47,7 +47,7 @@ export const createPayment = ({data, description, total, titular, paymentId, url
         "DS_MERCHANT_URLKO":urlKo || paymentConfig.payment_KO_Route
     };
     return  {
-        signature: redsys.createMerchantSignature(DS_MERCHANT_KEY, mParams),
+        signature: redsys.createMerchantSignature(process.env.DS_MERCHANT_KEY, mParams),
         merchantParameters: redsys.createMerchantParameters(mParams),
         raw: mParams
     };
