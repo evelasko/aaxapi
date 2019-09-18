@@ -150,6 +150,15 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
                     fullname: `${firstname} ${lastname}`, //-- complete name of the participant
                 } 
             )
+            //-- notify the organization
+            await sendEmail(
+                paymentConfig.notifications.recipients.newOrderConfirmed.toString(),
+                'Nueva Confirmación de Participación',
+                `Datos de la Nueva Confirmación:
+                
+                Nombre: ${firstname} ${lastname}
+                Confirmación: ${ticketName} \n ${ticketDescription}`
+            )
             res.send("done")
         
         }
