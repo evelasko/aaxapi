@@ -205,7 +205,7 @@ paymentRoutes.get('/receipt/:orderid', express.urlencoded({extended: true}), asy
             Ds_Order: reference,
             ticketName: `${items[0].product.name} – ${items[0].discount ? items[0].discount.name : ''}`,
             ticketDescription: items[0].product.description,
-            total: (parseInt(total)/100).toFixed(2).toString(),
+            total,
             fullname: `${firstname} ${lastname}`,
             ...addresses[0]
         })
