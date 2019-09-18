@@ -7,7 +7,8 @@ const paymentConfig = {
     notifications: {
         recipients: {
             newDiscountRequest: [
-                'h.superpotter@gmail.com'
+                'h.superpotter@gmail.com',
+                'congreso@alicialonso.org'
             ],
             newOrderConfirmed: [
                 'h.superpotter@gmail.com'
