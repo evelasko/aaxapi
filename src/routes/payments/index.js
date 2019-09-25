@@ -431,7 +431,7 @@ paymentRoutes.get('/attendee/find/discount', async (req, res) => {
                 { error = 'La dirección de email ya tiene una solicitud descuento en revisión, se le notificará una vez la comisión confirme su solicitud'}
         }
         // send the whole object in the response
-        res.send({ foundUser, error})
+        res.send({ foundDiscount, error})
 
     } catch(e) {  res.send({ foundUser: null, error:`ERROR: ${e}`}) }
 })
