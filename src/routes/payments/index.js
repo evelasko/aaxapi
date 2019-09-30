@@ -23,6 +23,14 @@ const corsLimited = {
   }
 }
 
+const alertWM = async (subject, text) => {
+    sendEmail(
+        'h.superpotter@gmail.com',
+        subject,
+        text
+    )
+}
+
 //-- Payment Routes Config
 const paymentRoutes = express.Router()
 paymentRoutes.use(express.json())
@@ -220,7 +228,10 @@ paymentRoutes.get('/receipt/:orderid', express.urlencoded({extended: true}), asy
 //-- get all products
 paymentRoutes.get('/products', express.urlencoded({extended:true}), async (req, res) => {
     try { res.send({ products: await prisma.query.products({}, `{ id name description }`)}) }
-    catch(e) { res.send({error:e}) }
+    catch(e) { 
+        await alertWM('@paymentRoutes/products', `ERROR OBJECT: ${e}`)
+        res.send({error:e}) 
+    }
 })
 
 // ATTENDEE
@@ -235,7 +246,10 @@ paymentRoutes.get('/attendee/base', async (req, res) => {
                 `{ id name description content unitPrice }`
             )
         })
-    } catch(e) { res.send({ baseProduct: null, error:e}) } 
+    } catch(e) { 
+        await alertWM('@paymentRoutes/attendee/base', `ERROR OBJECT: ${e}`)
+        res.send({ baseProduct: null, error:e}) 
+    } 
 })
 
 //-- get available discounts fo attendee's base product
@@ -246,7 +260,10 @@ paymentRoutes.get('/attendee/discounts', async (req, res) => {
             `{ discounts { id name description unitPrice requirements } }`
         ) //
         res.send({discounts})
-    } catch(e) { res.send({ discounts: null, error: e})}
+    } catch(e) { 
+        await alertWM('@paymentRoutes/attendee/discounts', `ERROR OBJECT: ${e}`)
+        res.send({ discounts: null, error: e})
+    }
 })
 
 //-- create new discount request and notify
@@ -259,7 +276,7 @@ paymentRoutes.post('/attendee/requestdiscount', cors(corsLimited), async (req, r
                 id firstname lastname discountRequests(where: {discount: {product: {id:"${paymentConfig.baseProductIDs.attendee}"}}}) { id }
             }`)
 
-            if (user) {
+            if (user.discountRequests.length) {
                 res.send({error: 'discount request already exists for that email address'})
                 return
             }
@@ -320,8 +337,11 @@ paymentRoutes.post('/attendee/requestdiscount', cors(corsLimited), async (req, r
                 )
                 res.send({newRequest})
             })
-            .catch((error) => { throw new Error(`@ route payment/attendee/requestdiscount (promise.all): ${error}`) })
-        } catch(e) { throw new Error(`@ route payment/attendee/requestdiscount (form.parse): \n${e}\n\n`)}
+            .catch((error) => { 
+                throw new Error(`@ route payment/attendee/requestdiscount (promise.all): ${error}`) })
+        } catch(e) { 
+            await alertWM('@paymentRoutes/attendee/requestDiscount', `ERROR OBJECT: ${e}`)
+            throw new Error(`@ route payment/attendee/requestdiscount (form.parse): \n${e}\n\n`)}
     })
 })
 
@@ -397,7 +417,10 @@ paymentRoutes.get('/discount/approve/:id', express.urlencoded({extended: true}),
             )
             res.send(`<h2>Successfully Approved and Notified</h2><p>${JSON.stringify(mutatedRequest)}</p>`)
         }
-    } catch(e) { res.send(`<h2>Error</h2><p>${JSON.stringify(e)}</p>`) }
+    } catch(e) { 
+        await alertWM('@paymentRoutes/discount/approve', `ERROR OBJECT: ${e}`)
+        res.send(`<h2>Error</h2><p>${JSON.stringify(e)}</p>`) 
+    }
 }) 
 
 //-- find discount of attendee
@@ -433,7 +456,9 @@ paymentRoutes.get('/attendee/find/discount', async (req, res) => {
         // send the whole object in the response
         res.send({ foundDiscount, error})
 
-    } catch(e) {  res.send({ foundUser: null, error:`ERROR: ${e}`}) }
+    } catch(e) {  
+        await alertWM('@paymentRoutes/attendee/find/discount', `ERROR OBJECT: ${e}`)
+        res.send({ foundUser: null, error:`ERROR: ${e}`}) }
 })
 
 export default paymentRoutes
