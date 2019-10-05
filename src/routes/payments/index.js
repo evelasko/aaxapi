@@ -276,9 +276,11 @@ paymentRoutes.post('/attendee/requestdiscount', cors(corsLimited), async (req, r
                 id firstname lastname discountRequests(where: {discount: {product: {id:"${paymentConfig.baseProductIDs.attendee}"}}}) { id }
             }`)
 
-            if (user.discountRequests.length) {
-                res.send({error: 'discount request already exists for that email address'})
-                return
+            if (user) {
+                if (user.discountRequests.length){
+                    res.send({error: 'discount request already exists for that email address'})
+                    return
+                }
             }
             let fl = []
             if (!Array.isArray(files)) { fl.push(files) }
