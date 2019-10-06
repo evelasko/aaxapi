@@ -61,7 +61,7 @@ paymentRoutes.post('/getsignature', cors(corsLimited), async (req, res) => {
 paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), async ({body}, res) => {
     try {
         // console.log("BODY: ", body)
-
+        alertWM('request', `REQ BODY: \n${body}`)
         const params = processResponse(body)
         // console.log("PARAMS: ", params)
 
@@ -120,15 +120,17 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
             // add the discount to the order mutation arguments and set it to APPLIED: TRUE
             if (discountId) {
                 args.data.items.create.discount = { connect: { id: discountId } }
-                const fuser = await prisma.query.user(
-                    {where:{email}}, 
-                    `{ discountRequests(where: { discount: { id: "${discountId}"}}) { id } }`
-                )
-                if (fuser.discountRequests[0].id) {
-                        discountRequest = await prisma.mutation.updateDiscountRequest(
-                            {where:{id:fuser.discountRequests[0].id}, data:{applied:true}},
-                            `{ discount { name }}`)
-                }  
+                if (discountId != 'ck0myx7zu09ol0831hbyydmcp') {
+                    const fuser = await prisma.query.user(
+                        {where:{email}}, 
+                        `{ discountRequests(where: { discount: { id: "${discountId}"}}) { id } }`
+                    )
+                    if (fuser.discountRequests[0].id) {
+                            discountRequest = await prisma.mutation.updateDiscountRequest(
+                                {where:{id:fuser.discountRequests[0].id}, data:{applied:true}},
+                                `{ discount { name }}`)
+                    }  
+                }
             }
             // create Order / Transaction
             const order = await prisma.mutation.createOrder( args, `{ id items { product { name description } } }`)
