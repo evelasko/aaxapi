@@ -173,7 +173,11 @@ paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), asyn
         else {
             console.log("ERROR! TRANSACTION WAS KO...")
         }
-    } catch(e) { throw new Error(`@ /confirmation (create order and notify):\n${e}`)}
+    } catch(e) {
+        res.send("error")
+        alertWM('@confirmation', `ERROR:\n${e}`)
+        throw new Error(`@ /confirmation (create order and notify):\n${e}`)
+    }
 })
 
 //-- render receipt in browser
