@@ -59,10 +59,10 @@ paymentRoutes.post('/getsignature', cors(corsLimited), async (req, res) => {
 
 //-- Receive payment response from bank
 paymentRoutes.post('/confirmation', express.urlencoded({ extended: true }), async ({body}, res) => {
-    await alertWM('request', `REQ BODY: \n${body}`)
+    // await alertWM('request', `REQ BODY: \n${body}`)
     try {
         // console.log("BODY: ", body)
-        alertWM('request', `REQ BODY: \n${body}`)
+        // alertWM('request', `REQ BODY: \n${body}`)
         const params = processResponse(body)
         // console.log("PARAMS: ", params)
 
