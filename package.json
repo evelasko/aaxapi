@@ -63,7 +63,7 @@
     "qs": "^6.8.0",
     "shortid": "^2.2.14",
     "uuid": "^3.3.3",
-    "validator": "^11.1.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.3",
