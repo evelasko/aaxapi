@@ -60,7 +60,7 @@
     "prisma-binding": "^2.3.10",
     "prisma-client-lib": "^1.34.8",
     "qrcode": "^1.4.1",
-    "qs": "^6.8.0",
+    "qs": "^6.8.3",
     "shortid": "^2.2.14",
     "uuid": "^3.3.3",
     "validator": "^11.1.0"
